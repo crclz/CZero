@@ -60,11 +60,11 @@ namespace CZero.Lexical
 
             if (c == '\n')
             {
-                Position = Position.NextCloumn();
+                Position = Position.StartOfNextLine();
             }
             else
             {
-                Position = Position.StartOfNextLine();
+                Position = Position.NextCloumn();
             }
 
             return true;

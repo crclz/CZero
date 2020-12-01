@@ -86,5 +86,49 @@ namespace CZero.Lexical.Test
             Assert.False(reader.NextNonWhiteChar(out char _));
         }
 
+        [Fact]
+        void Position_points_at_0_0_when_begin()
+        {
+            var reader = new SourceReader(new StringReader("   \t  \r  \n  \r  "));
+
+            Assert.Equal(0, reader.Position.Line);
+            Assert.Equal(0, reader.Position.Column);
+        }
+
+        [Fact]
+        void Position_column_increases_when_next()
+        {
+            var reader = new SourceReader(new StringReader("abc"));
+
+            reader.Next();
+
+            Assert.Equal(0, reader.Position.Line);
+            Assert.Equal(1, reader.Position.Column);
+        }
+
+        [Fact]
+        void Position_column_set_0_and_line_incr_1()
+        {
+            var source = "ab\nasd";
+            var reader = new SourceReader(new StringReader(source));
+
+            reader.Next();// a
+            reader.Next();// b
+            reader.Next();// This reads \n
+
+            Assert.Equal(0, reader.Position.Column);
+            Assert.Equal(1, reader.Position.Line);
+        }
+
+        [Fact]
+        void PrevioutPositionTest()
+        {
+            var reader = new SourceReader(new StringReader("io"));
+
+            reader.Next();
+
+            Assert.Equal(0, reader.PreviousPosition.Column);
+            Assert.Equal(0, reader.PreviousPosition.Line);
+        }
     }
 }
