@@ -29,21 +29,19 @@ namespace CZero.Lexical.Tokens
             return new KeywordToken(keyword, position);
         }
 
-        private static Dictionary<string, Keyword> _keywordReference
+        // Mapping examined
+        public static IReadOnlyDictionary<string, Keyword> KeywordReference
             = new Dictionary<string, Keyword>
             {
                 {"fn", Keyword.Fn },
                 {"let", Keyword.Let },
                 {"const", Keyword.Const },
                 {"as", Keyword.As },
-                {"while",Keyword.As },
+                {"while",Keyword.While },
                 {"if", Keyword.If },
                 {"else", Keyword.Else },
-                {"return", Keyword.Else },
+                {"return", Keyword.Return },
             };
-
-        public static IReadOnlyDictionary<string, Keyword> KeywordReference => _keywordReference;
-
     }
 
     public enum Keyword

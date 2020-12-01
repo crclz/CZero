@@ -27,6 +27,7 @@ namespace CZero.Lexical.Tokens
             return new OperatorToken(op, position);
         }
 
+        // Mapping examined
         private static Dictionary<string, Operator> _operatorReference
             = new Dictionary<string, Operator>
             {
