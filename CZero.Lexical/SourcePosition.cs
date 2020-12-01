@@ -36,7 +36,7 @@ namespace CZero.Lexical
 
         public SourcePosition StartOfNextLine()
         {
-            return new SourcePosition(Line + 1, 1);
+            return new SourcePosition(Line + 1, 0);
         }
     }
 }
