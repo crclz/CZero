@@ -68,5 +68,23 @@ namespace CZero.Lexical.Test
 
             Assert.False(reader.TryNext(out char _));
         }
+
+        [Fact]
+        void NextNonWhiteChar_at_start()
+        {
+            var reader = new SourceReader(new StringReader(" \t \r abc"));
+
+            Assert.True(reader.NextNonWhiteChar(out char c));
+            Assert.Equal('a', c);
+        }
+
+        [Fact]
+        void NextNonWhiteChar_returns_false_when_no_more_nonwhite()
+        {
+            var reader = new SourceReader(new StringReader("   \t  \r  \n  \r  "));
+
+            Assert.False(reader.NextNonWhiteChar(out char _));
+        }
+
     }
 }
