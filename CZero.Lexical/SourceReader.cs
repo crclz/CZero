@@ -1,22 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 
+[assembly: InternalsVisibleTo("CZero.Lexical.Test")]
 namespace CZero.Lexical
 {
     class SourceReader
     {
         private TextReader _reader { get; }
 
-        private SourcePosition _position { get; set; } = new SourcePosition(0, 0);
+        public SourcePosition PreviousPosition { get; private set; }
+
+        /// <summary>
+        /// Points to next char to read
+        /// </summary>
+        public SourcePosition Position { get; private set; } = new SourcePosition(0, 0);
 
         public SourceReader(TextReader reader)
         {
             _reader = reader;
         }
 
-        public bool Peek(out char c)
+        public bool TryPeek(out char c)
         {
             var x = _reader.Peek();
             if (x == -1)
@@ -29,7 +36,14 @@ namespace CZero.Lexical
             return true;
         }
 
-        public bool Next(out char c)
+        public char Peek()
+        {
+            if (!TryPeek(out char c))
+                throw new InvalidOperationException();
+            return c;
+        }
+
+        public bool TryNext(out char c)
         {
             var x = _reader.Read();
             if (x == -1)
@@ -40,24 +54,34 @@ namespace CZero.Lexical
 
             c = (char)x;
 
-            // Change the line and column counter
+            // Change position pointers
+
+            PreviousPosition = Position;
+
             if (c == '\n')
             {
-                _position = _position.NextCloumn();
+                Position = Position.NextCloumn();
             }
             else
             {
-                _position = _position.StartOfNextLine();
+                Position = Position.StartOfNextLine();
             }
 
             return true;
+        }
+
+        public char Next()
+        {
+            if (!TryNext(out char c))
+                throw new InvalidOperationException();
+            return c;
         }
 
         public bool NextNonWhiteChar(out char nonWhiteChar)
         {
             while (true)
             {
-                if (Next(out char c))
+                if (TryNext(out char c))
                 {
                     if (!char.IsWhiteSpace(c))
                     {
