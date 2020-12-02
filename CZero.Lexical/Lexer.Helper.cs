@@ -33,7 +33,7 @@ namespace CZero.Lexical
             }
         }
 
-        private bool TryMatchOperator(out OperatorToken token)
+        internal bool TryMatchOperator(out OperatorToken token)
         {
             var startPosition = _reader.Position;
 
@@ -48,9 +48,6 @@ namespace CZero.Lexical
 
                 if (RegexMatch(pattern, out string result))
                 {
-                    // Advance the cursor
-                    _reader.Advance(op.Length);
-
                     token = OperatorToken.FromString(op, startPosition);
                     return true;
                 }
