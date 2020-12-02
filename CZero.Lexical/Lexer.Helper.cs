@@ -1,4 +1,5 @@
-﻿using CZero.Lexical.Tokens;
+﻿using Ardalis.GuardClauses;
+using CZero.Lexical.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -127,9 +128,45 @@ namespace CZero.Lexical
             return true;
         }
 
-        private static string ReplaceEscapeChars(string s)
+        // \'、\"、\\、\n、\t、\r
+        private static IReadOnlyDictionary<string, char> EscapeChars = new Dictionary<string, char>
         {
-            throw new NotImplementedException();
+            {@"\'",     '\'' },
+            {@"\""",    '"' },
+            {@"\\",     '\\' },
+            {@"\n",     '\n' },
+            {@"\t",     '\t' },
+            {@"\r",     '\r' },
+        };
+
+        internal static string ReplaceEscapeChars(string s)
+        {
+            Guard.Against.Null(s, nameof(s));
+
+            var builder = new StringBuilder();
+            bool escaping = false;
+
+            foreach (var c in s)
+            {
+                if (escaping)
+                {
+                    var sequence = "\\" + c;
+                    if (!EscapeChars.TryGetValue(sequence, out char realChar))
+                        throw new InvalidOperationException($"Invalid escape sequence: {sequence}");
+                    builder.Append(realChar);
+
+                    escaping = false;
+                }
+                else
+                {
+                    if (c == '\\')
+                        escaping = true;
+                    else
+                        builder.Append(c);
+                }
+            }
+
+            return builder.ToString();
         }
     }
 }
