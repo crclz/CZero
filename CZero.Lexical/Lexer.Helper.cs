@@ -100,7 +100,7 @@ namespace CZero.Lexical
                 return false;
             }
 
-            // Replace escape chars
+            result = RemoveQuotes(result);
             string realValue = ReplaceEscapeChars(result);
 
             token = new StringLiteralToken(realValue, startPosition);
@@ -118,7 +118,7 @@ namespace CZero.Lexical
                 return false;
             }
 
-            // Replace escape chars
+            result = RemoveQuotes(result);
             char resultChar = ReplaceEscapeChars(result).Single();
 
             token = new CharLiteralToken(resultChar, startPosition);
