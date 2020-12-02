@@ -89,18 +89,21 @@ namespace CZero.Lexical
                 }
                 else
                 {
-                    // Match operator
-                    if (TryMatchOperator(out OperatorToken operatorToken))
-                    {
-                        yield return operatorToken;
-                        continue;
-                    }
+                    // NOTE: comment should be placed before operators,
+                    // because Divide: /, Comment: //
 
                     // Match comment
                     var isComment = RegexMatch(RegexList.Comment, out string _);
                     if (isComment)
                     {
                         // Ignore comment, do not produce token
+                        continue;
+                    }
+
+                    // Match operator
+                    if (TryMatchOperator(out OperatorToken operatorToken))
+                    {
+                        yield return operatorToken;
                         continue;
                     }
 
