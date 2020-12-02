@@ -13,7 +13,7 @@ namespace CZero.Lexical
     {
         internal bool RegexMatch(string pattern, out string result)
         {
-            pattern = '^' + pattern;
+            pattern = "\\G" + pattern;// \G works for startsAt, ^ does not
             var regex = new Regex(pattern);
 
             var match = regex.Match(_reader.SourceCode, _reader.Cursor);
