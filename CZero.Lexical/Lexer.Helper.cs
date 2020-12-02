@@ -73,7 +73,7 @@ namespace CZero.Lexical
             return false;
         }
 
-        private bool TryMatchUnsigned(out UInt64LiteralToken token)
+        internal bool TryMatchUnsigned(out UInt64LiteralToken token)
         {
             var startPosition = _reader.Position;
 

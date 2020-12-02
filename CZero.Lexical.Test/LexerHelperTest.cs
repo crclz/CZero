@@ -109,6 +109,7 @@ namespace CZero.Lexical.Test
                 var success = lexer.TryMatchDouble(out DoubleLiteralToken doubleToken);
                 Assert.True(success);
                 Assert.Equal(val, doubleToken.Value);
+                Assert.True(lexer.ReaderReachedEnd);
             }
         }
 
@@ -124,6 +125,49 @@ namespace CZero.Lexical.Test
             {
                 var lexer = new Lexer(s);
                 Assert.False(lexer.TryMatchOperator(out OperatorToken _));
+            }
+        }
+
+        [Fact]
+        void TryMatchUnsigned_MatchTest()
+        {
+            var samples = new (string, ulong)[]
+            {
+                ("12345678901234",12345678901234),
+                ("00000123",00000123),
+                ("0",0),
+                ("1",1),
+            };
+
+            foreach (var (s, val) in samples)
+            {
+                var lexer = new Lexer(s);
+
+                var success = lexer.TryMatchUnsigned(out UInt64LiteralToken ulongToken);
+                Assert.True(success);
+                Assert.Equal(val, ulongToken.Value);
+                Assert.True(lexer.ReaderReachedEnd);
+            }
+        }
+
+        [Fact]
+        void TryMatchUnsigned_NotMatchTest()
+        {
+            var samples = new string[]
+            {
+                "-12345678901234",
+                "x00000123",
+                "",
+                "d"
+            };
+
+            foreach (var s in samples)
+            {
+                var lexer = new Lexer(s);
+
+                Assert.False(lexer.TryMatchUnsigned(out UInt64LiteralToken ulongToken));
+                Assert.Null(ulongToken);
+                Assert.Equal(0, lexer.ReaderCursor);
             }
         }
     }
