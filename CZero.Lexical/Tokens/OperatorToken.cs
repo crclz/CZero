@@ -1,6 +1,8 @@
 ﻿using Ardalis.GuardClauses;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Text;
 
 namespace CZero.Lexical.Tokens
@@ -28,99 +30,70 @@ namespace CZero.Lexical.Tokens
         }
 
         // Mapping examined
-        public static IReadOnlyDictionary<string, Operator> OperatorReference
-            = new Dictionary<string, Operator>
+        public static IReadOnlyDictionary<string, Operator> OperatorReference = GenerateReference();
+
+        internal static Dictionary<string, Operator> GenerateReference()
+        {
+            var reference = new Dictionary<string, Operator>();
+
+            var enumType = typeof(Operator);
+
+            foreach (var i in Enum.GetValues(typeof(Operator)))
             {
-                {"+", Operator.Plus },
-                {"-", Operator.Minus },
-                {"*", Operator.Mult },
-                {"/", Operator.Divide },
-                {"=", Operator.Assign },
-                {"==", Operator.Equal },
-                {"!=", Operator.NotEqual },
-                {"<", Operator.LessThan },
-                {">", Operator.GreaterThan },
-                {"<=", Operator.LessEqual },
-                {">=", Operator.GreaterEqual },
-                {"(", Operator.LeftParen },
-                {")", Operator.RightParen },
-                {"{", Operator.LeftBrace },
-                {"}", Operator.RightBrace },
-                {"->", Operator.Arrow },
-                {",", Operator.Comma },
-                {":", Operator.Colon },
-                {";", Operator.Semicolon }
-            };
+                var enumValue = (Operator)i;
+
+                var memberInfos = enumType.GetMember(enumValue.ToString());
+                var enumValueMemberInfo = memberInfos.FirstOrDefault(m => m.DeclaringType == enumType);
+                var valueAttributes =
+                      enumValueMemberInfo.GetCustomAttributes(typeof(DescriptionAttribute), false);
+                var description = ((DescriptionAttribute)valueAttributes[0]).Description;
+
+                reference.Add(description, enumValue);
+            }
+
+            return reference;
+        }
     }
 
     public enum Operator
     {
+        [Description("+")]
         Plus,
+        [Description("-")]
         Minus,
+        [Description("*")]
         Mult,
+        [Description("/")]
         Divide,
+        [Description("=")]
         Assign,
+        [Description("==")]
         Equal,
+        [Description("!=")]
         NotEqual,
-
-        /// <summary>
-        /// <
-        /// </summary>
+        [Description("<")]
         LessThan,
-
-        /// <summary>
-        /// >
-        /// </summary>
+        [Description(">")]
         GreaterThan,
-
-        /// <summary>
-        /// <=
-        /// </summary>
+        [Description("<=")]
         LessEqual,
-
-        /// <summary>
-        /// >=
-        /// </summary>
+        [Description(">=")]
         GreaterEqual,
-
-        /// <summary>
-        /// (
-        /// </summary>
+        [Description("(")]
         LeftParen,
-
-        /// <summary>
-        /// )
-        /// </summary>
+        [Description(")")]
         RightParen,
-
-        /// <summary>
-        /// {
-        /// </summary>
+        [Description("{")]
         LeftBrace,
-
-        /// <summary>
-        /// }
-        /// </summary>
+        [Description("}")]
         RightBrace,
-
-        /// <summary>
-        /// ->
-        /// </summary>
+        [Description("->")]
         Arrow,
-
-        /// <summary>
-        /// ,
-        /// </summary>
+        [Description(",")]
         Comma,
-
-        /// <summary>
-        /// :
-        /// </summary>
+        [Description(":")]
         Colon,
-
-        /// <summary>
-        /// ;
-        /// </summary>
+        [Description(";")]
         Semicolon,
     }
 }
