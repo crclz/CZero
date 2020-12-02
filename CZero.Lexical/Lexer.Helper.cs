@@ -1,6 +1,7 @@
 ﻿using CZero.Lexical.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -18,16 +19,18 @@ namespace CZero.Lexical
 
             foreach (var op in operatorList)
             {
-                // TODO: this shit
-                throw new NotImplementedException();
-                //if (StringSliceStartsWith(_reader.SourceCode, _reader.Cursor, op))
-                //{
-                //    // Advance the cursor
-                //    _reader.Advance(op.Length);
+                var pattern = RegexList.OperatorPatterns[op];
+                Debug.Assert(pattern != null);
 
-                //    token = OperatorToken.FromString(op, startPosition);
-                //    return true;
-                //}
+                var (result, success) = _reader.RegexMatch(pattern);
+                if (success)
+                {
+                    // Advance the cursor
+                    _reader.Advance(op.Length);
+
+                    token = OperatorToken.FromString(op, startPosition);
+                    return true;
+                }
             }
 
             token = null;
