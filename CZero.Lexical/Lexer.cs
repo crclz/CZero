@@ -46,10 +46,12 @@ namespace CZero.Lexical
                     if (KeywordToken.IsKeyword(result))
                     {
                         yield return KeywordToken.FromKeywordString(result, startPosition);
+                        continue;
                     }
                     else
                     {
                         yield return new IdentifierToken(result, startPosition);
+                        continue;
                     }
                 }
                 else if (char.IsDigit(c))
