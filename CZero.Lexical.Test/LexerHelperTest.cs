@@ -170,5 +170,25 @@ namespace CZero.Lexical.Test
                 Assert.Equal(0, lexer.ReaderCursor);
             }
         }
+
+        [Fact]
+        void TryMatchStringLiteral_MatchTest()
+        {
+            var realString = "\" \\hellio, world\n !\"";
+            var lexer = new Lexer(@""" \\hellio, world\n !""");
+            var success = lexer.TryMatchStringLiteral(out StringLiteralToken stringToken);
+            Assert.True(success);
+            Assert.Equal(realString, stringToken.Value);
+        }
+
+        [Fact]
+        void TryMatchStringLiteral_NotMatchTest()
+        {
+            var lexer = new Lexer(@"""asdas");
+            var success = lexer.TryMatchStringLiteral(out StringLiteralToken stringToken);
+
+            Assert.False(success);
+            Assert.Null(stringToken);
+        }
     }
 }

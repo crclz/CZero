@@ -90,7 +90,7 @@ namespace CZero.Lexical
             return false;
         }
 
-        private bool TryMatchStringLiteral(out StringLiteralToken token)
+        internal bool TryMatchStringLiteral(out StringLiteralToken token)
         {
             var startPosition = _reader.Position;
 
