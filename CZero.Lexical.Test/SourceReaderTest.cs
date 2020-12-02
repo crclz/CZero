@@ -38,7 +38,7 @@ namespace CZero.Lexical.Test
             reader.Next();
             reader.Next();
 
-            Assert.False(reader.TryNext(out char _));
+            Assert.Equal('\0', reader.Next());
         }
 
         [Fact]
@@ -66,7 +66,7 @@ namespace CZero.Lexical.Test
             reader.Next();
             reader.Next();
 
-            Assert.False(reader.TryNext(out char _));
+            Assert.Equal('\0', reader.Next());
         }
 
         [Fact]
@@ -74,8 +74,7 @@ namespace CZero.Lexical.Test
         {
             var reader = new SourceReader(new StringReader(" \t \r abc"));
 
-            Assert.True(reader.NextNonWhiteChar(out char c));
-            Assert.Equal('a', c);
+            Assert.Equal('a', reader.NextNonWhiteChar());
         }
 
         [Fact]
@@ -83,7 +82,7 @@ namespace CZero.Lexical.Test
         {
             var reader = new SourceReader(new StringReader("   \t  \r  \n  \r  "));
 
-            Assert.False(reader.NextNonWhiteChar(out char _));
+            Assert.Equal('\0', reader.NextNonWhiteChar());
         }
 
         [Fact]

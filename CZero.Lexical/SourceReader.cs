@@ -23,36 +23,28 @@ namespace CZero.Lexical
             _reader = reader;
         }
 
-        public bool TryPeek(out char c)
+        /// <returns>When read EOF, return 0</returns>
+        public char Peek()
         {
             var x = _reader.Peek();
             if (x == -1)
             {
-                c = '\0';
-                return false;
+                return '\0';
             }
 
-            c = (char)x;
-            return true;
+            return (char)x;
         }
 
-        public char Peek()
-        {
-            if (!TryPeek(out char c))
-                throw new InvalidOperationException();
-            return c;
-        }
-
-        public bool TryNext(out char c)
+        /// <returns>When read EOF, return 0</returns>
+        public char Next()
         {
             var x = _reader.Read();
             if (x == -1)
             {
-                c = '\0';
-                return false;
+                return '\0';
             }
 
-            c = (char)x;
+            char c = (char)x;
 
             // Change position pointers
 
@@ -67,33 +59,26 @@ namespace CZero.Lexical
                 Position = Position.NextCloumn();
             }
 
-            return true;
-        }
-
-        public char Next()
-        {
-            if (!TryNext(out char c))
-                throw new InvalidOperationException();
             return c;
         }
 
-        public bool NextNonWhiteChar(out char nonWhiteChar)
+        /// <returns>When read EOF, return 0</returns>
+        public char NextNonWhiteChar()
         {
             while (true)
             {
-                if (TryNext(out char c))
+                char c;
+                if ((c = Next()) != '\0')
                 {
                     if (!char.IsWhiteSpace(c))
                     {
-                        nonWhiteChar = c;
-                        return true;
+                        return c;
                     }
                 }
                 else
                 {
                     // EOF
-                    nonWhiteChar = '\0';
-                    return false;
+                    return '\0';
                 }
             }
 
