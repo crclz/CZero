@@ -124,7 +124,7 @@ namespace CZero.Lexical.Test
             foreach (var s in samples)
             {
                 var lexer = new Lexer(s);
-                Assert.False(lexer.TryMatchOperator(out OperatorToken _));
+                Assert.False(lexer.TryMatchDouble(out DoubleLiteralToken _));
             }
         }
 
