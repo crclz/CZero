@@ -121,5 +121,24 @@ namespace CZero.Lexical.Test
                 Assert.False(FullMatch(RegexList.CharLiteral, text));
             }
         }
+
+        [Fact]
+        void OperatorPatterns_MatchTest()
+        {
+            foreach (var (op, pattern) in RegexList.OperatorPatterns)
+            {
+                Assert.Matches($"^{pattern}$", op);
+            }
+        }
+
+        [Fact]
+        void OperatorPatterns_NotMatchTest()
+        {
+            foreach (var (op, pattern) in RegexList.OperatorPatterns)
+            {
+                Assert.DoesNotMatch($"^{pattern}$", "a");
+                Assert.DoesNotMatch($"^{pattern}$", op + op);
+            }
+        }
     }
 }

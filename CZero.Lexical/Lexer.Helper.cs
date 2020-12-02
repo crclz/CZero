@@ -1,6 +1,7 @@
 ﻿using CZero.Lexical.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace CZero.Lexical
@@ -17,14 +18,16 @@ namespace CZero.Lexical
 
             foreach (var op in operatorList)
             {
-                if (StringSliceStartsWith(_reader.SourceCode, _reader.Cursor, op))
-                {
-                    // Advance the cursor
-                    _reader.Advance(op.Length);
+                // TODO: this shit
+                throw new NotImplementedException();
+                //if (StringSliceStartsWith(_reader.SourceCode, _reader.Cursor, op))
+                //{
+                //    // Advance the cursor
+                //    _reader.Advance(op.Length);
 
-                    token = OperatorToken.FromString(op, startPosition);
-                    return true;
-                }
+                //    token = OperatorToken.FromString(op, startPosition);
+                //    return true;
+                //}
             }
 
             token = null;
@@ -77,10 +80,6 @@ namespace CZero.Lexical
                 return false;
             }
 
-            // 语义约束
-            if (!StringLiteralToken.SatisfyConstraints(result))
-                throw new LexerException("String not satisfying literal contraints");
-
             // Replace escape chars
             string realValue = ReplaceEscapeChars(result);
 
@@ -101,10 +100,15 @@ namespace CZero.Lexical
             }
 
             // Replace escape chars
-            char resultChar = CharIteralToChar(result);
+            char resultChar = ReplaceEscapeChars(result).Single();
 
             token = new CharLiteralToken(resultChar, startPosition);
             return true;
+        }
+
+        private static string ReplaceEscapeChars(string s)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -28,7 +28,7 @@ namespace CZero.Lexical.Tokens
         }
 
         // Mapping examined
-        private static Dictionary<string, Operator> _operatorReference
+        public static IReadOnlyDictionary<string, Operator> OperatorReference
             = new Dictionary<string, Operator>
             {
                 {"+", Operator.Plus },
@@ -51,8 +51,6 @@ namespace CZero.Lexical.Tokens
                 {":", Operator.Colon },
                 {";", Operator.Semicolon }
             };
-
-        public static IReadOnlyDictionary<string, Operator> OperatorReference => _operatorReference;
     }
 
     public enum Operator

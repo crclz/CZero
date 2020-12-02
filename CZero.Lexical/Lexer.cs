@@ -4,10 +4,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
 // https://c0.karenia.cc/c0/token.html
+
+[assembly: InternalsVisibleTo("CZero.Lexical.Test")]
 
 namespace CZero.Lexical
 {
