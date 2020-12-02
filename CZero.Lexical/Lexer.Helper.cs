@@ -11,7 +11,7 @@ namespace CZero.Lexical
 {
     public partial class Lexer
     {
-        public bool RegexMatch(string pattern, out string result)
+        internal bool RegexMatch(string pattern, out string result)
         {
             pattern = '^' + pattern;
             var regex = new Regex(pattern);

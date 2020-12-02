@@ -16,7 +16,10 @@ namespace CZero.Lexical
 {
     public partial class Lexer
     {
-        private SourceStringReader _reader { get; set; }
+        private SourceStringReader _reader { get; }
+
+        // For unit testing
+        internal int ReaderCursor => _reader.Cursor;
 
         public Lexer(string sourceCode)
         {
