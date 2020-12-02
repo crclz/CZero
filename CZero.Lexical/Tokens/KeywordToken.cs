@@ -42,6 +42,13 @@ namespace CZero.Lexical.Tokens
                 {"else", Keyword.Else },
                 {"return", Keyword.Return },
             };
+
+        public static bool IsKeyword(string word)
+        {
+            Guard.Against.Null(word, nameof(word));
+
+            return KeywordReference.ContainsKey(word);
+        }
     }
 
     public enum Keyword
