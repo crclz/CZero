@@ -90,5 +90,41 @@ namespace CZero.Lexical.Test
                 }
             }
         }
+
+        [Fact]
+        void TryMatchDouble_MatchTest()
+        {
+            var samples = new List<(string, double)>
+            {
+                ("1.0",1.0),
+                ("0.12",0.12),
+                ("1.11e3",1.11e3),
+                ("1023.23e+3",1023.23e+3),
+                ("10086.0012E-3",10086.0012E-3)
+            };
+
+            foreach (var (s, val) in samples)
+            {
+                var lexer = new Lexer(s);
+                var success = lexer.TryMatchDouble(out DoubleLiteralToken doubleToken);
+                Assert.True(success);
+                Assert.Equal(val, doubleToken.Value);
+            }
+        }
+
+        [Fact]
+        void TryMatchDouble_NotMatchTest()
+        {
+            var samples = new string[]
+            {
+                ".1","1a5","1a5e1","e101.11e1"
+            };
+
+            foreach (var s in samples)
+            {
+                var lexer = new Lexer(s);
+                Assert.False(lexer.TryMatchOperator(out OperatorToken _));
+            }
+        }
     }
 }

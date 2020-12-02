@@ -20,6 +20,7 @@ namespace CZero.Lexical
 
         // For unit testing
         internal int ReaderCursor => _reader.Cursor;
+        internal bool ReaderReachedEnd => _reader.ReachedEnd;
 
         public Lexer(string sourceCode)
         {

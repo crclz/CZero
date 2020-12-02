@@ -57,7 +57,7 @@ namespace CZero.Lexical
             return false;
         }
 
-        private bool TryMatchDouble(out DoubleLiteralToken token)
+        internal bool TryMatchDouble(out DoubleLiteralToken token)
         {
             var startPosition = _reader.Position;
 
