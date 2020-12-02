@@ -107,7 +107,7 @@ namespace CZero.Lexical
             return true;
         }
 
-        private bool TryMatchCharLiteral(out CharLiteralToken token)
+        internal bool TryMatchCharLiteral(out CharLiteralToken token)
         {
             var startPosition = _reader.Position;
 
@@ -164,6 +164,23 @@ namespace CZero.Lexical
             }
 
             return builder.ToString();
+        }
+
+        internal static string RemoveQuotes(string s)
+        {
+            Guard.Against.Null(s, nameof(s));
+            if (s.Length <= 1)
+                throw new ArgumentException("String length should >= 2. String: " + s);
+
+            var q = s[0];
+            if (q != '\'' && q != '"')
+                throw new ArgumentException("Start of string should be ' or \". String:" + s);
+
+            if (s[^1] != q)
+                throw new ArgumentException("Last char of string not equals first char. String:" + s);
+
+            return s[1..^1];
+
         }
     }
 }

@@ -174,7 +174,7 @@ namespace CZero.Lexical.Test
         [Fact]
         void TryMatchStringLiteral_MatchTest()
         {
-            var realString = "\" \\hellio, world\n !\"";
+            var realString = " \\hellio, world\n !";
             var lexer = new Lexer(@""" \\hellio, world\n !""");
             var success = lexer.TryMatchStringLiteral(out StringLiteralToken stringToken);
             Assert.True(success);
@@ -189,6 +189,48 @@ namespace CZero.Lexical.Test
 
             Assert.False(success);
             Assert.Null(stringToken);
+        }
+
+        [Fact]
+        void RemoveQuotes_throws_when_not_start_with_quote()
+        {
+            Assert.Throws<ArgumentException>(() => Lexer.RemoveQuotes("&adasd'"));
+        }
+
+        [Fact]
+        void RemoveQuotes_throws_when_not_end_with_matching_quote()
+        {
+            Assert.Throws<ArgumentException>(() => Lexer.RemoveQuotes("'adasd\""));
+            Assert.Throws<ArgumentException>(() => Lexer.RemoveQuotes("'adasd\""));
+            Assert.Throws<ArgumentException>(() => Lexer.RemoveQuotes("\"adasd'"));
+            Assert.Throws<ArgumentException>(() => Lexer.RemoveQuotes("\"adasd*"));
+        }
+
+        [Fact]
+        void RemoveQuotes_removes_quotes_when_ok()
+        {
+            Assert.Equal("abcd", Lexer.RemoveQuotes(@"""abcd"""));
+            Assert.Equal("abcd", Lexer.RemoveQuotes(@"'abcd'"));
+        }
+
+        [Fact]
+        void TryMatchCharLiteral_MatchTest()
+        {
+            var lexer = new Lexer(@"'\r'");
+            var success = lexer.TryMatchCharLiteral(out CharLiteralToken charToken);
+
+            Assert.True(success);
+            Assert.Equal('\r', charToken.Value);
+        }
+
+        [Fact]
+        void TryMatchCharLiteral_NotMatchTest()
+        {
+            var lexer = new Lexer(@"'\'");
+            var success = lexer.TryMatchCharLiteral(out CharLiteralToken charToken);
+
+            Assert.False(success);
+            Assert.Null(charToken);
         }
     }
 }
