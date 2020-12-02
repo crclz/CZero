@@ -75,24 +75,5 @@ namespace CZero.Lexical
 
             return false;
         }
-
-        public (string, bool) RegexMatch(string pattern)
-        {
-            pattern = '^' + pattern;
-            var regex = new Regex(pattern);
-
-            var match = regex.Match(SourceCode, Cursor);
-
-
-            if (match.Success)
-            {
-                Advance(match.Length);
-                return (match.Value, true);
-            }
-            else
-            {
-                return (null, false);
-            }
-        }
     }
 }

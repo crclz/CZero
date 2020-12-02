@@ -35,7 +35,7 @@ namespace CZero.Lexical
                 char c = _reader.CurrentChar();
                 if (char.IsLetter(c) || c == '_')
                 {
-                    var (result, success) = _reader.RegexMatch(RegexList.IdentifierOrKeyword);
+                    var success = RegexMatch(RegexList.IdentifierOrKeyword, out string result);
                     Debug.Assert(success);// Worst: IdentifierToken{name=CurrentChar}
 
                     // Determine token is keyword or identifier
@@ -91,7 +91,7 @@ namespace CZero.Lexical
                     }
 
                     // Match comment
-                    var (comment, isComment) = _reader.RegexMatch(RegexList.Comment);
+                    var isComment = RegexMatch(RegexList.Comment, out string _);
                     if (isComment)
                     {
                         // Ignore comment, do not produce token

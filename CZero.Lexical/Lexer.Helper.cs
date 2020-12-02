@@ -4,11 +4,34 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace CZero.Lexical
 {
     public partial class Lexer
     {
+        public bool RegexMatch(string pattern, out string result)
+        {
+            pattern = '^' + pattern;
+            var regex = new Regex(pattern);
+
+            var match = regex.Match(_reader.SourceCode, _reader.Cursor);
+
+
+            if (match.Success)
+            {
+                _reader.Advance(match.Length);
+
+                result = match.Value;
+                return true;
+            }
+            else
+            {
+                result = null;
+                return false;
+            }
+        }
+
         private bool TryMatchOperator(out OperatorToken token)
         {
             var startPosition = _reader.Position;
@@ -22,8 +45,7 @@ namespace CZero.Lexical
                 var pattern = RegexList.OperatorPatterns[op];
                 Debug.Assert(pattern != null);
 
-                var (result, success) = _reader.RegexMatch(pattern);
-                if (success)
+                if (RegexMatch(pattern, out string result))
                 {
                     // Advance the cursor
                     _reader.Advance(op.Length);
@@ -41,8 +63,7 @@ namespace CZero.Lexical
         {
             var startPosition = _reader.Position;
 
-            var (result, isDouble) = _reader.RegexMatch(RegexList.DoubleLiteral);
-            if (isDouble)
+            if (RegexMatch(RegexList.DoubleLiteral, out string result))
             {
                 if (!double.TryParse(result, out double val))
                     throw new LexerException("Double literal overflow");
@@ -58,8 +79,7 @@ namespace CZero.Lexical
         {
             var startPosition = _reader.Position;
 
-            var (result, isUnsigned) = _reader.RegexMatch(RegexList.UnsignedLiteral);
-            if (isUnsigned)
+            if (RegexMatch(RegexList.UnsignedLiteral, out string result))
             {
                 if (!ulong.TryParse(result, out ulong val))
                     throw new LexerException("Unsigned literal overflow");
@@ -76,8 +96,7 @@ namespace CZero.Lexical
         {
             var startPosition = _reader.Position;
 
-            var (result, isString) = _reader.RegexMatch(RegexList.StringLiteral);
-            if (!isString)
+            if (!RegexMatch(RegexList.StringLiteral, out string result))
             {
                 token = null;
                 return false;
@@ -95,8 +114,7 @@ namespace CZero.Lexical
             var startPosition = _reader.Position;
 
             // CharLiteralToken
-            var (result, isChar) = _reader.RegexMatch(RegexList.CharLiteral);
-            if (!isChar)
+            if (!RegexMatch(RegexList.CharLiteral, out string result))
             {
                 token = null;
                 return false;
