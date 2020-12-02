@@ -41,6 +41,8 @@ namespace CZero.Lexical.Tokens
                 {"if", Keyword.If },
                 {"else", Keyword.Else },
                 {"return", Keyword.Return },
+                {"break", Keyword.Break },
+                {"continue", Keyword.Continue }
             };
 
         public static bool IsKeyword(string word)
