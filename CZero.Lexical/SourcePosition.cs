@@ -19,6 +19,11 @@ namespace CZero.Lexical
             Column = column;
         }
 
+        public static implicit operator SourcePosition((int, int) pos)
+        {
+            return new SourcePosition(pos.Item1, pos.Item2);
+        }
+
         public SourcePosition NextCloumn()
         {
             return new SourcePosition(Line, Column + 1);
