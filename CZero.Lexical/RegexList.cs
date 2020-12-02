@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace CZero.Lexical
 {
@@ -13,8 +14,6 @@ namespace CZero.Lexical
         public static string StringLiteral => @"""([^\r\n\t""\\]|\\[\\""'nrt])*""";
         public static string CharLiteral => @"'([^\r\n\t'\\]|\\[\\""'nrt])'";
         public static string Comment => @"//.*\n";
-
-        private static HashSet<char> RegexEscapeChars = new HashSet<char>(@"[\^$.|?*+(){}");
 
         internal static IReadOnlyDictionary<string, string> OperatorPatterns { get; }
             = GenerateOperatorPatterns();
@@ -29,16 +28,9 @@ namespace CZero.Lexical
             {
                 var builder = new StringBuilder();
 
-                foreach (var c in op)
-                {
-                    if (RegexEscapeChars.Contains(c))
-                    {
-                        builder.Append('\\');
-                    }
-                    builder.Append(c);
-                }
+                var pattern = Regex.Escape(op);
 
-                patterns.Add(op, builder.ToString());
+                patterns.Add(op, pattern);
             }
 
             return patterns;
