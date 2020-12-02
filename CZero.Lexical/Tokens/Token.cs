@@ -12,6 +12,7 @@ namespace CZero.Lexical.Tokens
         public Token(SourcePosition position)
         {
             Guard.Against.Null(position, nameof(position));
+            SourcePosition = position;
         }
     }
 }
