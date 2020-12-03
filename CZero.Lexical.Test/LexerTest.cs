@@ -81,7 +81,54 @@ namespace CZero.Lexical.Test
             var lexer = new Lexer(sourceCode);
             var tokens = lexer.Parse().ToList();
 
-            //Assert.Equal(expectedTokens.Length, tokens.Count);
+            Assert.Equal(expectedTokens.Length, tokens.Count);
+
+            for (var i = 0; i < expectedTokens.Length; i++)
+            {
+                var expectedToken = expectedTokens[i];
+                var actualToken = tokens[i];
+
+                AssertJsonEqual(expectedToken, actualToken);
+            }
+
+            // TODO: check both are end
+        }
+
+
+        [Fact]
+        void LexerSmokeTestSecond()
+        {
+            var sourceCode =
+@"fn+let-const*as/while//hello
+continue:=if->(else=> _==int){""as\nc\rc\tc""
+<=p>1.5E-3!=231231231231</p>
+}
+";
+            var expectedTokens = new Token[]
+            {
+                new KeywordToken(Keyword.Fn,(0,0)), new OperatorToken(Operator.Plus,(0,2)), new KeywordToken(Keyword.Let,(0,3)),
+                new OperatorToken(Operator.Minus,(0,6)), new KeywordToken(Keyword.Const,(0,7)), new OperatorToken(Operator.Mult,(0,12)),
+                new KeywordToken(Keyword.As,(0,13)), new OperatorToken(Operator.Divide,(0,15)),new KeywordToken(Keyword.While,(0,16)),
+
+                new KeywordToken(Keyword.Continue,(1,0)), new OperatorToken(Operator.Colon,(1,8)), new OperatorToken(Operator.Assign,(1,9)),
+                new KeywordToken(Keyword.If,(1,10)), new OperatorToken(Operator.Arrow,(1,12)), new OperatorToken(Operator.LeftParen,(1,14)),
+                new KeywordToken(Keyword.Else,(1,15)), new OperatorToken(Operator.Assign,(1,19)), new OperatorToken(Operator.GreaterThan,(1,20)),
+                new IdentifierToken("_",(1,22)), new OperatorToken(Operator.Equal,(1,23)), new IdentifierToken("int",(1,25)),
+                new OperatorToken(Operator.RightParen,(1,28)), new OperatorToken(Operator.LeftBrace,(1,29)),
+                new StringLiteralToken("as\nc\rc\tc",(1,30)),
+
+                new OperatorToken(Operator.LessEqual,(2,0)), new IdentifierToken("p",(2,2)),new OperatorToken(Operator.GreaterThan,(2,3)),
+                new DoubleLiteralToken(1.5E-3,(2,4)), new OperatorToken(Operator.NotEqual,(2,10)), new UInt64LiteralToken(231231231231,(2,12)),
+                new OperatorToken(Operator.LessThan,(2,24)), new OperatorToken(Operator.Divide,(2,25)), new IdentifierToken("p",(2,26)),
+                new OperatorToken(Operator.GreaterThan,(2,27)),
+
+                new OperatorToken(Operator.RightBrace,(3,0)),
+            };
+
+            var lexer = new Lexer(sourceCode);
+            var tokens = lexer.Parse().ToList();
+
+            Assert.Equal(expectedTokens.Length, tokens.Count);
 
             for (var i = 0; i < expectedTokens.Length; i++)
             {
