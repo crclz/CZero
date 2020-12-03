@@ -1,9 +1,11 @@
 # 表达式
 
-## 进度
-- [ ] 消除左递归
-- [ ] Or候选式First不相交
-- [ ] LL(1)
+## 改写文法进度
+- [x] 能制导（必要条件）
+- [x] 消除左递归（必要）
+- [ ] 无回溯（**非必要**，性能 vs 可读性）
+  - [ ] 多个候选式First不相交
+  - [ ] LL(1)
 
 ## 表达式文法
 
@@ -45,20 +47,26 @@ from https://c0.karenia.cc/c0/expr.html
 
 但是，我冥思苦想还想不出怎么制导。只能得出的结论是：**改写文法的时候，要让文法能够用于递归下降制导，**。
 
-## 改写文法
 
+## 改写文法
 
 ```js
 expr -> 
-      operator_expr /*运算符表达式*/ expr binary_operator expr
+      operator_expr /*运算符表达式*/
     | negate_expr /*取反表达式*/ '-' expr
-    | assign_expr /*赋值表达式*/ l_expr '=' expr  (l_expr->IDENT 左值表达式)
-    | as_expr /*类型转换表达式*/ expr 'as' ty (ty -> IDENT)
+    | assign_expr /*赋值表达式*/ IDENT '=' expr
+    // | as_expr /*类型转换表达式*/ expr 'as' ty (ty -> IDENT)
     | call_expr /*函数调用表达式*/ IDENT '(' call_param_list? ')'
     | literal_expr /*字面量表达式*/ UINT_LITERAL | DOUBLE_LITERAL | STRING_LITERAL
     | ident_expr /*标识符表达式*/ IDENT
     | group_expr /*括号表达式*/ '(' expr ')'
 
 binary_operator -> '+' | '-' | '*' | '/' | '==' | '!=' | '<' | '>' | '<=' | '>='
+
+operator_expr -> weak_term { 比较符 weak_term }
+weak_team -> term { +|- term }
+term -> factor { *|/ factor }
+factor -> strong_factor { as ty} // ty -> IDENT
+strong_factor -> negate_expr | call_expr | literal_expr | ident_expr | group_expr
 
 ```
