@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CZero.Lexical", "CZero.Lexi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CZero.Lexical.Test", "CZero.Lexical.Test\CZero.Lexical.Test.csproj", "{3F351CAB-2809-4ADE-8F30-D87218E2EFE4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CZero.Syntactic", "CZero.Syntactic\CZero.Syntactic.csproj", "{67E57817-558C-4626-A465-6A519244E836}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CZero.Syntactic", "CZero.Syntactic\CZero.Syntactic.csproj", "{67E57817-558C-4626-A465-6A519244E836}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CZero.Syntactic.Test", "CZero.Syntactic.Test\CZero.Syntactic.Test.csproj", "{75476BA7-E87F-4EA6-995F-4510E6971B8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{67E57817-558C-4626-A465-6A519244E836}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67E57817-558C-4626-A465-6A519244E836}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67E57817-558C-4626-A465-6A519244E836}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75476BA7-E87F-4EA6-995F-4510E6971B8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75476BA7-E87F-4EA6-995F-4510E6971B8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75476BA7-E87F-4EA6-995F-4510E6971B8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75476BA7-E87F-4EA6-995F-4510E6971B8F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
