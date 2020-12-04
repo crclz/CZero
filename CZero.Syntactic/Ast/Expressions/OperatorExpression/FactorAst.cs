@@ -7,7 +7,7 @@ using System.Text;
 
 namespace CZero.Syntactic.Ast.Expressions.OperatorExpression
 {
-    public class FactorAst
+    public class FactorAst : Ast
     {
         public StrongFactorAst StrongFactor { get; }
         public IReadOnlyList<(KeywordToken AsToken, IdentifierToken TypeToken)> AsTypeList { get; }

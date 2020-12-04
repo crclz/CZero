@@ -6,7 +6,7 @@ using System.Text;
 
 namespace CZero.Syntactic.Ast.Expressions.OperatorExpression
 {
-    public class StrongFactorAst
+    public class StrongFactorAst : Ast
     {
         public ExpressionAst SingleExpression { get; }
 

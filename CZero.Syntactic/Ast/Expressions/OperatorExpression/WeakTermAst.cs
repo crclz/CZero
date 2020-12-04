@@ -7,7 +7,7 @@ using System.Text;
 
 namespace CZero.Syntactic.Ast.Expressions.OperatorExpression
 {
-    public class WeakTermAst
+    public class WeakTermAst : Ast
     {
         public TermAst Term { get; }
         public IReadOnlyList<(OperatorToken Op, TermAst Term)> OpTerms { get; }

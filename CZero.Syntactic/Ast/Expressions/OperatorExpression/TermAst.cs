@@ -7,7 +7,7 @@ using System.Text;
 
 namespace CZero.Syntactic.Ast.Expressions.OperatorExpression
 {
-    public class TermAst
+    public class TermAst : Ast
     {
         public FactorAst Factor { get; }
         public IReadOnlyList<(OperatorToken Op, FactorAst Factor)> OpFactors { get; }
