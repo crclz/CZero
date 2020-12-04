@@ -9,7 +9,7 @@ using System.Text;
 [assembly: InternalsVisibleTo("CZero.Syntactic.Test")]
 namespace CZero.Syntactic
 {
-    class TokenReader
+    public class TokenReader
     {
         private Token[] _tokens { get; }
         internal int _cursor { get; private set; } = 0;
@@ -39,16 +39,25 @@ namespace CZero.Syntactic
             _cursor++;
         }
 
-        public bool AdvanceIfCurrentIsType<T>(out T token) where T : Token
+        public void SetCursor(int position)
+        {
+            Guard.Against.OutOfRange(position, nameof(position), 0, _tokens.Length - 1);
+
+            _cursor = position;
+        }
+
+        public bool CurrentIsType<T>(out T token) where T : Token
         {
             if (ReachedEnd)
-                throw new SyntacticException("Unexpectedly reached end because of bad source code (token list");
+            {
+                token = null;
+                return false;
+            }
 
             var t = Current();
             if (t is T t1)
             {
                 token = t1;
-                Advance();
                 return true;
             }
 
@@ -56,14 +65,33 @@ namespace CZero.Syntactic
             return false;
         }
 
-        public T ExpectCurrentAndAdvance<T>() where T : Token
+        public bool AdvanceIfCurrentIsType<T>(out T token) where T : Token
         {
-            if (AdvanceIfCurrentIsType<T>(out T token))
+            if (!CurrentIsType(out T t))
             {
-                return token;
+                token = null;
+                return false;
             }
 
-            throw new SyntacticException($"Expect: {typeof(T)}. Actual: {token.GetType()}");
+            Advance();
+            token = t;
+            return true;
+        }
+
+        public bool AdvanceIfCurrentIsOperator(out OperatorToken op, Operator kind)
+        {
+            if (!AdvanceIfCurrentIsType(out OperatorToken token))
+            {
+                op = null; return false;
+            }
+
+            if (token.Value != kind)
+            {
+                op = null; return false;
+            }
+
+            op = token;
+            return true;
         }
     }
 }

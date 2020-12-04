@@ -5,11 +5,13 @@ using System.Text;
 
 namespace CZero.Syntactic
 {
-    public class SyntacticAnalyzer
+    public partial class SyntacticAnalyzer
     {
-        public SyntacticAnalyzer(IEnumerable<Token> tokens)
-        {
+        private readonly TokenReader _reader;
 
+        public SyntacticAnalyzer(TokenReader reader)
+        {
+            _reader = reader;
         }
     }
 }
