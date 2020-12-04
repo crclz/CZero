@@ -54,12 +54,14 @@ namespace CZero.Syntactic
 
         internal bool TryFactor(out FactorAst factorAst)
         {
+            var oldCursor = _reader._cursor;
+
             // strong_factor { as ty} // ty -> IDENT
 
             if (!TryStrongFactor(out StrongFactorAst strongFactor))
             {
                 factorAst = null;
-                return false;
+                return restoreCursor(oldCursor);
             }
 
             var asTypeList = new List<(KeywordToken AsToken, IdentifierToken Type)>();
@@ -75,24 +77,26 @@ namespace CZero.Syntactic
                 if (!_reader.AdvanceIfCurrentIsType(out IdentifierToken identifier))
                 {
                     factorAst = null;
-                    return false;
+                    return restoreCursor(oldCursor);
                 }
 
                 asTypeList.Add((asToken, identifier));
             }
 
             factorAst = new FactorAst(strongFactor, asTypeList);
-            return false;
+            return restoreCursor(oldCursor);
         }
 
         internal bool TryTerm(out TermAst termAst)
         {
+            var oldCursor = _reader._cursor;
+
             // -> factor { *|/ factor }
 
             if (!TryFactor(out FactorAst factor))
             {
                 termAst = null;
-                return false;
+                return restoreCursor(oldCursor);
             }
 
             var opFactorList = new List<(OperatorToken Op, FactorAst Factor)>();
@@ -111,7 +115,7 @@ namespace CZero.Syntactic
                 if (!TryFactor(out FactorAst oneFactor))
                 {
                     termAst = null;
-                    return false;
+                    return restoreCursor(oldCursor);
                 }
 
                 opFactorList.Add((op, oneFactor));
@@ -123,12 +127,14 @@ namespace CZero.Syntactic
 
         internal bool TryWeakTerm(out WeakTermAst weakTerm)
         {
+            var oldCursor = _reader._cursor;
+
             // term { +|- term }
 
             if (!TryTerm(out TermAst firstTerm))
             {
                 weakTerm = null;
-                return false;
+                return restoreCursor(oldCursor);
             }
 
             var opTermList = new List<(OperatorToken Op, TermAst Term)>();
@@ -147,7 +153,7 @@ namespace CZero.Syntactic
                 if (!TryTerm(out TermAst term))
                 {
                     weakTerm = null;
-                    return false;
+                    return restoreCursor(oldCursor);
                 }
 
                 opTermList.Add((op, term));
@@ -159,12 +165,14 @@ namespace CZero.Syntactic
 
         internal bool TryOperatorExpression(out OperatorExpressionAst e)
         {
+            var oldCursor = _reader._cursor;
+
             // weak_term { 比较符 weak_term }
 
             if (!TryWeakTerm(out WeakTermAst firstWeakTerm))
             {
                 e = null;
-                return false;
+                return restoreCursor(oldCursor);
             }
 
             var opTerms = new List<(OperatorToken Op, WeakTermAst Term)>();
@@ -182,7 +190,7 @@ namespace CZero.Syntactic
                 if (!TryWeakTerm(out WeakTermAst term))
                 {
                     e = null;
-                    return false;
+                    return restoreCursor(oldCursor);
                 }
 
                 opTerms.Add((op, term));

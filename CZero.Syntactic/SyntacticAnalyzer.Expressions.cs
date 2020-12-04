@@ -12,7 +12,7 @@ namespace CZero.Syntactic
         private bool restoreCursor(int oldCursor)
         {
             _reader.SetCursor(oldCursor);
-            return false;
+            return !true;
         }
 
 
@@ -48,17 +48,17 @@ namespace CZero.Syntactic
 
             if (!_reader.AdvanceIfCurrentIsOperator(out OperatorToken leftParen, Operator.LeftParen))
             {
-                e = null; return false;
+                e = null; return restoreCursor(oldCursor);
             }
 
             if (!TryExpression(out ExpressionAst expression))
             {
-                e = null; return false;
+                e = null; return restoreCursor(oldCursor);
             }
 
             if (!_reader.AdvanceIfCurrentIsOperator(out OperatorToken rightParen, Operator.RightParen))
             {
-                e = null; return false;
+                e = null; return restoreCursor(oldCursor);
             }
 
             e = new GroupExpressionAst(leftParen, expression, rightParen);
@@ -67,10 +67,12 @@ namespace CZero.Syntactic
 
         internal bool TryIdentExpression(out IdentExpressionAst e)
         {
+            var oldCursor = _reader._cursor;
+
             // IDENT
             if (!_reader.AdvanceIfCurrentIsType(out IdentifierToken identifier))
             {
-                e = null; return false;
+                e = null; return restoreCursor(oldCursor);
             }
 
             e = new IdentExpressionAst(identifier);
@@ -79,9 +81,11 @@ namespace CZero.Syntactic
 
         internal bool TryLiteralExpression(out LiteralExpressionAst e)
         {
+            var oldCursor = _reader._cursor;
+
             if (!_reader.AdvanceIfCurrentIsType(out LiteralToken literalToken))
             {
-                e = null; return false;
+                e = null; return restoreCursor(oldCursor);
             }
 
             e = new LiteralExpressionAst(literalToken);
@@ -90,16 +94,18 @@ namespace CZero.Syntactic
 
         internal bool TryCallExpression(out CallExpressionAst e)
         {
+            var oldCursor = _reader._cursor;
+
             // IDENT '(' call_param_list? ')'
 
             if (!_reader.AdvanceIfCurrentIsType(out IdentifierToken identifier))
             {
-                e = null; return false;
+                e = null; return restoreCursor(oldCursor);
             }
 
             if (!_reader.AdvanceIfCurrentIsOperator(out OperatorToken leftParen, Operator.LeftParen))
             {
-                e = null; return false;
+                e = null; return restoreCursor(oldCursor);
             }
 
             // Optional
@@ -107,7 +113,7 @@ namespace CZero.Syntactic
 
             if (!_reader.AdvanceIfCurrentIsOperator(out OperatorToken rightParen, Operator.RightParen))
             {
-                e = null; return false;
+                e = null; return restoreCursor(oldCursor);
             }
 
             e = new CallExpressionAst(identifier, leftParen, paramList, rightParen);
@@ -116,13 +122,15 @@ namespace CZero.Syntactic
 
         internal bool TryParamList(out CallParamListAst e)
         {
+            var oldCursor = _reader._cursor;
+
             // expr (',' expr)*
 
             var argList = new List<ExpressionAst>();
 
             if (!TryExpression(out ExpressionAst arg0))
             {
-                e = null; return false;
+                e = null; return restoreCursor(oldCursor);
             }
 
             argList.Add(arg0);
@@ -134,7 +142,7 @@ namespace CZero.Syntactic
 
                 if (!TryExpression(out ExpressionAst arg))
                 {
-                    e = null; return false;
+                    e = null; return restoreCursor(oldCursor);
                 }
 
                 argList.Add(arg);
@@ -146,24 +154,26 @@ namespace CZero.Syntactic
 
         internal bool TryAssignExpression(out AssignExpressionAst e)
         {
+            var oldCursor = _reader._cursor;
+
             // IDENT '=' expr
 
             if (!_reader.AdvanceIfCurrentIsType(out IdentifierToken identifier))
             {
                 e = null;
-                return false;
+                return restoreCursor(oldCursor);
             }
 
             if (_reader.AdvanceIfCurrentIsOperator(out OperatorToken assign, Operator.Assign))
             {
                 e = null;
-                return false;
+                return restoreCursor(oldCursor);
             }
 
             if (!TryExpression(out ExpressionAst expression))
             {
                 e = null;
-                return false;
+                return restoreCursor(oldCursor);
             }
 
             e = new AssignExpressionAst(identifier, assign, expression);
@@ -172,6 +182,8 @@ namespace CZero.Syntactic
 
         internal bool TryExpression(out ExpressionAst e)
         {
+            var oldCursor = _reader._cursor;
+
             ExpressionAst expression = null;
 
             if (TryOperatorExpression(out OperatorExpressionAst operatorExpression))
@@ -206,9 +218,9 @@ namespace CZero.Syntactic
             if (expression == null)
             {
                 e = null;
-                return false;
+                return restoreCursor(oldCursor);
             }
-            
+
             e = expression;
             return true;
         }
