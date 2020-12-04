@@ -11,6 +11,8 @@ namespace CZero.Lexical.Tokens
     {
         public Operator Value { get; }
 
+        public bool IsCompare => ComparationOperators.Contains(Value);
+
         public OperatorToken(Operator op, SourcePosition position) : base(position)
         {
             Guard.Against.OutOfRange(op, nameof(op));
@@ -53,6 +55,13 @@ namespace CZero.Lexical.Tokens
 
             return reference;
         }
+
+        private static HashSet<Operator> ComparationOperators = new HashSet<Operator>
+        {
+            Operator.Equal,Operator.NotEqual,
+            Operator.LessThan,Operator.GreaterThan,
+            Operator.LessThan,Operator.GreaterEqual,
+        };
     }
 
     public enum Operator
