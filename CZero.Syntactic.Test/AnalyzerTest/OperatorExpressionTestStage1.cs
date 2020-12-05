@@ -23,8 +23,6 @@ namespace CZero.Syntactic.Test.AnalyzerTest
         | literal_expr  
         | ident_expr    禁用
         | group_expr
-        
-    负值：没有负值的输入。这样分阶段是因为之前错误的文法导致的。
 
     */
 
@@ -175,6 +173,63 @@ namespace CZero.Syntactic.Test.AnalyzerTest
             Assert.Null(strongFactor);
 
             Assert.Equal(0, reader._cursor);
+        }
+
+        [Fact]
+        void GoodFactorTest()
+        {
+            var tokenA = new DoubleLiteralToken(5678.123, (0, 0));
+
+            for (int negativeCount = 0; negativeCount < 8; negativeCount++)
+            {
+                var tokens = new List<Token>();
+                for (int i = 0; i < negativeCount; i++)
+                    tokens.Add(new OperatorToken(Operator.Minus, (0, 0)));
+
+                tokens.Add(tokenA);
+
+                var reader = new TokenReader(tokens);
+                var analyzer = Configure(new Mock<SyntacticAnalyzer>(reader)).Object;
+
+                var success = analyzer.TryGoodFactor(out GoodFactorAst goodFactor);
+
+                Assert.True(success);
+                Assert.NotNull(goodFactor);
+
+                Assert.True(reader.ReachedEnd);
+
+                bool isNegative = (negativeCount % 2) == 1;
+                Assert.Equal(isNegative, goodFactor.IsNegative);
+
+                var literalExpression = Assert.IsType<LiteralExpressionAst>(goodFactor.StrongFactor.SingleExpression);
+                var literalToken = Assert.IsType<DoubleLiteralToken>(literalExpression.Literal);
+                Assert.Equal(tokenA, literalToken);
+            }
+        }
+
+        [Fact]
+        void GoodFactorFailTest()
+        {
+            var tokenA = new KeywordToken(Keyword.As, (0, 0));
+
+            for (int negativeCount = 0; negativeCount < 8; negativeCount++)
+            {
+                var tokens = new List<Token>();
+                for (int i = 0; i < negativeCount; i++)
+                    tokens.Add(new OperatorToken(Operator.Minus, (0, 0)));
+
+                tokens.Add(tokenA);
+
+                var reader = new TokenReader(tokens);
+                var analyzer = Configure(new Mock<SyntacticAnalyzer>(reader)).Object;
+
+                var success = analyzer.TryGoodFactor(out GoodFactorAst goodFactor);
+
+                Assert.False(success);
+                Assert.Null(goodFactor);
+
+                Assert.Equal(0, reader._cursor);
+            }
         }
 
         [Fact]
