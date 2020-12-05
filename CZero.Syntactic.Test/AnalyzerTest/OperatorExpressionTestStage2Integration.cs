@@ -12,7 +12,7 @@ using Xunit;
 
 namespace CZero.Syntactic.Test.AnalyzerTest
 {
-    public partial class OperatorExpressionTestStage1
+    public partial class OperatorExpressionTestStage2
     {
         public object CalculateExpression(string sourceCode)
         {
@@ -40,24 +40,25 @@ namespace CZero.Syntactic.Test.AnalyzerTest
         }
 
         [Fact]
-        void IntegrationTestIntValuesOfNotNegative()
+        void IntegrationTestIntValuesOfAllRange()
         {
             var random = new Random(90001);
 
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < 1000; i++)
             {
-                var x = random.Next(0, int.MaxValue);
+                // Different from Stage1, here the value could be negative
+                var x = random.Next(int.MinValue, int.MaxValue);
                 AssertValue(x.ToString(), x);
             }
         }
 
-        internal static List<(string Source, object Value)> SampleList1 = new List<(string, object)>
+        internal static List<(string Source, object Value)> SampleList = new List<(string, object)>
         {
-            ("1",1), ("123",123), ("23141123",23141123),("0",0),
-            ("1+1",1+1),("123132+213123",123132+213123),("8882331+2813812",8882331+2813812),
-            ("0-2313121",0-2313121),("8848-8849",8848-8849),("1231231-0",1231231-0),
-            ("0*123212",0*123212), ("123*6666",123*6666), ("312*7146",312*7146),
-            ("13124/6324",13124/6324),("0/232323",0/232323),("1/32323232",1/32323232),
+            ("-1",-1), ("-123",-123), ("-23141123",-23141123),("-0",-0),
+            ("-1+1",-1+1),("-123132+213123",-123132+213123),("-8882331+2813812",-8882331+2813812),
+            ("0-2313121",0-2313121),("-8848-8849",-8848-8849),("-1231231-0",-1231231-0),
+            ("-0*123212",-0*-123212), ("-123*-6666",-123*-6666), ("-312*-7146",-312*-7146),
+            ("-13124/-6324",-13124/-6324),("-0/-232323",-0/-232323),("-1/-32323232",-1/-32323232),
 
             ("0.0*123212.0",0.0*123212.0),("123.123*6666.5343",123.123*6666.5343),
             ("12312.123E-4 * 321343.1e+5",12312.123E-4 * 321343.1e+5),
@@ -80,7 +81,13 @@ namespace CZero.Syntactic.Test.AnalyzerTest
         [Fact]
         void IntegrationSampleTests()
         {
-            foreach (var sample in SampleList1)
+            // Test samples in Stage 1
+            foreach (var sample in OperatorExpressionTestStage1.SampleList1)
+            {
+                AssertValue(sample.Source, sample.Value);
+            }
+
+            foreach (var sample in SampleList)
             {
                 AssertValue(sample.Source, sample.Value);
             }
