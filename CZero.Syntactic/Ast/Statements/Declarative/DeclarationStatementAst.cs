@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CZero.Syntactic.Ast.Statements
 {
-    public class DeclarationStatementAst : StatementAst
+    public abstract class DeclarationStatementAst : StatementAst
     {
     }
 }
