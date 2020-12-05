@@ -42,7 +42,7 @@ namespace CZero.Syntactic
 
         public void SetCursor(int position)
         {
-            Guard.Against.OutOfRange(position, nameof(position), 0, _tokens.Length - 1);
+            Guard.Against.OutOfRange(position, nameof(position), 0, _tokens.Length);
 
             _cursor = position;
         }
