@@ -4,6 +4,7 @@ using CZero.Syntactic.Ast.Expressions.OperatorExpression;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -245,5 +246,77 @@ namespace CZero.Syntactic.Test.AnalyzerTest
             // the as list
             Assert.Empty(factor.AsTypeList);
         }
+
+        #region Term
+
+        [Fact]
+        void TermEmptyListTest()
+        {
+            // Arrange
+            var tokenA = new UInt64LiteralToken(1, (2, 2));
+            var reader = new TokenReader(new Token[] { tokenA });
+            var analyzer = Configure(new Mock<SyntacticAnalyzer>(reader)).Object;
+
+            // Act
+            var success = analyzer.TryTerm(out TermAst term);
+
+            // Assert
+            Assert.True(success);
+            Assert.NotNull(term);
+
+            Assert.IsType<LiteralExpressionAst>(term.Factor.StrongFactor.SingleExpression);
+
+            Assert.True(reader.ReachedEnd);
+        }
+
+        [Fact]
+        void TermWithListTest()
+        {
+            for (var listSize = 0; listSize < 10; listSize++)
+            {
+                // Arrange
+                var tokenA = new UInt64LiteralToken(1, (0, 0));
+
+                var tokens = new List<Token>();
+
+                tokens.Add(tokenA);
+
+                for (int i = 0; i < listSize; i++)
+                {
+                    var op = new OperatorToken(Operator.Divide, (0, 0));
+                    var f = new DoubleLiteralToken(123.06, (0, 0));
+                    tokens.Add(op);
+                    tokens.Add(f);
+                }
+
+                var reader = new TokenReader(tokens);
+                var analyzer = Configure(new Mock<SyntacticAnalyzer>(reader)).Object;
+
+                // Act
+                var success = analyzer.TryTerm(out TermAst term);
+
+                // Assert
+                Assert.True(success);
+                Assert.True(reader.ReachedEnd);
+                Assert.NotNull(term);
+
+                Assert.IsType<LiteralExpressionAst>(term.Factor.StrongFactor.SingleExpression);
+
+                // the list
+                Assert.Equal(listSize, term.OpFactors.Count);
+
+                for (var i = 0; i < listSize; i++)
+                {
+                    var op = (OperatorToken)tokens[1 + 2 * i + 0];
+                    var f = (LiteralToken)tokens[1 + 2 * i + 1];
+
+                    Assert.Equal(op, term.OpFactors[i].Op);
+                    Assert.Equal(f, (term.OpFactors[i].Factor.StrongFactor.SingleExpression
+                        as LiteralExpressionAst).Literal);
+                }
+            }
+        }
+
+        #endregion
     }
 }
