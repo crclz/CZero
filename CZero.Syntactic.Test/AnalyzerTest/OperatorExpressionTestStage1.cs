@@ -317,6 +317,77 @@ namespace CZero.Syntactic.Test.AnalyzerTest
             }
         }
 
+        [Fact]
+        void TermWithBrokenList()
+        {
+            // Arrange
+            var tokenA = new UInt64LiteralToken(1, (0, 0));
+
+            var tokens = new List<Token>();
+
+            tokens.Add(tokenA);
+
+            // list [0]
+            var op = new OperatorToken(Operator.Divide, (0, 0));
+            var f = new DoubleLiteralToken(123.06, (0, 0));
+            tokens.Add(op);
+            tokens.Add(f);
+
+            // broken list [1]
+            tokens.Add(op);
+
+            var reader = new TokenReader(tokens);
+            var analyzer = Configure(new Mock<SyntacticAnalyzer>(reader)).Object;
+
+            // Act
+            var success = analyzer.TryTerm(out TermAst term);
+
+            // Assert
+            Assert.True(success);
+            Assert.False(reader.ReachedEnd);
+            Assert.NotNull(term);
+
+            Assert.IsType<LiteralExpressionAst>(term.Factor.StrongFactor.SingleExpression);
+
+            // the list
+            Assert.Equal(1, term.OpFactors.Count);
+
+            // list [0]
+            Assert.Equal(op, term.OpFactors[0].Op);
+            Assert.Equal(f, (term.OpFactors[0].Factor.StrongFactor.SingleExpression as LiteralExpressionAst).Literal);
+        }
+
+        [Fact]
+        void TermFail()
+        {
+            // Arrange
+            var tokenA = new OperatorToken(Operator.GreaterEqual, (0, 0));
+
+            var tokens = new List<Token>();
+
+            tokens.Add(tokenA);
+
+            // list [0]
+            var op = new OperatorToken(Operator.Divide, (0, 0));
+            var f = new DoubleLiteralToken(123.06, (0, 0));
+            tokens.Add(op);
+            tokens.Add(f);
+
+            // broken list [1]
+            tokens.Add(op);
+
+            var reader = new TokenReader(tokens);
+            var analyzer = Configure(new Mock<SyntacticAnalyzer>(reader)).Object;
+
+            // Act
+            var success = analyzer.TryTerm(out TermAst term);
+
+            // Assert
+            Assert.False(success);
+            Assert.Null(term);
+            Assert.Equal(0, reader._cursor);
+        }
+
         #endregion
     }
 }
