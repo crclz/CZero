@@ -48,7 +48,6 @@ namespace CZero.Syntactic
             }
         }
 
-        // TODO: unit test
         internal bool TryGoodFactor(out GoodFactorAst goodFactor)
         {
             var oldCursor = _reader._cursor;

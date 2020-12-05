@@ -90,8 +90,6 @@ namespace CZero.Lexical.Test
 
                 AssertJsonEqual(expectedToken, actualToken);
             }
-
-            // TODO: check both are end
         }
 
 
@@ -137,8 +135,6 @@ continue:=if->(else=> _==int){""as\nc\rc\tc""
 
                 AssertJsonEqual(expectedToken, actualToken);
             }
-
-            // TODO: check both are end
         }
     }
 }

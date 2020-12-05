@@ -73,7 +73,6 @@ namespace CZero.Syntactic.Test
 
         public static object Calculate(this IdentExpressionAst identExpression)
         {
-            // TODO: use a fake version, like a1 -- 1, b2 -- 2
             if (identExpression.IdentifierToken.Value == "i1")
                 return 1;
             if (identExpression.IdentifierToken.Value == "i2")
