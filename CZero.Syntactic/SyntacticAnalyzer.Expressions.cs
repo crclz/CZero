@@ -186,9 +186,15 @@ namespace CZero.Syntactic
 
             ExpressionAst expression = null;
 
+            // 必须要按照文法给出的顺序, 因为有优先级的考虑
+
             if (false)
             {
 
+            }
+            else if (TryOperatorExpression(out OperatorExpressionAst operatorExpression))
+            {
+                expression = operatorExpression;
             }
             else if (TryNegateExpression(out NegateExpressionAst negateExpression))
             {
@@ -213,10 +219,6 @@ namespace CZero.Syntactic
             else if (TryGroupExpression(out GroupExpressionAst groupExpression))
             {
                 expression = groupExpression;
-            }
-            else if (TryOperatorExpression(out OperatorExpressionAst operatorExpression))// should appear at last
-            {
-                expression = operatorExpression;
             }
 
             if (expression == null)
