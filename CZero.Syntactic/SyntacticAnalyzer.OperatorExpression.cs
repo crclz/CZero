@@ -15,11 +15,7 @@ namespace CZero.Syntactic
 
             ExpressionAst expression = null;
 
-            if (TryNegateExpression(out NegateExpressionAst e))
-            {
-                expression = e;
-            }
-            else if (TryAssignExpression(out AssignExpressionAst assignExpression))
+            if (TryAssignExpression(out AssignExpressionAst assignExpression))
             {
                 expression = assignExpression;
             }
@@ -52,13 +48,39 @@ namespace CZero.Syntactic
             }
         }
 
+        // TODO: unit test
+        internal bool TryGoodFactor(out GoodFactorAst goodFactor)
+        {
+            var oldCursor = _reader._cursor;
+
+            // { - } strong_factor
+
+            var negatives = new List<OperatorToken>();
+
+            while (true)
+            {
+                if (!_reader.AdvanceIfCurrentIsOperator(out OperatorToken op, Operator.Minus))
+                    break;
+                negatives.Add(op);
+            }
+
+            if (!TryStrongFactor(out StrongFactorAst strongFactor))
+            {
+                goodFactor = null;
+                return restoreCursor(oldCursor);
+            }
+
+            goodFactor = new GoodFactorAst(negatives, strongFactor);
+            return true;
+        }
+
         internal bool TryFactor(out FactorAst factorAst)
         {
             var oldCursor = _reader._cursor;
 
             // strong_factor { as ty} // ty -> IDENT
 
-            if (!TryStrongFactor(out StrongFactorAst strongFactor))
+            if (!TryGoodFactor(out GoodFactorAst goodFactor))
             {
                 factorAst = null;
                 return restoreCursor(oldCursor);
@@ -86,7 +108,7 @@ namespace CZero.Syntactic
                 asTypeList.Add((asToken, identifier));
             }
 
-            factorAst = new FactorAst(strongFactor, asTypeList);
+            factorAst = new FactorAst(goodFactor, asTypeList);
             return true;
         }
 

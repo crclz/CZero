@@ -15,31 +15,6 @@ namespace CZero.Syntactic
             return !true;
         }
 
-
-
-        internal virtual bool TryNegateExpression(out NegateExpressionAst e)
-        {
-            var oldCursor = _reader._cursor;
-
-            // -> '-' expr
-
-            if (!_reader.AdvanceIfCurrentIsOperator(out OperatorToken op, Operator.Minus))
-            {
-                e = null;
-                return restoreCursor(oldCursor);
-            }
-
-            // expr
-            if (!TryExpression(out ExpressionAst expr))
-            {
-                e = null;
-                return restoreCursor(oldCursor);
-            }
-
-            e = new NegateExpressionAst(op, expr);
-            return true;
-        }
-
         internal bool TryGroupExpression(out GroupExpressionAst e)
         {
             var oldCursor = _reader._cursor;
@@ -195,10 +170,6 @@ namespace CZero.Syntactic
             else if (TryOperatorExpression(out OperatorExpressionAst operatorExpression))
             {
                 expression = operatorExpression;
-            }
-            else if (TryNegateExpression(out NegateExpressionAst negateExpression))
-            {
-                expression = negateExpression;
             }
             else if (TryAssignExpression(out AssignExpressionAst assignExpression))
             {

@@ -44,7 +44,7 @@ namespace CZero.Syntactic.Test.AnalyzerTest
         {
             var random = new Random(90001);
 
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < 1000; i++)
             {
                 var x = random.Next(0, int.MaxValue);
                 AssertValue(x.ToString(), x);

@@ -18,12 +18,13 @@ namespace CZero.Syntactic.Test.AnalyzerTest
 
     expr -> 
         | operator_exp
-        | negate_expr   禁用，下一步就启用
         | assign_expr   禁用
         | call_expr     逐步启用，解释器设置几个专用函数调用的结果计算
         | literal_expr  
         | ident_expr    禁用
         | group_expr
+        
+    负值：没有负值的输入。这样分阶段是因为之前错误的文法导致的。
 
     */
 
@@ -32,17 +33,18 @@ namespace CZero.Syntactic.Test.AnalyzerTest
 
     expr -> 
         | operator_exp
-        | negate_expr   禁用
         | assign_expr   禁用
         | call_expr     禁用
         | literal_expr  
         | ident_expr    禁用
         | group_expr
 
+    operator_expr -> weak_term { 比较符 weak_term }
     weak_term -> term { +|- term }
     term -> factor { *|/ factor }
-    factor -> strong_factor { as ty} // ty -> IDENT
-    strong_factor -> negate_expr | assign_expr | call_expr | literal_expr | ident_expr | group_expr
+    factor -> good_factor { as ty} // ty -> IDENT
+    good_factor -> { - } strong_factor
+    strong_factor -> assign_expr | call_expr | literal_expr | ident_expr | group_expr
 
     */
 
@@ -52,12 +54,10 @@ namespace CZero.Syntactic.Test.AnalyzerTest
         {
             mock.CallBase = true;
 
-            NegateExpressionAst negateExpression = null;
             AssignExpressionAst assignExpression = null;
             CallExpressionAst callExpression = null;
             IdentExpressionAst identExpression = null;
 
-            mock.Setup(p => p.TryNegateExpression(out negateExpression)).Returns(false);
             mock.Setup(p => p.TryAssignExpression(out assignExpression)).Returns(false);
             mock.Setup(p => p.TryCallExpression(out callExpression)).Returns(false);
             mock.Setup(p => p.TryIdentExpression(out identExpression)).Returns(false);
@@ -192,7 +192,7 @@ namespace CZero.Syntactic.Test.AnalyzerTest
             Assert.True(success);
             Assert.NotNull(factor);
 
-            Assert.IsType<LiteralExpressionAst>(factor.StrongFactor.SingleExpression);
+            Assert.IsType<LiteralExpressionAst>(factor.GoodFactor.StrongFactor.SingleExpression);
 
             Assert.True(reader.ReachedEnd);
         }
@@ -216,7 +216,7 @@ namespace CZero.Syntactic.Test.AnalyzerTest
             Assert.True(reader.ReachedEnd);
             Assert.NotNull(factor);
 
-            Assert.IsType<LiteralExpressionAst>(factor.StrongFactor.SingleExpression);
+            Assert.IsType<LiteralExpressionAst>(factor.GoodFactor.StrongFactor.SingleExpression);
 
             // the as list
             Assert.Single(factor.AsTypeList);
@@ -243,7 +243,7 @@ namespace CZero.Syntactic.Test.AnalyzerTest
             Assert.Equal(1, reader._cursor);
             Assert.NotNull(factor);
 
-            Assert.IsType<LiteralExpressionAst>(factor.StrongFactor.SingleExpression);
+            Assert.IsType<LiteralExpressionAst>(factor.GoodFactor.StrongFactor.SingleExpression);
 
             // the as list
             Assert.Empty(factor.AsTypeList);
@@ -266,7 +266,7 @@ namespace CZero.Syntactic.Test.AnalyzerTest
             Assert.True(success);
             Assert.NotNull(term);
 
-            Assert.IsType<LiteralExpressionAst>(term.Factor.StrongFactor.SingleExpression);
+            Assert.IsType<LiteralExpressionAst>(term.Factor.GoodFactor.StrongFactor.SingleExpression);
 
             Assert.True(reader.ReachedEnd);
         }
@@ -302,7 +302,7 @@ namespace CZero.Syntactic.Test.AnalyzerTest
                 Assert.True(reader.ReachedEnd);
                 Assert.NotNull(term);
 
-                Assert.IsType<LiteralExpressionAst>(term.Factor.StrongFactor.SingleExpression);
+                Assert.IsType<LiteralExpressionAst>(term.Factor.GoodFactor.StrongFactor.SingleExpression);
 
                 // the list
                 Assert.Equal(listSize, term.OpFactors.Count);
@@ -313,7 +313,7 @@ namespace CZero.Syntactic.Test.AnalyzerTest
                     var f = (LiteralToken)tokens[1 + 2 * i + 1];
 
                     Assert.Equal(op, term.OpFactors[i].Op);
-                    Assert.Equal(f, (term.OpFactors[i].Factor.StrongFactor.SingleExpression
+                    Assert.Equal(f, (term.OpFactors[i].Factor.GoodFactor.StrongFactor.SingleExpression
                         as LiteralExpressionAst).Literal);
                 }
             }
@@ -349,14 +349,14 @@ namespace CZero.Syntactic.Test.AnalyzerTest
             Assert.False(reader.ReachedEnd);
             Assert.NotNull(term);
 
-            Assert.IsType<LiteralExpressionAst>(term.Factor.StrongFactor.SingleExpression);
+            Assert.IsType<LiteralExpressionAst>(term.Factor.GoodFactor.StrongFactor.SingleExpression);
 
             // the list
             Assert.Equal(1, term.OpFactors.Count);
 
             // list [0]
             Assert.Equal(op, term.OpFactors[0].Op);
-            Assert.Equal(f, (term.OpFactors[0].Factor.StrongFactor.SingleExpression as LiteralExpressionAst).Literal);
+            Assert.Equal(f, (term.OpFactors[0].Factor.GoodFactor.StrongFactor.SingleExpression as LiteralExpressionAst).Literal);
         }
 
         [Fact]
@@ -427,7 +427,7 @@ namespace CZero.Syntactic.Test.AnalyzerTest
                 Assert.True(reader.ReachedEnd);
                 Assert.NotNull(weakTerm);
 
-                Assert.IsType<LiteralExpressionAst>(weakTerm.Term.Factor.StrongFactor.SingleExpression);
+                Assert.IsType<LiteralExpressionAst>(weakTerm.Term.Factor.GoodFactor.StrongFactor.SingleExpression);
 
                 // the list
                 Assert.Equal(listSize, weakTerm.OpTerms.Count);
@@ -438,7 +438,7 @@ namespace CZero.Syntactic.Test.AnalyzerTest
                     var f = (LiteralToken)tokens[1 + 2 * i + 1];
 
                     Assert.Equal(op, weakTerm.OpTerms[i].Op);
-                    Assert.Equal(f, (weakTerm.OpTerms[i].Term.Factor.StrongFactor.SingleExpression
+                    Assert.Equal(f, (weakTerm.OpTerms[i].Term.Factor.GoodFactor.StrongFactor.SingleExpression
                         as LiteralExpressionAst).Literal);
                 }
             }
@@ -485,7 +485,7 @@ namespace CZero.Syntactic.Test.AnalyzerTest
                 Assert.NotNull(weakTerm);
 
 
-                Assert.IsType<LiteralExpressionAst>(weakTerm.Term.Factor.StrongFactor.SingleExpression);
+                Assert.IsType<LiteralExpressionAst>(weakTerm.Term.Factor.GoodFactor.StrongFactor.SingleExpression);
 
                 // the list (the last is fail)
                 Assert.Equal(listSize - 1, weakTerm.OpTerms.Count);
@@ -496,7 +496,7 @@ namespace CZero.Syntactic.Test.AnalyzerTest
                     var f = (LiteralToken)tokens[1 + 2 * i + 1];
 
                     Assert.Equal(op, weakTerm.OpTerms[i].Op);
-                    Assert.Equal(f, (weakTerm.OpTerms[i].Term.Factor.StrongFactor.SingleExpression
+                    Assert.Equal(f, (weakTerm.OpTerms[i].Term.Factor.GoodFactor.StrongFactor.SingleExpression
                         as LiteralExpressionAst).Literal);
                 }
             }
@@ -538,7 +538,7 @@ namespace CZero.Syntactic.Test.AnalyzerTest
                 Assert.True(reader.ReachedEnd);
                 Assert.NotNull(opExpr);
 
-                Assert.IsType<LiteralExpressionAst>(opExpr.WeakTerm.Term.Factor.StrongFactor.SingleExpression);
+                Assert.IsType<LiteralExpressionAst>(opExpr.WeakTerm.Term.Factor.GoodFactor.StrongFactor.SingleExpression);
 
                 // the list
                 Assert.Equal(listSize, opExpr.OpTerms.Count);
@@ -549,7 +549,7 @@ namespace CZero.Syntactic.Test.AnalyzerTest
                     var f = (LiteralToken)tokens[1 + 2 * i + 1];
 
                     Assert.Equal(op, opExpr.OpTerms[i].Op);
-                    Assert.Equal(f, (opExpr.OpTerms[i].WeakTerm.Term.Factor.StrongFactor.SingleExpression
+                    Assert.Equal(f, (opExpr.OpTerms[i].WeakTerm.Term.Factor.GoodFactor.StrongFactor.SingleExpression
                         as LiteralExpressionAst).Literal);
                 }
             }
@@ -591,7 +591,7 @@ namespace CZero.Syntactic.Test.AnalyzerTest
                 Assert.False(reader.ReachedEnd);
                 Assert.NotNull(opExpr);
 
-                Assert.IsType<LiteralExpressionAst>(opExpr.WeakTerm.Term.Factor.StrongFactor.SingleExpression);
+                Assert.IsType<LiteralExpressionAst>(opExpr.WeakTerm.Term.Factor.GoodFactor.StrongFactor.SingleExpression);
 
                 // the list
                 Assert.Equal(listSize - 1, opExpr.OpTerms.Count);
@@ -602,7 +602,7 @@ namespace CZero.Syntactic.Test.AnalyzerTest
                     var f = (LiteralToken)tokens[1 + 2 * i + 1];
 
                     Assert.Equal(op, opExpr.OpTerms[i].Op);
-                    Assert.Equal(f, (opExpr.OpTerms[i].WeakTerm.Term.Factor.StrongFactor.SingleExpression
+                    Assert.Equal(f, (opExpr.OpTerms[i].WeakTerm.Term.Factor.GoodFactor.StrongFactor.SingleExpression
                         as LiteralExpressionAst).Literal);
                 }
             }

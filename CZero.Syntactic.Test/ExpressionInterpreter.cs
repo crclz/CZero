@@ -16,8 +16,6 @@ namespace CZero.Syntactic.Test
             {
                 case OperatorExpressionAst operatorExpression:
                     return operatorExpression.Calculate();
-                case NegateExpressionAst negateExpression:
-                    return negateExpression.Calculate();
                 case AssignExpressionAst assignExpression:
                     return assignExpression.Calculate();
                 case CallExpressionAst callExpression:
@@ -31,18 +29,6 @@ namespace CZero.Syntactic.Test
                 default:
                     throw new ArgumentException();
             }
-        }
-
-        public static object Calculate(this NegateExpressionAst negateExpression)
-        {
-            var val = negateExpression.Expression.Calculate();
-
-            if (val is int intVal)
-                return -intVal;
-            if (val is double doubleValue)
-                return -doubleValue;
-            else
-                throw new ArgumentException();
         }
 
         public static object Calculate(this AssignExpressionAst assignExpression)

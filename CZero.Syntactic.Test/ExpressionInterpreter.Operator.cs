@@ -14,9 +14,25 @@ namespace CZero.Syntactic.Test
             return Calculate(strongFactor.SingleExpression);
         }
 
+        public static object Calculate(this GoodFactorAst goodFactor)
+        {
+            var val = goodFactor.StrongFactor.Calculate();
+
+            int sign = 1;
+            if (goodFactor.IsNegative)
+                sign = -1;
+
+            if (val is int intVal)
+                return sign * intVal;
+            if (val is double doubleValue)
+                return sign * doubleValue;
+            else
+                throw new ArgumentException();
+        }
+
         public static object Calculate(this FactorAst factor)
         {
-            object value = factor.StrongFactor.Calculate();
+            object value = factor.GoodFactor.Calculate();
 
             foreach (var item in factor.AsTypeList)
             {

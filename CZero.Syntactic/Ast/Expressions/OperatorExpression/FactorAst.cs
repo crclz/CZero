@@ -9,13 +9,13 @@ namespace CZero.Syntactic.Ast.Expressions.OperatorExpression
 {
     public class FactorAst : Ast
     {
-        public StrongFactorAst StrongFactor { get; }
+        public GoodFactorAst GoodFactor { get; }
         public IReadOnlyList<(KeywordToken AsToken, IdentifierToken TypeToken)> AsTypeList { get; }
 
-        public FactorAst(StrongFactorAst strongFactor,
+        public FactorAst(GoodFactorAst goodFactor,
             IEnumerable<(KeywordToken AsToken, IdentifierToken TypeToken)> asTypeList)
         {
-            Guard.Against.Null(strongFactor, nameof(strongFactor));
+            Guard.Against.Null(goodFactor, nameof(goodFactor));
             Guard.Against.Null(asTypeList, nameof(asTypeList));
 
             var asTypeListCopy = asTypeList.ToList();
@@ -31,7 +31,7 @@ namespace CZero.Syntactic.Ast.Expressions.OperatorExpression
             }
 
             // Check is ok
-            StrongFactor = strongFactor;
+            GoodFactor = goodFactor;
             AsTypeList = asTypeListCopy;
         }
     }
