@@ -787,5 +787,53 @@ namespace CZero.Syntactic.Test.AnalyzerTest
         }
 
         #endregion
+
+
+
+        #region IdentExpression
+
+        [Fact]
+        void IdentExpressionTest()
+        {
+            // print(,)
+
+            // Arrange
+            var varName = new IdentifierToken("theDayBeforeYesterday", (0, 0));
+
+            var reader = new TokenReader(new Token[] { varName });
+            var analyzer = Configure(new Mock<SyntacticAnalyzer>(reader)).Object;
+
+            // Act
+            var success = analyzer.TryIdentExpression(out IdentExpressionAst identExpression);
+
+            // Assert
+            Assert.True(success);
+            Assert.True(reader.ReachedEnd);
+            Assert.NotNull(identExpression);
+
+            Assert.Equal(varName, identExpression.IdentifierToken);
+        }
+
+        [Fact]
+        void IdentExpressionFail()
+        {
+            // print(,)
+
+            // Arrange
+            var keyword = new KeywordToken(Keyword.If, (0, 0));
+
+            var reader = new TokenReader(new Token[] { keyword });
+            var analyzer = Configure(new Mock<SyntacticAnalyzer>(reader)).Object;
+
+            // Act
+            var success = analyzer.TryIdentExpression(out IdentExpressionAst identExpression);
+
+            // Assert
+            Assert.False(success);
+            Assert.Equal(0, reader._cursor);
+            Assert.Null(identExpression);
+        }
+
+        #endregion
     }
 }
