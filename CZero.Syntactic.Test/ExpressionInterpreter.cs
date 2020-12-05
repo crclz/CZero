@@ -38,6 +38,21 @@ namespace CZero.Syntactic.Test
 
         public static object Calculate(this CallExpressionAst callExpression)
         {
+            if (callExpression.Identifier.Value == "intsum")
+            {
+                int s = 0;
+                if (callExpression.ParamList != null)
+                {
+                    foreach (var arg in callExpression.ParamList.Parameters)
+                    {
+                        int val = (int)arg.Calculate();
+                        s += val;
+                    }
+                }
+
+                return s;
+            }
+
             throw new NotImplementedException();
         }
 
@@ -59,6 +74,20 @@ namespace CZero.Syntactic.Test
         public static object Calculate(this IdentExpressionAst identExpression)
         {
             // TODO: use a fake version, like a1 -- 1, b2 -- 2
+            if (identExpression.IdentifierToken.Value == "i1")
+                return 1;
+            if (identExpression.IdentifierToken.Value == "i2")
+                return 2;
+            if (identExpression.IdentifierToken.Value == "i5")
+                return 5;
+
+            if (identExpression.IdentifierToken.Value == "d1")
+                return 1.0;
+            if (identExpression.IdentifierToken.Value == "d2")
+                return 2.0;
+            if (identExpression.IdentifierToken.Value == "d5")
+                return 5.0;
+
             throw new NotImplementedException();
         }
 
