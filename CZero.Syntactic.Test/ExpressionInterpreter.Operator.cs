@@ -39,11 +39,24 @@ namespace CZero.Syntactic.Test
                 switch (item.TypeToken.Value)
                 {
                     case "int":
-                        value = (int)value;
-                        break;
+                        {
+                            if (!(value is double))
+                                throw new ArgumentException();
+
+                            double dval = (double)value;
+                            value = (int)dval;
+                            break;
+                        }
+
                     case "double":
-                        value = (double)value;
-                        break;
+                        {
+                            if (!(value is int))
+                                throw new ArgumentException();
+
+                            int ival = (int)value;
+                            value = (double)ival;
+                            break;
+                        }
                     default:
                         throw new ArgumentException();
                 }
@@ -99,8 +112,6 @@ namespace CZero.Syntactic.Test
                         case Lexical.Tokens.Operator.Divide:
                             doubleResult /= doubleFactorVal;
                             break;
-                        default:
-                            throw new ArgumentException();
                     }
                 }
 
