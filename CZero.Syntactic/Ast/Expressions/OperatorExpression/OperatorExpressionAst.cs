@@ -10,7 +10,7 @@ namespace CZero.Syntactic.Ast.Expressions.OperatorExpression
     public class OperatorExpressionAst : ExpressionAst
     {
         public WeakTermAst WeakTerm { get; }
-        public IReadOnlyList<(OperatorToken Op, WeakTermAst Term)> OpTerms { get; }
+        public IReadOnlyList<(OperatorToken Op, WeakTermAst WeakTerm)> OpTerms { get; }
 
         public OperatorExpressionAst(WeakTermAst weakTerm,
             IEnumerable<(OperatorToken Op, WeakTermAst Term)> opTerms)
