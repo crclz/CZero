@@ -11,22 +11,6 @@ using Xunit;
 namespace CZero.Syntactic.Test.AnalyzerTest
 {
     /*
-    测试计划
-
-    分为多阶段。每个阶段启用一点东西。
-    在每个阶段中，先单元测试，然后集成测试。
-
-    expr -> 
-        | operator_exp
-        | assign_expr   禁用
-        | call_expr     逐步启用，解释器设置几个专用函数调用的结果计算
-        | literal_expr  
-        | ident_expr    禁用
-        | group_expr
-
-    */
-
-    /*
     Stage 2
 
     expr -> 
@@ -698,6 +682,108 @@ namespace CZero.Syntactic.Test.AnalyzerTest
             Assert.False(success);
             Assert.Equal(0, reader._cursor);
             Assert.Null(assignExpression);
+        }
+
+        #endregion
+
+
+        #region CallExpression
+
+        [Fact]
+        void CallExpression_NoArgTest()
+        {
+            // print()
+
+            // Arrange
+            var funcName = new IdentifierToken("print", (0, 0));
+            var lParen = new OperatorToken(Operator.LeftParen, (0, 0));
+            var rParen = new OperatorToken(Operator.RightParen, (0, 0));
+
+            var reader = new TokenReader(new Token[] { funcName, lParen, rParen });
+            var analyzer = Configure(new Mock<SyntacticAnalyzer>(reader)).Object;
+
+            // Act
+            var success = analyzer.TryCallExpression(out CallExpressionAst callExpression);
+
+            // Assert
+            Assert.True(success);
+            Assert.True(reader.ReachedEnd);
+            Assert.NotNull(callExpression);
+
+            Assert.Equal(funcName, callExpression.Identifier);
+            Assert.Equal(lParen, callExpression.LeftParen);
+            Assert.Equal(rParen, callExpression.RightParen);
+        }
+
+        [Fact]
+        void CallExpression_HasArgsTest()
+        {
+            // Arrange
+            for (int argCount = 1; argCount < 6; argCount++)
+            {
+                var funcName = new IdentifierToken("print", (0, 0));
+                var lParen = new OperatorToken(Operator.LeftParen, (0, 0));
+                var rParen = new OperatorToken(Operator.RightParen, (0, 0));
+
+                var tokens = new List<Token> { funcName, lParen };
+                var args = new List<IdentifierToken>();
+                for (var i = 0; i < argCount; i++)
+                {
+                    args.Add(new IdentifierToken("a" + i, (0, 0)));
+                }
+
+                foreach (var arg in args)
+                {
+                    tokens.Add(arg);
+                    tokens.Add(new OperatorToken(Operator.Comma, (0, 0)));
+                }
+
+                tokens.RemoveAt(tokens.Count - 1);
+
+                tokens.Add(rParen);
+
+                var reader = new TokenReader(tokens);
+
+                var analyzer = Configure(new Mock<SyntacticAnalyzer>(reader)).Object;
+
+                // Act
+                var success = analyzer.TryCallExpression(out CallExpressionAst callExpression);
+
+                // Assert
+                Assert.True(success);
+                Assert.True(reader.ReachedEnd);
+                Assert.NotNull(callExpression);
+
+                Assert.Equal(funcName, callExpression.Identifier);
+                Assert.Equal(lParen, callExpression.LeftParen);
+                Assert.Equal(rParen, callExpression.RightParen);
+
+                // check args
+                Assert.Equal(args.Count, callExpression.ParamList.Parameters.Count);
+            }
+        }
+
+        [Fact]
+        void CallExpressionFail()
+        {
+            // print(,)
+
+            // Arrange
+            var funcName = new IdentifierToken("print", (0, 0));
+            var lParen = new OperatorToken(Operator.LeftParen, (0, 0));
+            var comma = new OperatorToken(Operator.Comma, (0, 0));
+            var rParen = new OperatorToken(Operator.RightParen, (0, 0));
+
+            var reader = new TokenReader(new Token[] { funcName, lParen, comma, rParen });
+            var analyzer = Configure(new Mock<SyntacticAnalyzer>(reader)).Object;
+
+            // Act
+            var success = analyzer.TryCallExpression(out CallExpressionAst callExpression);
+
+            // Assert
+            Assert.False(success);
+            Assert.Equal(0, reader._cursor);
+            Assert.Null(callExpression);
         }
 
         #endregion
