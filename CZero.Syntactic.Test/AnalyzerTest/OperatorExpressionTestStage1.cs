@@ -193,5 +193,57 @@ namespace CZero.Syntactic.Test.AnalyzerTest
 
             Assert.True(reader.ReachedEnd);
         }
+
+        [Fact]
+        void FactorWithAsTypeTest()
+        {
+            // Arrange
+            var tokenA = new UInt64LiteralToken(1, (0, 0));
+            var asToken = new KeywordToken(Keyword.As, (0, 0));
+            var typeA = new IdentifierToken("string", (0, 0));
+
+            var reader = new TokenReader(new Token[] { tokenA, asToken, typeA });
+            var analyzer = Configure(new Mock<SyntacticAnalyzer>(reader)).Object;
+
+            // Act
+            var success = analyzer.TryFactor(out FactorAst factor);
+
+            // Assert
+            Assert.True(success);
+            Assert.True(reader.ReachedEnd);
+            Assert.NotNull(factor);
+
+            Assert.IsType<LiteralExpressionAst>(factor.StrongFactor.SingleExpression);
+
+            // the as list
+            Assert.Single(factor.AsTypeList);
+            Assert.Equal(asToken, factor.AsTypeList[0].AsToken);
+            Assert.Equal(typeA, factor.AsTypeList[0].TypeToken);
+        }
+
+        [Fact]
+        void Factor_success_and_return_empty_list_when_meet_broken_as_list()
+        {
+            // Arrange
+            var tokenA = new UInt64LiteralToken(1, (0, 0));
+            var asToken = new KeywordToken(Keyword.As, (0, 0));
+            var typeA = new KeywordToken(Keyword.Const, (0, 0));
+
+            var reader = new TokenReader(new Token[] { tokenA, asToken, typeA });
+            var analyzer = Configure(new Mock<SyntacticAnalyzer>(reader)).Object;
+
+            // Act
+            var success = analyzer.TryFactor(out FactorAst factor);
+
+            // Assert
+            Assert.True(success);
+            Assert.Equal(1, reader._cursor);
+            Assert.NotNull(factor);
+
+            Assert.IsType<LiteralExpressionAst>(factor.StrongFactor.SingleExpression);
+
+            // the as list
+            Assert.Empty(factor.AsTypeList);
+        }
     }
 }

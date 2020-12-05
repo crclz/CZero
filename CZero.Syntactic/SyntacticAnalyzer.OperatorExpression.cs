@@ -77,8 +77,10 @@ namespace CZero.Syntactic
 
                 if (!_reader.AdvanceIfCurrentIsType(out IdentifierToken identifier))
                 {
-                    factorAst = null;
-                    return restoreCursor(oldCursor);
+                    // If as list is broken, just roll back a little.
+                    // The function and previous list items are still valid
+                    _reader.SetCursor(_reader._cursor - 1);
+                    break;
                 }
 
                 asTypeList.Add((asToken, identifier));
@@ -115,8 +117,8 @@ namespace CZero.Syntactic
 
                 if (!TryFactor(out FactorAst oneFactor))
                 {
-                    termAst = null;
-                    return restoreCursor(oldCursor);
+                    _reader.SetCursor(_reader._cursor - 1);
+                    break;
                 }
 
                 opFactorList.Add((op, oneFactor));
@@ -153,8 +155,8 @@ namespace CZero.Syntactic
 
                 if (!TryTerm(out TermAst term))
                 {
-                    weakTerm = null;
-                    return restoreCursor(oldCursor);
+                    _reader.SetCursor(_reader._cursor - 1);
+                    break;
                 }
 
                 opTermList.Add((op, term));
@@ -190,8 +192,8 @@ namespace CZero.Syntactic
 
                 if (!TryWeakTerm(out WeakTermAst term))
                 {
-                    e = null;
-                    return restoreCursor(oldCursor);
+                    _reader.SetCursor(_reader._cursor - 1);
+                    break;
                 }
 
                 opTerms.Add((op, term));
