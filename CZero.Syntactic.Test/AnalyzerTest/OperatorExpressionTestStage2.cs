@@ -11,28 +11,11 @@ using Xunit;
 namespace CZero.Syntactic.Test.AnalyzerTest
 {
     /*
-    测试计划
-
-    分为多阶段。每个阶段启用一点东西。
-    在每个阶段中，先单元测试，然后集成测试。
-
-    expr -> 
-        | operator_exp
-        | negate_expr   禁用，下一步就启用
-        | assign_expr   禁用
-        | call_expr     逐步启用，解释器设置几个专用函数调用的结果计算
-        | literal_expr  
-        | ident_expr    禁用
-        | group_expr
-
-    */
-
-    /*
     Stage 1
 
     expr -> 
         | operator_exp
-        | negate_expr   禁用
+        | negate_expr   启用
         | assign_expr   禁用
         | call_expr     禁用
         | literal_expr  
@@ -46,18 +29,16 @@ namespace CZero.Syntactic.Test.AnalyzerTest
 
     */
 
-    public partial class OperatorExpressionTestStage1
+    public partial class OperatorExpressionTestStage2
     {
         private Mock<SyntacticAnalyzer> Configure(Mock<SyntacticAnalyzer> mock)
         {
             mock.CallBase = true;
 
-            NegateExpressionAst negateExpression = null;
             AssignExpressionAst assignExpression = null;
             CallExpressionAst callExpression = null;
             IdentExpressionAst identExpression = null;
 
-            mock.Setup(p => p.TryNegateExpression(out negateExpression)).Returns(false);
             mock.Setup(p => p.TryAssignExpression(out assignExpression)).Returns(false);
             mock.Setup(p => p.TryCallExpression(out callExpression)).Returns(false);
             mock.Setup(p => p.TryIdentExpression(out identExpression)).Returns(false);
@@ -65,8 +46,25 @@ namespace CZero.Syntactic.Test.AnalyzerTest
             return mock;
         }
 
-        public OperatorExpressionTestStage1()
+        [Fact]
+        void NegateExpressionSuccess()
         {
+            var minus = new OperatorToken(Operator.Minus, (0, 0));
+            var tokenA = new UInt64LiteralToken(1, (2, 2));
+            var reader = new TokenReader(new Token[] { minus, tokenA });
+            var analyzer = Configure(new Mock<SyntacticAnalyzer>(reader)).Object;
+
+            var success = analyzer.TryNegateExpression(out NegateExpressionAst negateExpression);
+
+            Assert.True(success);
+            Assert.NotNull(negateExpression);
+            var operatorExpression = Assert.IsType<OperatorExpressionAst>(negateExpression.Expression);
+            var literalExpression = Assert.IsType<LiteralExpressionAst>(
+                operatorExpression.WeakTerm.Term.Factor.StrongFactor.SingleExpression);
+            var literalToken = Assert.IsType<UInt64LiteralToken>(literalExpression.Literal);
+            Assert.Equal(tokenA, literalToken);
+
+            Assert.True(reader.ReachedEnd);
         }
 
         [Fact]
