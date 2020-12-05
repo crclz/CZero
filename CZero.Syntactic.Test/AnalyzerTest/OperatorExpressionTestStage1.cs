@@ -389,5 +389,118 @@ namespace CZero.Syntactic.Test.AnalyzerTest
         }
 
         #endregion
+
+        [Fact]
+        void WeakTermWithListTest()
+        {
+            for (var listSize = 0; listSize < 10; listSize++)
+            {
+                // Arrange
+                var tokenA = new UInt64LiteralToken(1, (0, 0));
+
+                var tokens = new List<Token>();
+
+                tokens.Add(tokenA);
+
+                for (int i = 0; i < listSize; i++)
+                {
+                    var op = new OperatorToken(Operator.Minus, (0, 0));
+                    var f = new DoubleLiteralToken(123.06, (0, 0));
+                    tokens.Add(op);
+                    tokens.Add(f);
+                }
+
+                var reader = new TokenReader(tokens);
+                var analyzer = Configure(new Mock<SyntacticAnalyzer>(reader)).Object;
+
+                // Act
+                var success = analyzer.TryWeakTerm(out WeakTermAst weakTerm);
+
+                // Assert
+                Assert.True(success);
+                Assert.True(reader.ReachedEnd);
+                Assert.NotNull(weakTerm);
+
+                Assert.IsType<LiteralExpressionAst>(weakTerm.Term.Factor.StrongFactor.SingleExpression);
+
+                // the list
+                Assert.Equal(listSize, weakTerm.OpTerms.Count);
+
+                for (var i = 0; i < listSize; i++)
+                {
+                    var op = (OperatorToken)tokens[1 + 2 * i + 0];
+                    var f = (LiteralToken)tokens[1 + 2 * i + 1];
+
+                    Assert.Equal(op, weakTerm.OpTerms[i].Op);
+                    Assert.Equal(f, (weakTerm.OpTerms[i].Term.Factor.StrongFactor.SingleExpression
+                        as LiteralExpressionAst).Literal);
+                }
+            }
+        }
+
+        [Fact]
+        void WeakTermFailTest()
+        {
+            for (var listSize = 1; listSize < 10; listSize++)
+            {
+                // Arrange
+                var tokenA = new UInt64LiteralToken(1, (0, 0));
+
+                var tokens = new List<Token>();
+
+                tokens.Add(tokenA);
+
+                for (int i = 0; i < listSize; i++)
+                {
+                    var op = new OperatorToken(Operator.Minus, (0, 0));
+                    var f = new DoubleLiteralToken(123.06, (0, 0));
+
+                    tokens.Add(op);
+
+                    if (i == listSize - 1)
+                    {
+                        // Make the last fail
+                        tokens.Add(new KeywordToken(Keyword.If, (0, 0)));
+                    }
+
+                    tokens.Add(f);
+                }
+
+                var reader = new TokenReader(tokens);
+                var analyzer = Configure(new Mock<SyntacticAnalyzer>(reader)).Object;
+
+                // Act
+                var success = analyzer.TryWeakTerm(out WeakTermAst weakTerm);
+
+                // Assert
+                Assert.True(success);
+
+                Assert.False(reader.ReachedEnd);
+                Assert.NotNull(weakTerm);
+
+
+                Assert.IsType<LiteralExpressionAst>(weakTerm.Term.Factor.StrongFactor.SingleExpression);
+
+                // the list (the last is fail)
+                Assert.Equal(listSize - 1, weakTerm.OpTerms.Count);
+
+                for (var i = 0; i < listSize - 1; i++)
+                {
+                    var op = (OperatorToken)tokens[1 + 2 * i + 0];
+                    var f = (LiteralToken)tokens[1 + 2 * i + 1];
+
+                    Assert.Equal(op, weakTerm.OpTerms[i].Op);
+                    Assert.Equal(f, (weakTerm.OpTerms[i].Term.Factor.StrongFactor.SingleExpression
+                        as LiteralExpressionAst).Literal);
+                }
+            }
+        }
+
+
+        #region WeakTerm
+
+
+
+        #endregion
     }
 }
