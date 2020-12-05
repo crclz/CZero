@@ -137,11 +137,11 @@ namespace CZero.Syntactic.Test
 
                     switch (op.Value)
                     {
-                        case Lexical.Tokens.Operator.Mult:
-                            doubleResult *= doubleFactorVal;
+                        case Lexical.Tokens.Operator.Plus:
+                            doubleResult += doubleFactorVal;
                             break;
-                        case Lexical.Tokens.Operator.Divide:
-                            doubleResult /= doubleFactorVal;
+                        case Lexical.Tokens.Operator.Minus:
+                            doubleResult -= doubleFactorVal;
                             break;
                         default:
                             throw new ArgumentException();
