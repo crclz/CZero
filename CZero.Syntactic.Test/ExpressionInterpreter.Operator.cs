@@ -172,14 +172,37 @@ namespace CZero.Syntactic.Test
             }
         }
 
+        private static bool greaterThan(object a, object b)
+        {
+            if (b.GetType() != b.GetType())
+                throw new ArgumentException();
+
+            if (a is int)
+                return (int)a > (int)b;
+
+            if (a is double)
+                return (double)a > (double)b;
+
+            throw new ArgumentException();
+        }
+
         public static object Calculate(this OperatorExpressionAst operatorExpression)
         {
             // weak_term { 比较符 weak_term }
             var weakVal = operatorExpression.WeakTerm.Calculate();
 
-            if (operatorExpression.OpTerms.Count > 0)
+            if (operatorExpression.OpTerms.Count >= 2)
             {
-                throw new ArgumentException("comparison unsupported");
+                throw new ArgumentException("chain count >=2 unsupported");
+            }
+
+            if (operatorExpression.OpTerms.Count == 1)
+            {
+                var (op, item2) = operatorExpression.OpTerms[0];
+                if (op.Value == Lexical.Tokens.Operator.GreaterThan)
+                    return greaterThan(operatorExpression.WeakTerm.Calculate(), item2.Calculate());
+
+                throw new NotImplementedException("Only implement >");
             }
 
             return weakVal;
