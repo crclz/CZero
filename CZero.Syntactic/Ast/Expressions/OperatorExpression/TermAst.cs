@@ -24,7 +24,7 @@ namespace CZero.Syntactic.Ast.Expressions.OperatorExpression
                 Guard.Against.Null(fac, nameof(fac));
 
                 // op should be *|/
-                if (op.Value != Operator.Mult || op.Value != Operator.Divide)
+                if (op.Value != Operator.Mult && op.Value != Operator.Divide)
                     throw new ArgumentException();
             }
 

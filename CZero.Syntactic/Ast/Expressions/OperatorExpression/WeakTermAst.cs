@@ -24,7 +24,7 @@ namespace CZero.Syntactic.Ast.Expressions.OperatorExpression
                 Guard.Against.Null(t, nameof(t));
 
                 // +|-
-                if (op.Value != Operator.Plus || op.Value != Operator.Minus)
+                if (op.Value != Operator.Plus && op.Value != Operator.Minus)
                     throw new ArgumentException();
             }
 
