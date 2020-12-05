@@ -1,0 +1,76 @@
+﻿using Ardalis.GuardClauses;
+using CZero.Lexical;
+using CZero.Lexical.Tokens;
+using CZero.Syntactic.Ast.Expressions;
+using CZero.Syntactic.Ast.Expressions.OperatorExpression;
+using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Xunit;
+
+namespace CZero.Syntactic.Test.AnalyzerTest
+{
+    public partial class OperatorExpressionTestStage1
+    {
+        public object CalculateExpression(string sourceCode)
+        {
+            Guard.Against.Null(sourceCode, nameof(sourceCode));
+            var lexer = new Lexer(sourceCode);
+            var tokens = lexer.Parse().ToList();
+            var tokenReder = new TokenReader(tokens);
+
+            var syntacticAnalyzer = Configure(new Mock<SyntacticAnalyzer>(tokenReder)).Object;
+
+            var success = syntacticAnalyzer.TryExpression(out ExpressionAst expression);
+            Assert.True(success);
+            Assert.True(tokenReder.ReachedEnd, sourceCode);
+
+            var value = expression.Calculate();
+            return value;
+        }
+
+        private void AssertValue(string sourceCode, object expectedValue)
+        {
+            var value = CalculateExpression(sourceCode);
+
+            Assert.True(expectedValue.Equals(value),
+                $"Expected: {expectedValue}, Actual: {value}. SourceCode: {sourceCode}");
+        }
+
+        [Fact]
+        void IntegrationTestIntValues()
+        {
+            var random = new Random(90001);
+
+            for (int i = 0; i < 10000; i++)
+            {
+                var x = random.Next(0, int.MaxValue);
+                AssertValue(x.ToString(), x);
+            }
+        }
+
+        internal static List<(string Source, object Value)> SampleList1 = new List<(string, object)>
+        {
+            ("1",1), ("123",123), ("23141123",23141123),("0",0),
+            ("1+1",1+1),("123132+213123",123132+213123),("8882331+2813812",8882331+2813812),
+            ("0-2313121",0-2313121),("8848-8849",8848-8849),("1231231-0",1231231-0),
+            ("0*123212",0*123212), ("123*6666",123*6666), ("312*7146",312*7146),
+            ("13124/6324",13124/6324),("0/232323",0/232323),("1/32323232",1/32323232),
+
+            ("0.0*123212.0",0.0*123212.0),("123.123*6666.5343",123.123*6666.5343),
+            ("12312.123E-4 * 321343.1e+5",12312.123E-4 * 321343.1e+5),
+        };
+
+        [Fact]
+        void IntegrationSampleTests()
+        {
+            foreach (var sample in SampleList1)
+            {
+                AssertValue(sample.Source, sample.Value);
+            }
+        }
+
+    }
+}
