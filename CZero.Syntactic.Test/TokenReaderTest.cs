@@ -79,10 +79,11 @@ namespace CZero.Syntactic.Test
         }
 
         [Fact]
-        void AdvanceIfCurrentIsType_throws_when_reache_end()
+        void AdvanceIfCurrentIsType_return_false_when_reache_end()
         {
             var reader = new TokenReader(new Token[] { });
-            Assert.Throws<SyntacticException>(() => reader.AdvanceIfCurrentIsType(out OperatorToken _));
+            Assert.False(reader.AdvanceIfCurrentIsType(out OperatorToken t));
+            Assert.Null(t);
         }
 
     }

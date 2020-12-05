@@ -17,7 +17,7 @@ namespace CZero.Syntactic
 
 
 
-        internal bool TryNegateExpression(out NegateExpressionAst e)
+        internal virtual bool TryNegateExpression(out NegateExpressionAst e)
         {
             var oldCursor = _reader._cursor;
 
@@ -65,7 +65,7 @@ namespace CZero.Syntactic
             return true;
         }
 
-        internal bool TryIdentExpression(out IdentExpressionAst e)
+        internal virtual bool TryIdentExpression(out IdentExpressionAst e)
         {
             var oldCursor = _reader._cursor;
 
@@ -92,7 +92,7 @@ namespace CZero.Syntactic
             return true;
         }
 
-        internal bool TryCallExpression(out CallExpressionAst e)
+        internal virtual bool TryCallExpression(out CallExpressionAst e)
         {
             var oldCursor = _reader._cursor;
 
@@ -152,7 +152,7 @@ namespace CZero.Syntactic
             return true;
         }
 
-        internal bool TryAssignExpression(out AssignExpressionAst e)
+        internal virtual bool TryAssignExpression(out AssignExpressionAst e)
         {
             var oldCursor = _reader._cursor;
 

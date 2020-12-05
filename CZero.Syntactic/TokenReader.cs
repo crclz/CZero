@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 
 [assembly: InternalsVisibleTo("CZero.Syntactic.Test")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 namespace CZero.Syntactic
 {
     public class TokenReader
@@ -80,7 +81,7 @@ namespace CZero.Syntactic
 
         public bool AdvanceIfCurrentIsOperator(out OperatorToken op, Operator kind)
         {
-            if (!AdvanceIfCurrentIsType(out OperatorToken token))
+            if (!CurrentIsType(out OperatorToken token))
             {
                 op = null; return false;
             }
@@ -89,6 +90,8 @@ namespace CZero.Syntactic
             {
                 op = null; return false;
             }
+
+            Advance();
 
             op = token;
             return true;

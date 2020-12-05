@@ -69,8 +69,9 @@ namespace CZero.Syntactic
             while (true)
             {
                 if (!_reader.CurrentIsType(out KeywordToken asToken))
-                    if (asToken.Keyword != Keyword.As)
-                        break;
+                    break;
+                if (asToken.Keyword != Keyword.As)
+                    break;
 
                 _reader.Advance();// do not forget
 
@@ -84,7 +85,7 @@ namespace CZero.Syntactic
             }
 
             factorAst = new FactorAst(strongFactor, asTypeList);
-            return restoreCursor(oldCursor);
+            return true;
         }
 
         internal bool TryTerm(out TermAst termAst)

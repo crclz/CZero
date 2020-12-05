@@ -18,7 +18,7 @@ namespace CZero.Syntactic.Ast.Expressions.OperatorExpression
             Guard.Against.Null(weakTerm, nameof(WeakTerm));
             Guard.Against.Null(opTerms, nameof(opTerms));
 
-            var opTermsCopy = OpTerms.ToList();
+            var opTermsCopy = opTerms.ToList();
 
             foreach (var (op, term) in opTerms)
             {

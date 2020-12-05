@@ -15,7 +15,7 @@ namespace CZero.Syntactic.Ast.Expressions.OperatorExpression
         public FactorAst(StrongFactorAst strongFactor,
             IEnumerable<(KeywordToken AsToken, IdentifierToken TypeToken)> asTypeList)
         {
-            Guard.Against.Null(StrongFactor, nameof(StrongFactor));
+            Guard.Against.Null(strongFactor, nameof(strongFactor));
             Guard.Against.Null(asTypeList, nameof(asTypeList));
 
             var asTypeListCopy = asTypeList.ToList();
