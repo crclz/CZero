@@ -23,7 +23,7 @@ namespace CZero.Syntactic.Test
                 switch (item.TypeToken.Value)
                 {
                     case "int":
-                        value = (long)value;
+                        value = (int)value;
                         break;
                     case "double":
                         value = (double)value;
@@ -38,14 +38,14 @@ namespace CZero.Syntactic.Test
 
         public static object Calculate(this TermAst term)
         {
-            var resultObject = term.Calculate();
+            var resultObject = term.Factor.Calculate();
 
-            if (resultObject is long longResult)
+            if (resultObject is int intResult)
             {
                 foreach (var (op, factor) in term.OpFactors)
                 {
                     var factorVal = factor.Calculate();
-                    if (!(factorVal is long longFactorVal))
+                    if (!(factorVal is int intFactorVal))
                     {
                         throw new ArgumentException();
                     }
@@ -53,17 +53,17 @@ namespace CZero.Syntactic.Test
                     switch (op.Value)
                     {
                         case Lexical.Tokens.Operator.Mult:
-                            longResult *= longFactorVal;
+                            intResult *= intFactorVal;
                             break;
                         case Lexical.Tokens.Operator.Divide:
-                            longResult /= longFactorVal;
+                            intResult /= intFactorVal;
                             break;
                         default:
                             throw new ArgumentException();
                     }
                 }
 
-                return longResult;
+                return intResult;
             }
             else if (resultObject is double doubleResult)
             {
@@ -98,14 +98,14 @@ namespace CZero.Syntactic.Test
 
         public static object Calculate(this WeakTermAst weak)
         {
-            var resultObject = weak.Calculate();
+            var resultObject = weak.Term.Calculate();
 
-            if (resultObject is long longResult)
+            if (resultObject is int intResult)
             {
                 foreach (var (op, term) in weak.OpTerms)
                 {
                     var factorVal = term.Calculate();
-                    if (!(factorVal is long longTermVal))
+                    if (!(factorVal is int intTermVal))
                     {
                         throw new ArgumentException();
                     }
@@ -113,17 +113,17 @@ namespace CZero.Syntactic.Test
                     switch (op.Value)
                     {
                         case Lexical.Tokens.Operator.Plus:
-                            longResult += longTermVal;
+                            intResult += intTermVal;
                             break;
                         case Lexical.Tokens.Operator.Minus:
-                            longResult -= longTermVal;
+                            intResult -= intTermVal;
                             break;
                         default:
                             throw new ArgumentException();
                     }
                 }
 
-                return longResult;
+                return intResult;
             }
             else if (resultObject is double doubleResult)
             {

@@ -37,8 +37,8 @@ namespace CZero.Syntactic.Test
         {
             var val = negateExpression.Expression.Calculate();
 
-            if (val is long longVal)
-                return -longVal;
+            if (val is int intVal)
+                return -intVal;
             if (val is double doubleValue)
                 return -doubleValue;
             else
@@ -62,7 +62,7 @@ namespace CZero.Syntactic.Test
                 case StringLiteralToken sl:
                     throw new ArgumentException();
                 case UInt64LiteralToken ul:
-                    return (long)ul.Value;
+                    return (int)ul.Value;
                 case DoubleLiteralToken dl:
                     return dl.Value;
                 default:
