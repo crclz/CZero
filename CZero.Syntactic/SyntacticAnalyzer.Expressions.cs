@@ -186,9 +186,9 @@ namespace CZero.Syntactic
 
             ExpressionAst expression = null;
 
-            if (TryOperatorExpression(out OperatorExpressionAst operatorExpression))
+            if (false)
             {
-                expression = operatorExpression;
+
             }
             else if (TryNegateExpression(out NegateExpressionAst negateExpression))
             {
@@ -213,6 +213,10 @@ namespace CZero.Syntactic
             else if (TryGroupExpression(out GroupExpressionAst groupExpression))
             {
                 expression = groupExpression;
+            }
+            else if (TryOperatorExpression(out OperatorExpressionAst operatorExpression))// should appear at last
+            {
+                expression = operatorExpression;
             }
 
             if (expression == null)

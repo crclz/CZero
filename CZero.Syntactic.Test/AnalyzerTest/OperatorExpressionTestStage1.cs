@@ -115,8 +115,8 @@ namespace CZero.Syntactic.Test.AnalyzerTest
             Assert.NotNull(groupExpression);
             Assert.Equal(lParen, groupExpression.LeftParen);
             Assert.Equal(rParen, groupExpression.RightParen);
-            //var literal = Assert.IsType<LiteralExpressionAst>(groupExpression.Expression);
-            //Assert.Equal(middle, literal.Literal);
+            var literal = Assert.IsType<LiteralExpressionAst>(groupExpression.Expression);
+            Assert.Equal(middle, literal.Literal);
             Assert.True(reader.ReachedEnd);
         }
 
