@@ -139,7 +139,7 @@ namespace CZero.Syntactic
                 return restoreCursor(oldCursor);
             }
 
-            if (_reader.AdvanceIfCurrentIsOperator(out OperatorToken assign, Operator.Assign))
+            if (!_reader.AdvanceIfCurrentIsOperator(out OperatorToken assign, Operator.Assign))
             {
                 e = null;
                 return restoreCursor(oldCursor);
