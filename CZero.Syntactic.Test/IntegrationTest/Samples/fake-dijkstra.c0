@@ -1,48 +1,31 @@
-const a:int=3456;
-let d:int=1000;
-let p:int=1000;
-let i:double=1234.6;
-let m:int;
-const n:double=3345.6;
-fn main() -> int {
-    scanf("%d%d",n,m);
-    let min1:int;
-    let x:int;
-    while (i<m) {
+const a:int=3456; // <ConstDeclarationStatement>
+let d:int=1000; // <LetDeclarationStatement>
+let p:int=1000;// <LetDeclarationStatement>
+let i:double=1234.6;// <LetDeclarationStatement>
+let m:int;// <LetDeclarationStatement>
+const n:double=3345.6; // <ConstDeclarationStatement>
+fn main() -> int { // <Function> <BlockStatement>
+    scanf("%d%d",n,m); // <CallExpression>
+    let min1:int;// <LetDeclarationStatement>
+    let x:int;// <LetDeclarationStatement>
+    while (i<m) {// <BlockStatement>
+        // <CallExpression> <CallExpression> <CallExpression> <CallExpression>
         scanf("%d%d%d",addr(x),addr(y),addr(z));
-        SetVal(a,x,y,z);
-        SetVal(a,y,x,z);
+        SetVal(a,x,y,z);// <CallExpression>
+        SetVal(a,y,x,z);// <CallExpression>
         i=i+1;
     }
-    while i<=n {
-        refer(d,i,max1);
+    while i<=n {// <BlockStatement>
+        refer(d,i,max1);// <CallExpression>
         i=i+1;
     }
     
-    SetVal(d,i,0);
-    fmtPrintln("hello %d %c", 1, 'x');
+    SetVal(d,i,0);// <CallExpression>
+    fmtPrintln("hello %d %c", 1, 'x');// <CallExpression>
 
-    while i<=n {
-        min1 = max1;
-        while j<=n {
-            if GetVal(p,j) < min1 {
-                min1= GetVal(d,j);
-                k=j;
-            }
-        }
+    // while here
 
-        SetVal(p,k,1);
-        while j<=n {
-            if GetVal(k,j) + GetVal(p,j) >= GetVal(d,j) *GetVal(d,k)+GetVal(a,sum(k,j)) {
-                d=sum(GetVal(d,k) , 0+ GetVal(k,j));
-            }
-        }
 
-    }
-
-    while (i<n) {
-        printf("%d->",get(d,i));
-    }
-    printf("%d\n",GetVal(d,n)); 
-    return 0+0*2*sum(2,3,4,sum(5,6,7));
+    printf("%d\n",GetVal(d,n)); // <CallExpression> <CallExpression>
+    return sum(2);// <CallExpression>
 }

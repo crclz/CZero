@@ -37,6 +37,15 @@ namespace CZero.Syntactic.Test.IntegrationTest
             return ast;
         }
 
+        /*
+         * Known Bug (Won't Fix):
+         * Traverse can only go into IEnumerable<Ast>,
+         * it cannot go into something like OpFactors, which is IEnumerable<(xxx, FactorAst)>.
+         * 
+         * So, to avoid triggering this bug, do not detect CallExpression in OperationExpression,
+         * like 2*pow(2,3)
+         */
+
         [Fact]
         void TestSamples()
         {
