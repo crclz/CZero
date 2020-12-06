@@ -9,4 +9,8 @@
     <PackageReference Include="Ardalis.GuardClauses" Version="3.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CZero.Syntactic.Test\CZero.Syntactic.Test.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,0 +1,10 @@
+﻿fn bar() -> int { // Function BlockStatement
+    let i: int; // DeclarationStatement
+    i = getint(); // AssignStatement
+    while i > 0 {
+        i = i - 1;
+        if i <= 0 {
+            return i;
+        }
+    }
+}
