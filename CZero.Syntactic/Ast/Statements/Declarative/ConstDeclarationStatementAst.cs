@@ -6,7 +6,7 @@ using System.Text;
 
 namespace CZero.Syntactic.Ast.Statements.Declarative
 {
-    public class ConstDeclarationStatement : DeclarationStatementAst
+    public class ConstDeclarationStatementAst : DeclarationStatementAst
     {
         // const_decl_stmt -> 'const' IDENT ':' ty '=' expr ';'
 
@@ -18,7 +18,7 @@ namespace CZero.Syntactic.Ast.Statements.Declarative
         public ExpressionAst ValueExpression { get; }
         public OperatorToken Semicolon { get; }
 
-        public ConstDeclarationStatement(
+        public ConstDeclarationStatementAst(
             KeywordToken @const, IdentifierToken name, OperatorToken colon,
             IdentifierToken type, OperatorToken assign, ExpressionAst valueExpression,
             OperatorToken semicolon)

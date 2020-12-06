@@ -40,7 +40,7 @@ namespace CZero.Syntactic
 
             // decl_stmt -> let_decl_stmt | const_decl_stmt
 
-            if (TryConstDeclarationStatement(out ConstDeclarationStatement constDeclaration))
+            if (TryConstDeclarationStatement(out ConstDeclarationStatementAst constDeclaration))
             {
                 declarationStatement = constDeclaration;
                 return true;
@@ -54,7 +54,7 @@ namespace CZero.Syntactic
             return restoreCursor(oldCursor);
         }
 
-        public bool TryConstDeclarationStatement(out ConstDeclarationStatement constDeclaration)
+        public bool TryConstDeclarationStatement(out ConstDeclarationStatementAst constDeclaration)
         {
             var oldCursor = _reader._cursor;
 
@@ -109,7 +109,7 @@ namespace CZero.Syntactic
                 return restoreCursor(oldCursor);
             }
 
-            constDeclaration = new ConstDeclarationStatement(
+            constDeclaration = new ConstDeclarationStatementAst(
                 @const, identifier, colon,
                 type, assign, valueExpression, semicolon);
             return true;

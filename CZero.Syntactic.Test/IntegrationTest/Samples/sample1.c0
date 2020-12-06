@@ -1,10 +1,31 @@
-﻿fn bar() -> int { // <Function> <BlockStatement>
+﻿const i : int=21323123; // <ConstDeclarationStatement>
+
+fn bar() -> int { // <Function> <BlockStatement>
+    
+    const i : int=21323123; // <ConstDeclarationStatement>
+
     let i: int; // <LetDeclarationStatement>
-    i = getint(); // <AssignExpression>
-    while i > 0 { // <BlockStatement>
-        i = i - 1; // <AssignExpression>
-        if i <= 0 { // <BlockStatement>
-            return i;
+    i = getint(); // <ExpressionStatement> <AssignExpression> <CallExpression>
+    while i > 0 { // <WhileStatement> <BlockStatement>
+        i = i - 1; // <ExpressionStatement> <AssignExpression> 
+        if i <= 0 { // <IfStatement>  <BlockStatement>
+            return i; // <ReturnStatement>
         }
     }
-}// asd
+
+    while (1+x) >= (x*5+(3+6)) { // <WhileStatement> <BlockStatement>
+
+        if (getsum(i,j,k)>5000){ //<IfStatement><CallExpression><BlockStatement>
+            continue; // <ContinueStatement>
+        }
+
+        foo(a,b,c,foo(x,y,z)); // <ExpressionStatement> <CallExpression> <CallExpression>
+
+        if x == 5 { // <IfStatement> <BlockStatement>
+            break; // <BreakStatement>
+        }
+
+        i = i+1; // <ExpressionStatement> <AssignExpression>
+    }
+}
+// asd

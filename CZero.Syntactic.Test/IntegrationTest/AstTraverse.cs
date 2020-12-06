@@ -14,7 +14,7 @@ namespace CZero.Syntactic.Test.IntegrationTest
         {
             // Log
             var name = ast.GetType().Name;
-            Debug.Assert(name.EndsWith("Ast"));
+            Debug.Assert(name.EndsWith("Ast"), name);
             name = name[..^3];// remove Ast
             NodeLog.Add(name);
 

@@ -77,7 +77,7 @@ namespace CZero.Syntactic.Test.AnalyzerTest
             var analyzer = new SyntacticAnalyzer(reader);
 
             // Act
-            var success = analyzer.TryConstDeclarationStatement(out ConstDeclarationStatement constDeclaration);
+            var success = analyzer.TryConstDeclarationStatement(out ConstDeclarationStatementAst constDeclaration);
 
             // Assert
             Assert.True(success);
