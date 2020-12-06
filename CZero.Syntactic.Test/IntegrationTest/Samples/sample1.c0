@@ -1,9 +1,9 @@
-﻿fn bar() -> int { // Function BlockStatement
-    let i: int; // DeclarationStatement
-    i = getint(); // AssignStatement
-    while i > 0 {
-        i = i - 1;
-        if i <= 0 {
+﻿fn bar() -> int { // <Function> <BlockStatement>
+    let i: int; // <LetDeclarationStatement>
+    i = getint(); // <AssignExpression>
+    while i > 0 { // <BlockStatement>
+        i = i - 1; // <AssignExpression>
+        if i <= 0 { // <BlockStatement>
             return i;
         }
     }

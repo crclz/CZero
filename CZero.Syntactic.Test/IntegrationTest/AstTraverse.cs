@@ -1,22 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
 namespace CZero.Syntactic.Test.IntegrationTest
 {
-    public static class AstTraverse
+    public class AstTraverse
     {
-        public static void Traverse(Ast.Ast ast)
+        public List<string> NodeLog { get; } = new List<string>();
+
+        public void Traverse(Ast.Ast ast)
         {
-            var type = ast.GetType();
-            foreach (var property in type.GetProperties())
+            // Log
+            var name = ast.GetType().Name;
+            Debug.Assert(name.EndsWith("Ast"));
+            name = name[..^3];// remove Ast
+            NodeLog.Add(name);
+
+            foreach (var property in ast.GetType().GetProperties())
             {
                 if (typeof(Ast.Ast).IsAssignableFrom(property.PropertyType))
                 {
-                    Console.WriteLine(property.Name);
-
-                    // get obj and traverse
+                    // get node and traverse
                     var node = (Ast.Ast)property.GetValue(ast);
                     if (node != null)
                     {
@@ -25,13 +31,8 @@ namespace CZero.Syntactic.Test.IntegrationTest
                 }
                 else
                 {
-                    bool isAstCollection = property.PropertyType.GetInterfaces()
-                        .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IReadOnlyCollection<>));
-
-                    if (isAstCollection)
+                    if (typeof(IEnumerable<Ast.Ast>).IsAssignableFrom(property.PropertyType))
                     {
-                        Console.WriteLine(property.Name);
-
                         // Traverse each node
                         var nodeCollection = (IReadOnlyCollection<Ast.Ast>)property.GetValue(ast);
                         foreach (var node in nodeCollection)
@@ -41,8 +42,11 @@ namespace CZero.Syntactic.Test.IntegrationTest
                     }
                 }
             }
+        }
 
-            throw new NotImplementedException();
+        public List<(string Name, int Count)> GetStatistics()
+        {
+            return NodeLog.GroupBy(p => p).Select(g => (g.Key, g.Count())).ToList();
         }
     }
 }
