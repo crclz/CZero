@@ -14,8 +14,8 @@ namespace CZero.Syntactic
             // 'const'? IDENT ':' ty
             var oldCursor = _reader._cursor;
 
-            if (!_reader.AdvanceIfCurrentIsKeyword(out KeywordToken @const, Keyword.Const))
-                goto fail;
+            _reader.AdvanceIfCurrentIsKeyword(out KeywordToken @const, Keyword.Const);
+
             if (!_reader.AdvanceIfCurrentIsType(out IdentifierToken name))
                 goto fail;
             if (!_reader.AdvanceIfCurrentIsOperator(out OperatorToken colon, Operator.Colon))
@@ -44,8 +44,22 @@ namespace CZero.Syntactic
             paramList.Add(firstParam);
 
             // other params are optional
-            while (TryFunctionParam(out FunctionParamAst aParam))
+            while (tryCommaAndParam(out FunctionParamAst aParam))
                 paramList.Add(aParam);
+
+            bool tryCommaAndParam(out FunctionParamAst theParam)
+            {
+                var oldCursor = _reader._cursor;
+
+                if (!_reader.AdvanceIfCurrentIsOperator(out OperatorToken _, Operator.Comma))
+                    goto fail2;
+                if (!TryFunctionParam(out theParam))
+                    goto fail2;
+                return true;
+            fail2:
+                theParam = null;
+                return restoreCursor(oldCursor);
+            }
 
             functionParamList = new FunctionParamListAst(paramList);
             return true;

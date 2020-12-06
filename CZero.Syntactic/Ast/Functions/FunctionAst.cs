@@ -24,6 +24,8 @@ namespace CZero.Syntactic.Ast.Functions
         public IdentifierToken ReturnType { get; }
         public BlockStatementAst BodyBlock { get; }
 
+        public bool HasParams => FunctionParamList != null;
+
         public FunctionAst(
             KeywordToken fn, IdentifierToken name, OperatorToken leftParen,
             FunctionParamListAst functionParamList, OperatorToken rightParen,

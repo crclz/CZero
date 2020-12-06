@@ -18,6 +18,8 @@ namespace CZero.Syntactic.Ast.Functions
 
         public IdentifierToken Type { get; }
 
+        public bool IsConstant => Const != null;
+
         public FunctionParamAst(KeywordToken @const, IdentifierToken name, OperatorToken colon, IdentifierToken type)
         {
             Const = @const;
