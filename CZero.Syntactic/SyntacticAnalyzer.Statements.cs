@@ -333,7 +333,7 @@ namespace CZero.Syntactic
             // continue_stmt -> 'continue' ';'
             var oldCursor = _reader._cursor;
 
-            if (!_reader.AdvanceIfCurrentIsKeyword(out KeywordToken @continue, Keyword.Const))
+            if (!_reader.AdvanceIfCurrentIsKeyword(out KeywordToken @continue, Keyword.Continue))
                 goto fail;
             if (!_reader.AdvanceIfCurrentIsOperator(out OperatorToken @semicolon, Operator.Semicolon))
                 goto fail;
