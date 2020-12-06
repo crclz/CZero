@@ -5,6 +5,7 @@ using CZero.Syntactic.Ast.Statements;
 using CZero.Syntactic.Ast.Statements.Declarative;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace CZero.Syntactic
@@ -183,6 +184,206 @@ namespace CZero.Syntactic
             letDeclaration = new LetDeclarationStatementAst(
                 let, identifier, colon, type, assign, valueExpression, semicolon);
             return true;
+        }
+
+        public bool TryBlockStatement(out BlockStatementAst blockStatement)
+        {
+            // block_stmt -> '{' stmt* '}'
+            var oldCursor = _reader._cursor;
+
+            if (!_reader.AdvanceIfCurrentIsOperator(out OperatorToken leftBrace, Operator.LeftBrace))
+                goto fail;
+
+            var statements = new List<StatementAst>();
+            while (TryStatement(out StatementAst statement))
+                statements.Add(statement);
+
+            if (!_reader.AdvanceIfCurrentIsOperator(out OperatorToken rightBrace, Operator.RightBrace))
+                goto fail;
+
+            blockStatement = new BlockStatementAst(leftBrace, statements, rightBrace);
+            return true;
+
+        fail:
+            blockStatement = null;
+            return restoreCursor(oldCursor);
+        }
+
+        public bool TryIfStatement(out IfStatementAst ifStatement)
+        {
+            var oldCursor = _reader._cursor;
+            // if_stmt -> 'if' expr block_stmt ('else' (block_stmt | if_stmt))?
+
+            if (!_reader.AdvanceIfCurrentIsKeyword(out KeywordToken @if, Keyword.If))
+                goto fail;
+            if (!TryExpression(out ExpressionAst condition))
+                goto fail;
+            if (!TryBlockStatement(out BlockStatementAst blockStatement))
+                goto fail;
+
+            KeywordToken @else = null;
+            BlockStatementAst followingBlock = null;
+            IfStatementAst followingIf = null;
+
+            var cursor2 = _reader._cursor;
+
+            bool tryElseAndFollowing()
+            {
+                var oldCursor = _reader._cursor;
+
+                if (!_reader.AdvanceIfCurrentIsKeyword(out @else, Keyword.Else))
+                    return false;
+
+                var followingOk = TryBlockStatement(out followingBlock);
+                if (!followingOk)
+                    followingOk = TryIfStatement(out followingIf);
+
+                return followingOk;
+            }
+
+            var ok = tryElseAndFollowing();
+            if (!ok)
+                _reader.SetCursor(cursor2);
+
+            // ok
+            ifStatement = new IfStatementAst(@if, condition, blockStatement, @else, followingBlock, followingIf);
+            return true;
+        fail:
+            ifStatement = null;
+            return restoreCursor(oldCursor);
+
+        }
+
+        public bool TryWhileStatement(out WhileStatementAst whileStatement)
+        {
+            // while_stmt -> 'while' expr block_stmt
+            var oldCursor = _reader._cursor;
+
+            if (!_reader.AdvanceIfCurrentIsKeyword(out KeywordToken @while, Keyword.While))
+                goto fail;
+            if (!TryExpression(out ExpressionAst condition))
+                goto fail;
+            if (!TryBlockStatement(out BlockStatementAst whileBlock))
+                goto fail;
+
+            whileStatement = new WhileStatementAst(@while, condition, whileBlock);
+            return true;
+        fail:
+            whileStatement = null;
+            return restoreCursor(oldCursor);
+        }
+
+        public bool TryReturnStatement(out ReturnStatementAst returnStatement)
+        {
+            // return_stmt -> 'return' expr? ';'
+            var oldCursor = _reader._cursor;
+
+            if (!_reader.AdvanceIfCurrentIsKeyword(out KeywordToken @return, Keyword.Return))
+                goto fail;
+
+            TryExpression(out ExpressionAst returnExpression);
+
+            if (!_reader.AdvanceIfCurrentIsOperator(out OperatorToken semicolon, Operator.Semicolon))
+                goto fail;
+
+            returnStatement = new ReturnStatementAst(@return, returnExpression, semicolon);
+            return true;
+
+        fail:
+            returnStatement = null;
+            return restoreCursor(oldCursor);
+        }
+
+        public bool TryEmptyStatement(out EmptyStatementAst emptyStatement)
+        {
+            // empty_stmt -> ';'
+            var oldCursor = _reader._cursor;
+
+            if (!_reader.AdvanceIfCurrentIsOperator(out OperatorToken semicolon, Operator.Semicolon))
+                goto fail;
+
+            emptyStatement = new EmptyStatementAst(semicolon);
+            return true;
+
+        fail:
+            emptyStatement = null;
+            return restoreCursor(oldCursor);
+        }
+
+        public bool TryBreakStatement(out BreakStatementAst breakStatement)
+        {
+            // break_stmt -> 'break' ';'
+            var oldCursor = _reader._cursor;
+
+            if (!_reader.AdvanceIfCurrentIsKeyword(out KeywordToken @break, Keyword.Break))
+                goto fail;
+            if (!_reader.AdvanceIfCurrentIsOperator(out OperatorToken @semicolon, Operator.Semicolon))
+                goto fail;
+
+            breakStatement = new BreakStatementAst(@break, semicolon);
+            return true;
+
+        fail:
+            breakStatement = null;
+            return restoreCursor(oldCursor);
+        }
+
+        public bool TryContinueStatement(out ContinueStatementAst continueStatement)
+        {
+            // continue_stmt -> 'continue' ';'
+            var oldCursor = _reader._cursor;
+
+            if (!_reader.AdvanceIfCurrentIsKeyword(out KeywordToken @continue, Keyword.Const))
+                goto fail;
+            if (!_reader.AdvanceIfCurrentIsOperator(out OperatorToken @semicolon, Operator.Semicolon))
+                goto fail;
+
+            continueStatement = new ContinueStatementAst(@continue, semicolon);
+            return true;
+
+        fail:
+            continueStatement = null;
+            return restoreCursor(oldCursor);
+        }
+
+        public bool TryStatement(out StatementAst statement)
+        {
+            /*
+             stmt ->
+                  expr_stmt
+                | decl_stmt
+                | if_stmt
+                | while_stmt
+                | return_stmt
+                | block_stmt
+                | empty_stmt
+
+                | break_stmt
+                | continue_stmt
+            */
+
+            statement = null;
+
+            if (TryExpressionStatement(out ExpressionStatementAst expressionStatement))
+                statement = expressionStatement;
+            else if (TryDeclarationStatement(out DeclarationStatementAst declarationStatement))
+                statement = declarationStatement;
+            else if (TryIfStatement(out IfStatementAst ifStatement))
+                statement = ifStatement;
+            else if (TryWhileStatement(out WhileStatementAst whileStatement))
+                statement = whileStatement;
+            else if (TryReturnStatement(out ReturnStatementAst returnStatement))
+                statement = returnStatement;
+            else if (TryBlockStatement(out BlockStatementAst blockStatement))
+                statement = blockStatement;
+            else if (TryEmptyStatement(out EmptyStatementAst emptyStatement))
+                statement = emptyStatement;
+            else if (TryContinueStatement(out ContinueStatementAst continueStatement))
+                statement = continueStatement;
+            else if (TryBreakStatement(out BreakStatementAst breakStatement))
+                statement = breakStatement;
+
+            return statement != null;
         }
     }
 }

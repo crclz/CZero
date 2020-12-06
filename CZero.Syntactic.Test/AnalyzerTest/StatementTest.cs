@@ -165,5 +165,41 @@ namespace CZero.Syntactic.Test.AnalyzerTest
             Assert.Null(letDeclaration.InitialExpression);
             Assert.Equal(tokens[4], letDeclaration.Semicolon);
         }
+
+        [Fact]
+        void BlockStatement_success()
+        {
+            // 'let' IDENT ':' ty ('=' expr)? ';'
+            // 'let' IDENT ':' ty ';'
+
+            // Arrange
+            var tokens = new Token[]
+            {
+                new KeywordToken( Keyword.Let, default),
+                new IdentifierToken("count", default),
+                new OperatorToken(Operator.Colon, default),
+                new IdentifierToken("int", default),
+                new OperatorToken(Operator.Semicolon, default),
+            };
+            var reader = new TokenReader(tokens);
+            var analyzer = new SyntacticAnalyzer(reader);
+
+            // Act
+            var success = analyzer.TryLetDeclarationStatement(out LetDeclarationStatementAst letDeclaration);
+
+            // Assert
+            Assert.True(success);
+            Assert.NotNull(letDeclaration);
+
+            Assert.True(reader.ReachedEnd);
+
+            Assert.Equal(tokens[0], letDeclaration.Let);
+            Assert.Equal(tokens[1], letDeclaration.Name);
+            Assert.Equal(tokens[2], letDeclaration.Colon);
+            Assert.Equal(tokens[3], letDeclaration.Type);
+            Assert.Null(letDeclaration.Assign);
+            Assert.Null(letDeclaration.InitialExpression);
+            Assert.Equal(tokens[4], letDeclaration.Semicolon);
+        }
     }
 }

@@ -2,6 +2,7 @@
 using CZero.Lexical.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace CZero.Syntactic.Ast.Statements
@@ -15,13 +16,14 @@ namespace CZero.Syntactic.Ast.Statements
         public OperatorToken RightBrace { get; }
 
         public BlockStatementAst(
-            OperatorToken leftBrace, IReadOnlyList<StatementAst> statements, OperatorToken rightBrace)
+            OperatorToken leftBrace, IEnumerable<StatementAst> statements, OperatorToken rightBrace)
         {
             LeftBrace = leftBrace ?? throw new ArgumentNullException(nameof(leftBrace));
-            Statements = statements ?? throw new ArgumentNullException(nameof(statements));
             RightBrace = rightBrace ?? throw new ArgumentNullException(nameof(rightBrace));
 
+            Guard.Against.Null(statements, nameof(statements));
             Guard.Against.NullElement(statements, nameof(statements));
+            Statements = statements.ToList();
         }
     }
 }
