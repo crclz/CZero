@@ -60,7 +60,7 @@ namespace CZero.Lexical.Tokens
         {
             Operator.Equal,Operator.NotEqual,
             Operator.LessThan,Operator.GreaterThan,
-            Operator.LessThan,Operator.GreaterEqual,
+            Operator.LessEqual,Operator.GreaterEqual,
         };
     }
 
