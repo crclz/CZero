@@ -32,7 +32,11 @@ namespace CZero.Lexical
             while (!_reader.ReachedEnd)
             {
                 if (!_reader.AdvanceUntilNonWhite())
+                {
+                    if (!ReaderReachedEnd)
+                        throw new LexerException("Bad input. Reader did not reach end");
                     yield break;// End producing token
+                }
 
                 var startPosition = _reader.Position;
 
