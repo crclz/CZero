@@ -43,5 +43,10 @@ namespace CZero.Lexical
         {
             return new SourcePosition(Line + 1, 0);
         }
+
+        public override string ToString()
+        {
+            return $"({Line},{Column})";
+        }
     }
 }
