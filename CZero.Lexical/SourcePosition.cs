@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CZero.Lexical
 {
-    public class SourcePosition
+    public struct SourcePosition
     {
         public int Line { get; }
         public int Column { get; }

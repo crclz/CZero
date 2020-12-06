@@ -26,9 +26,12 @@ namespace CZero.Syntactic.Ast.Statements.Declarative
         /// </summary>
         public ExpressionAst InitialExpression { get; }
 
+        public OperatorToken Semicolon { get; }
+
         public LetDeclarationStatementAst(
             KeywordToken let, IdentifierToken name, OperatorToken colon,
-            IdentifierToken type, OperatorToken assign, ExpressionAst initialExpression)
+            IdentifierToken type, OperatorToken assign, ExpressionAst initialExpression,
+            OperatorToken semicolon)
         {
             Let = let ?? throw new ArgumentNullException(nameof(let));
             Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -36,6 +39,7 @@ namespace CZero.Syntactic.Ast.Statements.Declarative
             Type = type ?? throw new ArgumentNullException(nameof(type));
             Assign = assign;
             InitialExpression = initialExpression;
+            Semicolon = semicolon ?? throw new ArgumentNullException(nameof(semicolon));
 
 
             if (let.Keyword != Keyword.Let)
@@ -46,6 +50,9 @@ namespace CZero.Syntactic.Ast.Statements.Declarative
 
             if (assign != null && assign.Value != Operator.Assign)
                 throw new ArgumentException(nameof(assign));
+
+            if (semicolon.Value != Operator.Semicolon)
+                throw new ArgumentNullException(nameof(semicolon));
         }
     }
 }

@@ -96,5 +96,23 @@ namespace CZero.Syntactic
             op = token;
             return true;
         }
+
+        public bool AdvanceIfCurrentIsKeyword(out KeywordToken keywordToken, Keyword keyword)
+        {
+            if (!CurrentIsType(out KeywordToken token))
+            {
+                keywordToken = null; return false;
+            }
+
+            if (token.Keyword != keyword)
+            {
+                keywordToken = null; return false;
+            }
+
+            Advance();
+
+            keywordToken = token;
+            return true;
+        }
     }
 }
