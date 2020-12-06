@@ -40,12 +40,12 @@ namespace CZero.Syntactic
 
             // decl_stmt -> let_decl_stmt | const_decl_stmt
 
-            if (!TryConstDeclarationStatement(out ConstDeclarationStatement constDeclaration))
+            if (TryConstDeclarationStatement(out ConstDeclarationStatement constDeclaration))
             {
                 declarationStatement = constDeclaration;
                 return true;
             }
-            else if (!TryLetDeclarationStatement(out LetDeclarationStatementAst letDeclaration))
+            else if (TryLetDeclarationStatement(out LetDeclarationStatementAst letDeclaration))
             {
                 declarationStatement = letDeclaration;
                 return true;
