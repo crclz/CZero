@@ -9,13 +9,22 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace CZero.Intermediate.Test.SemanticCheck.Integration
 {
     public class SamplesTest
     {
+        public ITestOutputHelper TestOutput { get; }
+
+        public SamplesTest(ITestOutputHelper testOutput)
+        {
+            TestOutput = testOutput;
+        }
+
         public string SampleDirectory => new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory)
             .Parent.Parent.Parent.FullName + "/SemanticCheck/Integration/Samples/";
+
 
         public static ProgramAst GetAst(string sourceCode)
         {
@@ -98,6 +107,8 @@ namespace CZero.Intermediate.Test.SemanticCheck.Integration
 
 
             }
+
+            TestOutput.WriteLine($"{samples.Length} samples tested");
         }
     }
 }
