@@ -356,5 +356,89 @@ namespace CZero.Intermediate.Test.SemanticCheck
             generator.ProcessWhileStatement(ast);
         }
         #endregion
+
+        #region ReturnStatement
+
+        [Fact]
+        void ProcessReturnStatement_throws_when_not_in_function()
+        {
+            var scope = new SymbolScope();
+            var returnExpr = new Mock<ExpressionAst>().Object;
+
+            var ast = new ReturnStatementAst(
+                new KeywordToken(Keyword.Return, default), returnExpr,
+                new OperatorToken(Operator.Semicolon, default));
+
+            var generator = ConfigureGenerator(scope, mock =>
+            {
+            });
+
+            Assert.Throws<SemanticException>(() => generator.ProcessReturnStatement(ast));
+        }
+
+        [Fact]
+        void ProcessReturnStatement_throws_when_expect_void_but_return_not_void()
+        {
+            var scope = new SymbolScope();
+            var returnExpr = new Mock<ExpressionAst>().Object;
+            var function = new FunctionSymbol("println", DataType.Void, new DataType[0]);
+
+            var ast = new ReturnStatementAst(
+                new KeywordToken(Keyword.Return, default), returnExpr,
+                new OperatorToken(Operator.Semicolon, default));
+
+            var generator = ConfigureGenerator(scope, mock =>
+            {
+                mock.Setup(p => p.ProcessExpression(returnExpr)).Returns(DataType.Double);
+            });
+
+            generator.EnterFunctionDefination(function);
+
+            Assert.Throws<SemanticException>(() => generator.ProcessReturnStatement(ast));
+        }
+
+        [Fact]
+        void ProcessReturnStatement_throws_when_type_different()
+        {
+            var scope = new SymbolScope();
+            var returnExpr = new Mock<ExpressionAst>().Object;
+            var function = new FunctionSymbol("println", DataType.Double, new DataType[0]);
+
+            var ast = new ReturnStatementAst(
+                new KeywordToken(Keyword.Return, default), returnExpr,
+                new OperatorToken(Operator.Semicolon, default));
+
+            var generator = ConfigureGenerator(scope, mock =>
+            {
+                mock.Setup(p => p.ProcessExpression(returnExpr)).Returns(DataType.Long);
+            });
+
+            generator.EnterFunctionDefination(function);
+
+            Assert.Throws<SemanticException>(() => generator.ProcessReturnStatement(ast));
+        }
+
+        [Fact]
+        void ProcessReturnStatement_success()
+        {
+            var scope = new SymbolScope();
+            var returnExpr = new Mock<ExpressionAst>().Object;
+            var function = new FunctionSymbol("println", DataType.Double, new DataType[0]);
+
+            var ast = new ReturnStatementAst(
+                new KeywordToken(Keyword.Return, default), returnExpr,
+                new OperatorToken(Operator.Semicolon, default));
+
+            var generator = ConfigureGenerator(scope, mock =>
+            {
+                mock.Setup(p => p.ProcessExpression(returnExpr)).Returns(DataType.Double);
+            });
+
+            generator.EnterFunctionDefination(function);
+
+            generator.ProcessReturnStatement(ast);
+        }
+
+        #endregion
     }
 }

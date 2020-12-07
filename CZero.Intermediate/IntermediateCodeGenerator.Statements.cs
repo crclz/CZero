@@ -127,5 +127,23 @@ namespace CZero.Intermediate
             if (conditionType != DataType.Bool)
                 throw new SemanticException($"If.Condition should be of bool type");
         }
+
+        public void ProcessReturnStatement(ReturnStatementAst returnStatement)
+        {
+            Guard.Against.Null(returnStatement, nameof(returnStatement));
+            // return_stmt -> 'return' expr? ';'
+            // 无返回值 - 有返回值
+
+            if (!IsInFunction)
+                throw new SemanticException($"Cannot return out side of function defination");
+
+            var expressionType = ProcessExpression(returnStatement.ReturnExpression);
+            if (expressionType != CurrentFunction.ReturnType)
+            {
+                throw new SemanticException(
+                    $"Should return {CurrentFunction.ReturnType}, but return {expressionType}");
+            }
+
+        }
     }
 }

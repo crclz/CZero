@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CZero.Intermediate.Symbols;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -11,6 +12,9 @@ namespace CZero.Intermediate
     {
         private SymbolScope SymbolScope { get; }
 
+        public FunctionSymbol CurrentFunction { get; private set; }
+        public bool IsInFunction => CurrentFunction != null;
+
         public IntermediateCodeGenerator()
         {
 
@@ -19,6 +23,23 @@ namespace CZero.Intermediate
         public IntermediateCodeGenerator(SymbolScope symbolScope)
         {
             SymbolScope = symbolScope ?? throw new ArgumentNullException(nameof(symbolScope));
+        }
+
+        public void LeaveFunctionDefination()
+        {
+            if (!IsInFunction)
+                throw new InvalidOperationException("Not in function. Cannot leave function");
+
+            CurrentFunction = null;
+        }
+
+        public void EnterFunctionDefination(FunctionSymbol function)
+        {
+            if (IsInFunction)
+                throw new InvalidOperationException(
+                    $"Cannot enter function when in function {CurrentFunction.Name}");
+
+            CurrentFunction = function;
         }
     }
 }
