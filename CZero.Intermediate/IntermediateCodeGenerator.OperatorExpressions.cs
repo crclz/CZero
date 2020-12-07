@@ -2,6 +2,7 @@
 using CZero.Syntactic.Ast.Expressions.OperatorExpression;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -58,6 +59,29 @@ namespace CZero.Intermediate
             }
 
             return type;
+        }
+
+        public virtual DataType ProcessTerm(TermAst term)
+        {
+            var firstType = ProcessFactor(term.Factor);
+            if (!DataTypeHelper.IsLongOrDouble(firstType))
+                throw new SemanticException($"First factor type {firstType} is not int or double");
+
+            if (term.OpFactors.Count == 0)
+                return firstType;
+
+            foreach (var (op, factor) in term.OpFactors)
+            {
+                Debug.Assert(op.Value == Lexical.Tokens.Operator.Mult
+                    || op.Value == Lexical.Tokens.Operator.Divide);
+
+                var factorType = ProcessFactor(factor);
+                if (factorType != firstType)
+                    throw new SemanticException($"Factor type '{factorType}' should equal to first type '{firstType}'");
+            }
+
+            // list check ok
+            return firstType;
         }
     }
 }

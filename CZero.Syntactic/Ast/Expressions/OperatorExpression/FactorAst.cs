@@ -12,6 +12,11 @@ namespace CZero.Syntactic.Ast.Expressions.OperatorExpression
         public GoodFactorAst GoodFactor { get; }
         public IReadOnlyList<(KeywordToken AsToken, IdentifierToken TypeToken)> AsTypeList { get; }
 
+        protected FactorAst()
+        {
+
+        }
+
         public FactorAst(GoodFactorAst goodFactor,
             IEnumerable<(KeywordToken AsToken, IdentifierToken TypeToken)> asTypeList)
         {
