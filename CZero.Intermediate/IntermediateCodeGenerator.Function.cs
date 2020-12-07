@@ -44,7 +44,8 @@ namespace CZero.Intermediate
                     paramTypeList.Add(paramType);
                 }
             }
-            SymbolScope.AddSymbol(new FunctionSymbol(functionAst.Name.Value, returnType, paramTypeList));
+            var functionSymbol = new FunctionSymbol(functionAst.Name.Value, returnType, paramTypeList);
+            SymbolScope.AddSymbol(functionSymbol);
 
             if (functionAst.HasParams)
             {
@@ -68,8 +69,11 @@ namespace CZero.Intermediate
 
             // All check ok
 
+            EnterFunctionDefination(functionSymbol);
             // Scope of function is created by the caller
             ProcessBlockStatement(functionAst.BodyBlock, suppressNewScopeCreation: true);
+
+            LeaveFunctionDefination();
         }
 
         public void ProcessProgram(ProgramAst programAst)

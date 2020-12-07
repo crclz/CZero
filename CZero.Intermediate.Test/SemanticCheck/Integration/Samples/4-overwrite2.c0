@@ -4,6 +4,9 @@ let z:int;// <z:int>
 fn printf(a:int, const y:int, z: double) -> double {
     let m:int; //<m:int>
     let b:int;// <b:int>
+
+    m=m+1;
+    b=m+b;
 }
 
 let y:double;// <y:double>
@@ -12,6 +15,8 @@ let y:double;// <y:double>
 fn main(const m:int, const y:double, const b:int) -> int {
     const a:double=2.567;// <a:const double>
     const z:double=3.14;// <z:const double>
+
+    return (z+1.2) as int + (a*z*(a+1.2)) as int;
 }
 
 const b: double=2.5; // <b:const double>

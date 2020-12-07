@@ -3,17 +3,23 @@ let z:int;// <z:int>
 // <printf:fn> <a:int> <y:const int> <z:double>
 fn printf(a:int, const y:int, z: double) -> double {
     let m:int; //<m:int>
-    let b:int;// <b:int>
+    let b:double;// <b:double>
     {
         let a:int;// <a:int>
         let y:double;// <y:double>
         let m:int; //<m:int>
+        b=1.023;
         let b:int;// <b:int>
+        b=1;
         {
+            return b as double;
+            b=1;
             let a:int;// <a:int>
             let y:double;// <y:double>
             let m:int; //<m:int>
-            let b:int;// <b:int>
+            let b:double;// <b:double>
+            b=1.023;
+            return b;
 
             let main:double=3.5;//<main:double>
         }
@@ -38,6 +44,9 @@ fn main(const m:int, const y:double, const b:int) -> int {
             const z:double=3.14;// <z:const double>
 
             let printf:int;//<printf:int>
+
+            printf=printf+1;
+            return printf;
         }
         let printf:int;//<printf:int>
     }
