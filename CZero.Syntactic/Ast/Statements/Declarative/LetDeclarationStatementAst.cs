@@ -26,6 +26,8 @@ namespace CZero.Syntactic.Ast.Statements.Declarative
         /// </summary>
         public ExpressionAst InitialExpression { get; }
 
+        public bool HasInitialExpression => InitialExpression != null;
+
         public OperatorToken Semicolon { get; }
 
         public LetDeclarationStatementAst(

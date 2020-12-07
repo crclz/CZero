@@ -9,27 +9,18 @@ namespace CZero.Intermediate.Symbols
         public bool IsGlobal { get; }
         public bool IsConstant { get; }
         public DataType Type { get; }
-        public object InitialValue { get; }
 
-        public bool HasInitialValue => InitialValue != null;
+        // 1. 初始值可能要经过计算，所以存不了
+        // 2. 也不需要初始值有没有
+        //public object InitialValue { get; }
 
         public VariableSymbol(
             string name, bool isGlobal, bool isConstant,
-            DataType type, object initialValue) : base(name)
+            DataType type) : base(name)
         {
-            if (isConstant && initialValue == null)
-                throw new ArgumentException("Const should have initial value");
-
-            if (initialValue != null && !DataTypeHelper.IsType(initialValue, type))
-            {
-                throw new ArgumentException(
-                    $"Initial value ({initialValue.GetType()}) not match data type {type}");
-            }
-
             IsGlobal = isGlobal;
             IsConstant = isConstant;
             Type = type;
-            InitialValue = initialValue;
         }
 
     }

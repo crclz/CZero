@@ -10,6 +10,9 @@ namespace CZero.Intermediate
     class SymbolScope
     {
         private SymbolScope ParentScope { get; }
+
+        public bool IsRoot => ParentScope == null;
+
         private Dictionary<string, Symbol> Symbols { get; } = new Dictionary<string, Symbol>();
 
         /// <summary>

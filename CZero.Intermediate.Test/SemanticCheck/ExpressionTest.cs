@@ -72,7 +72,7 @@ namespace CZero.Intermediate.Test.SemanticCheck
             var scope = new SymbolScope();
 
             var name = new IdentifierToken("today", default);
-            var constSymbol = new VariableSymbol(name.Value, true, true, DataType.Double, 1.23);
+            var constSymbol = new VariableSymbol(name.Value, true, true, DataType.Double);
             scope.AddSymbol(constSymbol);
 
             var ast = new AssignExpressionAst(
@@ -93,7 +93,7 @@ namespace CZero.Intermediate.Test.SemanticCheck
             var scope = new SymbolScope();
 
             var name = new IdentifierToken("today", default);
-            var constSymbol = new VariableSymbol(name.Value, true, isConstant: false, DataType.Double, 1.23);
+            var constSymbol = new VariableSymbol(name.Value, true, isConstant: false, DataType.Double);
             scope.AddSymbol(constSymbol);
 
             var expr = new Mock<ExpressionAst>().Object;
@@ -117,7 +117,7 @@ namespace CZero.Intermediate.Test.SemanticCheck
             var scope = new SymbolScope();
 
             var name = new IdentifierToken("today", default);
-            var constSymbol = new VariableSymbol(name.Value, true, isConstant: false, DataType.Double, 1.23);
+            var constSymbol = new VariableSymbol(name.Value, true, isConstant: false, DataType.Double);
             scope.AddSymbol(constSymbol);
 
             var expr = new Mock<ExpressionAst>().Object;
@@ -163,7 +163,7 @@ namespace CZero.Intermediate.Test.SemanticCheck
 
             var name = new IdentifierToken("print", default);
 
-            var varSymbol = new VariableSymbol(name.Value, true, false, DataType.Long, 321L);
+            var varSymbol = new VariableSymbol(name.Value, true, false, DataType.Long);
             scope.AddSymbol(varSymbol);
 
             var ast = new CallExpressionAst(
@@ -373,7 +373,7 @@ namespace CZero.Intermediate.Test.SemanticCheck
         void ProcessIdentExpression_returns_type_when_constvar_ok()
         {
             var scope = new SymbolScope();
-            var funcSymbol = new VariableSymbol("aCounter", true, false, DataType.Long, null);
+            var funcSymbol = new VariableSymbol("aCounter", true, false, DataType.Long);
             scope.AddSymbol(funcSymbol);
 
             var name = new IdentifierToken("aCounter", default);

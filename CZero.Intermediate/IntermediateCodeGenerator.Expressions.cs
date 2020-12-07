@@ -1,4 +1,5 @@
-﻿using CZero.Intermediate.Symbols;
+﻿using Ardalis.GuardClauses;
+using CZero.Intermediate.Symbols;
 using CZero.Lexical.Tokens;
 using CZero.Syntactic.Ast.Expressions;
 using CZero.Syntactic.Ast.Expressions.OperatorExpression;
@@ -15,6 +16,8 @@ namespace CZero.Intermediate
     {
         public virtual DataType ProcessExpression(ExpressionAst expression)
         {
+            Guard.Against.Null(expression, nameof(expression));
+
             if (expression is OperatorExpressionAst operatorExpression)
                 return ProcessOperatorExpression(operatorExpression);
             if (expression is AssignExpressionAst assignExpression)
