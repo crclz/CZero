@@ -1,0 +1,17 @@
+//<bad>
+let a:int=1; // <a:int>
+let z:int;// <z:int>
+// <printf:fn> <a:int> <printf:const int> <z:double>
+fn printf(a:int, const printf:int, z: double) -> double {
+    a = a+1+1*2*z as int;
+    return z*100.0;
+}
+
+let y:double;// <y:double>
+
+// <main:fn> <m:const int> <y:const double> <b:const int>
+fn main(const m:int, const y:double, const b:int) -> int {
+    return m * y as int * b*10086;
+}
+
+const b: double=2.5; // <b:const double>
