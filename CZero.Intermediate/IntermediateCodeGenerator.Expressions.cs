@@ -139,8 +139,8 @@ namespace CZero.Intermediate
 
         public virtual DataType ProcessGroupExpression(GroupExpressionAst groupExpression)
         {
-            // 沾点符号表了，所以下个阶段实现
-            throw new NotImplementedException();
+            // TODO: 代码生成
+            return ProcessExpression(groupExpression.Expression);
         }
     }
 }
