@@ -1,6 +1,7 @@
 ﻿using Ardalis.GuardClauses;
 using CZero.Intermediate.Symbols;
 using CZero.Lexical.Tokens;
+using CZero.Syntactic.Ast;
 using CZero.Syntactic.Ast.Expressions;
 using CZero.Syntactic.Ast.Expressions.OperatorExpression;
 using CZero.Syntactic.Ast.Functions;
@@ -49,6 +50,20 @@ namespace CZero.Intermediate
 
             // All check ok
 
+        }
+
+        public void ProcessProgram(ProgramAst programAst)
+        {
+            foreach (var element in programAst.Elements)
+            {
+                if (element is DeclarationStatementAst declarationStatement)
+                    ProcessDeclarationStatement(declarationStatement);
+                else if (element is FunctionAst function)
+                    ProcessFunction(function);
+                else
+                    throw new ArgumentException($"Unknown ast type of one element: {element.GetType()}");
+
+            }
         }
     }
 }
