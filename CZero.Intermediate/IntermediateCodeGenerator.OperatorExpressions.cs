@@ -1,4 +1,5 @@
 ﻿using Ardalis.GuardClauses;
+using CZero.Syntactic.Ast.Expressions;
 using CZero.Syntactic.Ast.Expressions.OperatorExpression;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,20 @@ namespace CZero.Intermediate
         {
             Guard.Against.Null(strongFactor, nameof(strongFactor));
 
-            throw new NotImplementedException();
+            // assign_expr | call_expr | literal_expr | ident_expr | group_expr
+            var expr = strongFactor.SingleExpression;
+            if (expr is AssignExpressionAst assignExpression)
+                return ProcessAssignExpression(assignExpression);
+            else if (expr is CallExpressionAst callExpression)
+                return ProcessCallExpression(callExpression);
+            else if (expr is LiteralExpressionAst literalExpression)
+                return ProcessLiteralExpression(literalExpression);
+            else if (expr is IdentExpressionAst identExpression)
+                return ProcessIdentExpression(identExpression);
+            else if (expr is GroupExpressionAst groupExpression)
+                return ProcessGroupExpression(groupExpression);
+            else
+                throw new ArgumentException($"Unsupported type: {expr.GetType()}");
         }
 
         public virtual DataType ProcessGoodFactor(GoodFactorAst goodFactor)
