@@ -53,7 +53,7 @@ namespace CZero.Intermediate.Test
         }
 
         [Fact]
-        void ProcessGoodFactor_return_type_when_not_negative()
+        void ProcessGoodFactor_return_type_whenever_not_negative()
         {
             foreach (var type in Utils.GetEnumList<DataType>())
             {
@@ -113,7 +113,7 @@ namespace CZero.Intermediate.Test
         [Fact]
         void ProcessFactor_returns_inner_type_when_no_as_type()
         {
-            foreach (var innerType in new List<DataType> { DataType.Long, DataType.Double })
+            foreach (var innerType in Utils.GetEnumList<DataType>())
             {
                 var emptyList = Enumerable.Empty<(KeywordToken, IdentifierToken)>();
                 var ast = new FactorAst(new Mock<GoodFactorAst>().Object, emptyList);
@@ -122,17 +122,23 @@ namespace CZero.Intermediate.Test
 
                 var returningType = generator.ProcessFactor(ast);
 
-                switch (innerType)
-                {
-                    case DataType.Long:
-                        Assert.Equal(DataType.Long, returningType);
-                        break;
-                    case DataType.Double:
-                        Assert.Equal(DataType.Double, returningType);
-                        break;
-                    default:
-                        throw new Exception();
-                }
+                Assert.Equal(innerType, returningType);
+            }
+        }
+
+        [Fact]
+        void ProcessFactor_throws_when_list_not_empty_and_first_not_int_or_double()
+        {
+            foreach (var innerType in Utils.GetEnumList<DataType>())
+            {
+                if (DataTypeHelper.IsLongOrDouble(innerType))
+                    continue;
+
+                var asTypeList = RandomIntDoubleAsTypeList();
+
+                var ast = new FactorAst(new Mock<GoodFactorAst>().Object, asTypeList);
+                var generator = MockGoodFactor(innerType);
+                Assert.Throws<SemanticException>(() => generator.ProcessFactor(ast));
             }
         }
 
@@ -218,8 +224,24 @@ namespace CZero.Intermediate.Test
             });
         }
 
+
         [Fact]
-        void ProcessTerm_throws_when_inner_not_int_or_double()
+        void ProcessTerm_returns_inner_type_when_list_empty()
+        {
+            foreach (var innerType in Utils.GetEnumList<DataType>())
+            {
+                var emptyList = Enumerable.Empty<(OperatorToken, FactorAst)>();
+
+                var ast = new TermAst(new Mock<FactorAst>().Object, emptyList);
+
+                var generator = MockFactor(innerType);
+
+                Assert.Equal(innerType, generator.ProcessTerm(ast));
+            }
+        }
+
+        [Fact]
+        void ProcessTerm_throws_when_list_not_empty_and_inner_not_int_or_double()
         {
             foreach (var innerType in Utils.GetEnumList<DataType>())
             {
@@ -236,20 +258,6 @@ namespace CZero.Intermediate.Test
             }
         }
 
-        [Fact]
-        void ProcessTerm_returns_inner_type_when_list_empty()
-        {
-            foreach (var innerType in new[] { DataType.Long, DataType.Double })
-            {
-                var emptyList = Enumerable.Empty<(OperatorToken, FactorAst)>();
-
-                var ast = new TermAst(new Mock<FactorAst>().Object, emptyList);
-
-                var generator = MockFactor(innerType);
-
-                Assert.Equal(innerType, generator.ProcessTerm(ast));
-            }
-        }
 
         [Fact]
         void ProcessTerm_throws_when_any_thing_in_list_not_first_type()
@@ -312,29 +320,9 @@ namespace CZero.Intermediate.Test
 
 
         [Fact]
-        void ProcessWeakTerm_throw_when_first_type_not_int_or_double()
-        {
-            foreach (var innerType in Utils.GetEnumList<DataType>())
-            {
-                if (new[] { DataType.Long, DataType.Double }.Contains(innerType))
-                    continue;
-
-                var emptyList = Enumerable.Empty<(OperatorToken, TermAst)>();
-                var ast = new WeakTermAst(new Mock<TermAst>().Object, emptyList);
-
-                var generator = Configure(mock =>
-                {
-                    mock.Setup(p => p.ProcessTerm(It.IsAny<TermAst>())).Returns(innerType);
-                });
-
-                Assert.Throws<SemanticException>(() => generator.ProcessWeakTerm(ast));
-            }
-        }
-
-        [Fact]
         void ProcessWeakTerm_returns_first_type_when_list_empty()
         {
-            foreach (var innerType in new[] { DataType.Long, DataType.Double })
+            foreach (var innerType in Utils.GetEnumList<DataType>())
             {
                 var emptyList = Enumerable.Empty<(OperatorToken, TermAst)>();
                 var ast = new WeakTermAst(new Mock<TermAst>().Object, emptyList);
@@ -347,6 +335,30 @@ namespace CZero.Intermediate.Test
                 Assert.Equal(innerType, generator.ProcessWeakTerm(ast));
             }
         }
+
+        [Fact]
+        void ProcessWeakTerm_throw_when_not_empty_and_first_type_not_int_or_double()
+        {
+            foreach (var innerType in Utils.GetEnumList<DataType>())
+            {
+                if (new[] { DataType.Long, DataType.Double }.Contains(innerType))
+                    continue;
+
+                var opFactors = new[] {
+                    (new OperatorToken(Operator.Plus, default), new Mock<TermAst>().Object),
+                };
+                var ast = new WeakTermAst(new Mock<TermAst>().Object, opFactors);
+
+                var generator = Configure(mock =>
+                {
+                    mock.Setup(p => p.ProcessTerm(It.IsAny<TermAst>())).Returns(innerType);
+                });
+
+                Assert.Throws<SemanticException>(() => generator.ProcessWeakTerm(ast));
+            }
+        }
+
+
 
         [Fact]
         void ProcessWeakTerm_throws_when_any_thing_in_list_not_first_type()
@@ -404,6 +416,30 @@ namespace CZero.Intermediate.Test
 
                 Assert.Equal(innerType, generator.ProcessWeakTerm(ast));
             }
+        }
+
+        [Fact]
+        void ProcessOpExpr_throw_when_first_type_not_int_or_double()
+        {
+
+        }
+
+        [Fact]
+        void ProcessOpExpr_returns_first_type_when_list_empty()
+        {
+
+        }
+
+        [Fact]
+        void ProcessOpExpr_throws_when_any_thing_in_list_not_first_type()
+        {
+
+        }
+
+        [Fact]
+        void ProcessOpExpr_returns_the_type_when_list_is_ok()
+        {
+
         }
 
     }

@@ -12,6 +12,11 @@ namespace CZero.Syntactic.Ast.Expressions.OperatorExpression
         public TermAst Term { get; }
         public IReadOnlyList<(OperatorToken Op, TermAst Term)> OpTerms { get; }
 
+        protected WeakTermAst()
+        {
+
+        }
+
         public WeakTermAst(TermAst term, IEnumerable<(OperatorToken Op, TermAst Term)> opTerms)
         {
             Guard.Against.Null(term, nameof(term));

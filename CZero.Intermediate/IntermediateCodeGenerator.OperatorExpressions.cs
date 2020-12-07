@@ -35,13 +35,13 @@ namespace CZero.Intermediate
         {
             var type = ProcessGoodFactor(factor.GoodFactor);
 
+            if (factor.AsTypeList.Count == 0)
+                return type;
+
             if (!DataTypeHelper.IsLongOrDouble(type))
             {
                 throw new SemanticException($"Inner type '{type}' is not double or int");
             }
-
-            if (factor.AsTypeList.Count == 0)
-                return type;
 
             foreach (var a in factor.AsTypeList)
             {
@@ -64,11 +64,12 @@ namespace CZero.Intermediate
         public virtual DataType ProcessTerm(TermAst term)
         {
             var firstType = ProcessFactor(term.Factor);
-            if (!DataTypeHelper.IsLongOrDouble(firstType))
-                throw new SemanticException($"First factor type {firstType} is not int or double");
 
             if (term.OpFactors.Count == 0)
                 return firstType;
+
+            if (!DataTypeHelper.IsLongOrDouble(firstType))
+                throw new SemanticException($"First factor type {firstType} is not int or double");
 
             foreach (var (op, factor) in term.OpFactors)
             {
@@ -89,11 +90,12 @@ namespace CZero.Intermediate
             // Remember to assert each op is +|-
             var firstType = ProcessTerm(weak.Term);
 
+            if (weak.OpTerms.Count == 0)
+                return firstType;
+
             if (!DataTypeHelper.IsLongOrDouble(firstType))
                 throw new SemanticException($"first type '{firstType}' should be int or double");
 
-            if (weak.OpTerms.Count == 0)
-                return firstType;
 
             foreach (var (op, term) in weak.OpTerms)
             {
@@ -109,6 +111,14 @@ namespace CZero.Intermediate
 
             // list check ok
             return firstType;
+        }
+
+        public virtual DataType ProcessOperatorExpression(OperatorExpressionAst operatorExpression)
+        {
+            // 注意 https://c0.karenia.cc/c0/expr.html 参数类型必须是数值。
+            // 所以如果有比较符号，那么它们都得是数值
+
+            throw new NotImplementedException();
         }
     }
 }
