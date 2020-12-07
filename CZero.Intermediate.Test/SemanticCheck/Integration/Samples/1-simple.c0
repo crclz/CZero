@@ -1,0 +1,13 @@
+let a:int=1; // <a:int>
+const b: double=2.5; // <b:const double>
+let c:double;// <c:double>
+
+// <printf:fn> <x:int> <y:const int> <z:double>
+fn printf(x:int, const y:int, z: double) -> double {
+
+}
+
+// <main:fn> <m:const int> <n:const double>
+fn main(const m:int, const n:double) -> int {
+
+}
