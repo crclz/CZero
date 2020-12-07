@@ -419,27 +419,92 @@ namespace CZero.Intermediate.Test
         }
 
         [Fact]
-        void ProcessOpExpr_throw_when_first_type_not_int_or_double()
+        void ProcessOpExpr_returns_first_type_when_list_empty()
         {
+            foreach (var innerType in Utils.GetEnumList<DataType>())
+            {
+                var emptyList = Enumerable.Empty<(OperatorToken, WeakTermAst)>();
+                var ast = new OperatorExpressionAst(new Mock<WeakTermAst>().Object, emptyList);
 
+                var generator = Configure(mock =>
+                {
+                    mock.Setup(p => p.ProcessWeakTerm(It.IsAny<WeakTermAst>())).Returns(innerType);
+                });
+
+                Assert.Equal(innerType, generator.ProcessOperatorExpression(ast));
+            }
         }
 
         [Fact]
-        void ProcessOpExpr_returns_first_type_when_list_empty()
+        void ProcessOpExpr_throw_when_list_not_empty_and_first_type_not_int_or_double()
         {
+            foreach (var innerType in Utils.GetEnumList<DataType>())
+            {
+                if (new[] { DataType.Long, DataType.Double }.Contains(innerType))
+                    continue;
 
+                var firstWeakTerm = new Mock<WeakTermAst>().Object;
+                var weak2 = new Mock<WeakTermAst>().Object;
+
+                var list = new[] { (new OperatorToken(Operator.GreaterEqual, default), weak2) };
+
+                var ast = new OperatorExpressionAst(firstWeakTerm, list);
+
+                var generator = Configure(mock =>
+                {
+                    mock.Setup(p => p.ProcessWeakTerm(firstWeakTerm)).Returns(innerType);
+                    mock.Setup(p => p.ProcessWeakTerm(weak2)).Returns(DataType.Long);
+                });
+                Assert.Throws<SemanticException>(() => generator.ProcessOperatorExpression(ast));
+            }
         }
 
         [Fact]
         void ProcessOpExpr_throws_when_any_thing_in_list_not_first_type()
         {
+            var innerType = DataType.Double;
+            {
+                var firstWeakTerm = new Mock<WeakTermAst>().Object;
+                var weak2 = new Mock<WeakTermAst>().Object;
 
+                var list = new[] {
+                    (new OperatorToken(Operator.GreaterEqual, default), weak2),
+                };
+
+                var ast = new OperatorExpressionAst(firstWeakTerm, list);
+
+                var generator = Configure(mock =>
+                {
+                    mock.Setup(p => p.ProcessWeakTerm(firstWeakTerm)).Returns(innerType);
+                    mock.Setup(p => p.ProcessWeakTerm(weak2)).Returns(DataType.Long);
+                });
+                Assert.Throws<SemanticException>(() => generator.ProcessOperatorExpression(ast));
+            }
         }
 
         [Fact]
-        void ProcessOpExpr_returns_the_type_when_list_is_ok()
+        void ProcessOpExpr_throws_when_list_count_bigger_than_1()
         {
+            // 只能进行一次比较。因为一次比较后就获得了一个bool，bool无法再参与运算，因为比较的操作数必须是数字类型
 
+            var innerType = DataType.Long;
+
+            var firstWeakTerm = new Mock<WeakTermAst>().Object;
+            var weak2 = new Mock<WeakTermAst>().Object;
+            var weak3 = new Mock<WeakTermAst>().Object;
+
+            var list = new[] {
+                    (new OperatorToken(Operator.GreaterEqual, default), weak2),
+                    (new OperatorToken(Operator.GreaterEqual, default), weak3)
+                };
+
+            var ast = new OperatorExpressionAst(firstWeakTerm, list);
+
+            var generator = Configure(mock =>
+            {
+                mock.Setup(p => p.ProcessWeakTerm(It.IsAny<WeakTermAst>())).Returns(innerType);
+            });
+            Assert.Throws<SemanticException>(() => generator.ProcessOperatorExpression(ast));
         }
 
     }

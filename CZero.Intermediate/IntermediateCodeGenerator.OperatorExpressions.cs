@@ -118,6 +118,26 @@ namespace CZero.Intermediate
             // 注意 https://c0.karenia.cc/c0/expr.html 参数类型必须是数值。
             // 所以如果有比较符号，那么它们都得是数值
 
+            var firstType = ProcessWeakTerm(operatorExpression.WeakTerm);
+
+            if (operatorExpression.OpTerms.Count == 0)
+                return firstType;
+
+            if (operatorExpression.OpTerms.Count > 1)
+                throw new SemanticException($"List count >1");
+
+            if (!DataTypeHelper.IsLongOrDouble(firstType))
+                throw new SemanticException($"List is not empty, first type '{firstType}' should be int or double");
+
+            var (op, weak) = operatorExpression.OpTerms[0];
+            Debug.Assert(op.IsCompare);
+
+            var weakTermType = ProcessWeakTerm(weak);
+            if (weakTermType != firstType)
+                throw new SemanticException(
+                    $"A weak term '{weakTermType}' in list not matching first type '{firstType}'");
+
+
             throw new NotImplementedException();
         }
     }
