@@ -1,4 +1,5 @@
-﻿using CZero.Intermediate.Symbols;
+﻿using CZero.Intermediate.Builders;
+using CZero.Intermediate.Symbols;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -14,6 +15,9 @@ namespace CZero.Intermediate
 
         public FunctionSymbol CurrentFunction { get; private set; }
         public bool IsInFunction => CurrentFunction != null;
+
+        public WhileBuilder CurrentWhile { get; private set; }
+        public bool IsInWhile => CurrentWhile != null;
 
         public IntermediateCodeGenerator()
         {
@@ -40,6 +44,22 @@ namespace CZero.Intermediate
                     $"Cannot enter function when in function {CurrentFunction.Name}");
 
             CurrentFunction = function;
+        }
+
+        public void LeaveWhileDefination()
+        {
+            if (!IsInWhile)
+                throw new InvalidOperationException("Not in while. Cannot leave while");
+
+            CurrentWhile = CurrentWhile.ParentWhile;
+        }
+
+        public void EnterWhileDefination(WhileBuilder whileBuilder)
+        {
+            if (whileBuilder.ParentWhile != CurrentWhile)
+                throw new ArgumentException("Wrong parent relationships");
+
+            CurrentWhile = whileBuilder;
         }
     }
 }

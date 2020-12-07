@@ -145,5 +145,28 @@ namespace CZero.Intermediate
             }
 
         }
+
+        public void ProcessBlockStatement(BlockStatementAst blockStatement)
+        {
+            // block_stmt -> '{' stmt* '}'
+            Guard.Against.Null(blockStatement, nameof(blockStatement));
+
+            foreach (var statement in blockStatement.Statements)
+            {
+                ProcessStatement(statement);
+            }
+        }
+
+        public void ProcessEmptyStatement(EmptyStatementAst emptyStatement)
+        {
+            // empty_stmt -> ';'
+            Guard.Against.Null(emptyStatement, nameof(emptyStatement));
+        }
+
+        public void ProcessBreakStatement(BreakStatementAst breakStatement)
+        {
+            if (!IsInWhile)
+                throw new SemanticException($"Not in while, cannot break");
+        }
     }
 }

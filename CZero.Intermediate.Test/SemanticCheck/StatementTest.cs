@@ -1,4 +1,5 @@
-﻿using CZero.Intermediate.Symbols;
+﻿using CZero.Intermediate.Builders;
+using CZero.Intermediate.Symbols;
 using CZero.Lexical.Tokens;
 using CZero.Syntactic.Ast;
 using CZero.Syntactic.Ast.Expressions;
@@ -437,6 +438,44 @@ namespace CZero.Intermediate.Test.SemanticCheck
             generator.EnterFunctionDefination(function);
 
             generator.ProcessReturnStatement(ast);
+        }
+
+        #endregion
+
+
+        #region Break
+
+        [Fact]
+        void ProcessBreakStatement_throws_when_not_in_while()
+        {
+            var scope = new SymbolScope();
+
+            var ast = new BreakStatementAst(
+                new KeywordToken(Keyword.Break, default),
+                new OperatorToken(Operator.Semicolon, default));
+
+            var generator = ConfigureGenerator(scope, mock =>
+            {
+            });
+
+            Assert.Throws<SemanticException>(() => generator.ProcessBreakStatement(ast));
+        }
+
+        [Fact]
+        void ProcessBreakStatement_success_when_in_while()
+        {
+            var scope = new SymbolScope();
+
+            var ast = new BreakStatementAst(
+                new KeywordToken(Keyword.Break, default),
+                new OperatorToken(Operator.Semicolon, default));
+
+            var generator = ConfigureGenerator(scope, mock =>
+            {
+            });
+            generator.EnterWhileDefination(new WhileBuilder(null));
+
+            generator.ProcessBreakStatement(ast);
         }
 
         #endregion
