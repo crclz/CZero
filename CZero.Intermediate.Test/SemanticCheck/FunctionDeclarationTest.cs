@@ -163,7 +163,7 @@ namespace CZero.Intermediate.Test.SemanticCheck
         }
 
         [Fact]
-        void Function_success_and_write_symbol_table()
+        void Function_success_and_write_self_and_params_to_symbol_table()
         {
             var name = new IdentifierToken("SendRequest", default);
 
@@ -191,12 +191,20 @@ namespace CZero.Intermediate.Test.SemanticCheck
             generator.ProcessFunction(ast);
 
             // Assert
+
+            // params
             Assert.True(scope.FindSymbolShallow(param1.Name.Value, out Symbol sym1));
             var var1 = Assert.IsType<VariableSymbol>(sym1);
             Assert.Equal(param1.IsConstant, var1.IsConstant);
             Assert.False(var1.IsGlobal);
             Assert.Equal(DataType.Long, var1.Type);
             Assert.Equal(param1.Name.Value, var1.Name);
+
+            // self
+            Assert.True(scope.FindSymbolShallow(ast.Name.Value, out Symbol symx));
+            var funcSym = Assert.IsType<FunctionSymbol>(symx);
+            Assert.Equal(DataType.Long, funcSym.ReturnType);
+            Assert.Equal(DataType.Long, funcSym.ParamTypes.Single());
 
         }
     }

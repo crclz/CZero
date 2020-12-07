@@ -28,12 +28,12 @@ namespace CZero.Intermediate
             ParentScope = parentScope ?? throw new ArgumentNullException(nameof(parentScope));
         }
 
-        public SymbolScope CreateChildScope()
+        public virtual SymbolScope CreateChildScope()
         {
             return new SymbolScope(this);
         }
 
-        public void AddSymbol(VariableSymbol symbol)
+        public virtual void AddSymbol(VariableSymbol symbol)
         {
             // TODO: check if the symbol is keyword
 
@@ -47,7 +47,7 @@ namespace CZero.Intermediate
             Debug.Assert(success);
         }
 
-        public void AddSymbol(FunctionSymbol symbol)
+        public virtual void AddSymbol(FunctionSymbol symbol)
         {
             // TODO: check if the symbol is keyword
 

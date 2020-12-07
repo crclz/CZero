@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CZero.Intermediate.Test\CZero.Intermediate.Test.csproj" />
     <ProjectReference Include="..\CZero.Syntactic.Test\CZero.Syntactic.Test.csproj" />
   </ItemGroup>
 

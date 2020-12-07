@@ -1,1 +1,5 @@
-let a:int=1;
+let a:int=1; // <a:int>
+
+fn printf(x:int, const y:int, z: double) -> double {// <printf:fn> <x:int> <y:const int> <z:double>
+
+}

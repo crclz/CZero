@@ -24,9 +24,27 @@ namespace CZero.Intermediate
             if (SymbolScope.FindSymbolDeep(functionAst.Name.Value, out Symbol symbol))
                 throw new SemanticException($"Symbol already exist: {symbol.Name}, {symbol.GetType()}");
 
-            var returningTypeName = functionAst.ReturnType.Value;
-            if (!new[] { "int", "double" }.Contains(returningTypeName))
-                throw new SemanticException($"Bad returning type: {returningTypeName}");
+            if (!new[] { "int", "double" }.Contains(functionAst.ReturnType.Value))
+                throw new SemanticException($"Bad returning type: {functionAst.ReturnType.Value}");
+
+            var returnType = DataTypeHelper.ParseLongOrDouble(functionAst.ReturnType.Value);
+
+            // Add function to scope
+            var paramTypeList = new List<DataType>();
+            if (functionAst.HasParams)
+            {
+                foreach (var parameter in functionAst.FunctionParamList.FunctionParams)
+                {
+                    var paramType = parameter.Type.Value switch
+                    {
+                        "int" => DataType.Long,
+                        "double" => DataType.Double,
+                        _ => throw new SemanticException($"Bad param type: {parameter.Type.Value}")
+                    };
+                    paramTypeList.Add(paramType);
+                }
+            }
+            SymbolScope.AddSymbol(new FunctionSymbol(functionAst.Name.Value, returnType, paramTypeList));
 
             if (functionAst.HasParams)
             {
