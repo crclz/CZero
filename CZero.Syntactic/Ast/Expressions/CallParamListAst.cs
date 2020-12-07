@@ -16,6 +16,9 @@ namespace CZero.Syntactic.Ast.Expressions
             Parameters = parameters.ToList() ?? throw new ArgumentNullException(nameof(parameters));
 
             Guard.Against.NullElement(Parameters, nameof(parameters));
+
+            if (Parameters.Count == 0)
+                throw new ArgumentException("CallParamList should have >=1 params. (Grammer)");
         }
     }
 }

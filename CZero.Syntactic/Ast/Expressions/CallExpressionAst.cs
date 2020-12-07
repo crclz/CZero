@@ -15,6 +15,8 @@ namespace CZero.Syntactic.Ast.Expressions
         // This is Optional
         public CallParamListAst ParamList { get; }
 
+        public bool HasParams => ParamList != null;
+
         public OperatorToken RightParen { get; }
 
         public CallExpressionAst(
