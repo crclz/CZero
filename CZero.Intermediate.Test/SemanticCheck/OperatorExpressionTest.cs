@@ -507,5 +507,25 @@ namespace CZero.Intermediate.Test
             Assert.Throws<SemanticException>(() => generator.ProcessOperatorExpression(ast));
         }
 
+        [Fact]
+        void ProcessOpExpr_returns_bool_when_doing_1_1_compare()
+        {
+            var firstWeakTerm = new Mock<WeakTermAst>().Object;
+            var weak2 = new Mock<WeakTermAst>().Object;
+
+            var list = new[] {
+                    (new OperatorToken(Operator.GreaterEqual, default), weak2),
+                };
+
+            var ast = new OperatorExpressionAst(firstWeakTerm, list);
+
+            var generator = Configure(mock =>
+            {
+                mock.Setup(p => p.ProcessWeakTerm(firstWeakTerm)).Returns(DataType.Double);
+                mock.Setup(p => p.ProcessWeakTerm(weak2)).Returns(DataType.Double);
+            });
+            Assert.Equal(DataType.Bool, generator.ProcessOperatorExpression(ast));
+        }
+
     }
 }

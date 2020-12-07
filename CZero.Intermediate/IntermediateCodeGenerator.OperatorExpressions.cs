@@ -137,8 +137,11 @@ namespace CZero.Intermediate
                 throw new SemanticException(
                     $"A weak term '{weakTermType}' in list not matching first type '{firstType}'");
 
+            // Check ok. Now comparing.
 
-            throw new NotImplementedException();
+            // TODO: Code generation
+
+            return DataType.Bool;
         }
     }
 }
