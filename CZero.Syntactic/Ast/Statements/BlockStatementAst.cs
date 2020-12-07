@@ -15,6 +15,11 @@ namespace CZero.Syntactic.Ast.Statements
         public IReadOnlyList<StatementAst> Statements { get; }
         public OperatorToken RightBrace { get; }
 
+        protected BlockStatementAst()
+        {
+
+        }
+
         public BlockStatementAst(
             OperatorToken leftBrace, IEnumerable<StatementAst> statements, OperatorToken rightBrace)
         {

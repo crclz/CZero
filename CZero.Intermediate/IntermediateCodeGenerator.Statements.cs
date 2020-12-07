@@ -1,4 +1,5 @@
-﻿using CZero.Intermediate.Symbols;
+﻿using Ardalis.GuardClauses;
+using CZero.Intermediate.Symbols;
 using CZero.Lexical.Tokens;
 using CZero.Syntactic.Ast.Expressions;
 using CZero.Syntactic.Ast.Expressions.OperatorExpression;
@@ -106,6 +107,16 @@ namespace CZero.Intermediate
             // All check ok
             var symbol = new VariableSymbol(name, SymbolScope.IsRoot, true, declaringType);
             SymbolScope.AddSymbol(symbol);
+        }
+
+        public void ProcessIfStatement(IfStatementAst ifStatement)
+        {
+            Guard.Against.Null(ifStatement, nameof(ifStatement));
+            // if_stmt -> 'if' expr block_stmt ('else' (block_stmt | if_stmt))?
+
+            var conditionType = ProcessExpression(ifStatement.ConditionExpression);
+            if (conditionType != DataType.Bool)
+                throw new SemanticException($"If.Condition should be of bool type");
         }
     }
 }

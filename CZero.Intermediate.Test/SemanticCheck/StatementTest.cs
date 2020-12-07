@@ -3,6 +3,7 @@ using CZero.Lexical.Tokens;
 using CZero.Syntactic.Ast;
 using CZero.Syntactic.Ast.Expressions;
 using CZero.Syntactic.Ast.Expressions.OperatorExpression;
+using CZero.Syntactic.Ast.Statements;
 using CZero.Syntactic.Ast.Statements.Declarative;
 using Moq;
 using System;
@@ -273,6 +274,45 @@ namespace CZero.Intermediate.Test.SemanticCheck
             Assert.Equal(DataType.Double, variableSymbol.Type);
         }
 
+        #endregion
+
+
+        #region If
+        [Fact]
+        void ProcessIfStatement_throws_when_condition_not_bool()
+        {
+            var scope = new SymbolScope();
+            var condition = new Mock<ExpressionAst>().Object;
+
+            var ast = new IfStatementAst(
+                new KeywordToken(Keyword.If, default), condition, new Mock<BlockStatementAst>().Object,
+                @else: null, null, null);
+
+            var generator = ConfigureGenerator(scope, mock =>
+            {
+                mock.Setup(p => p.ProcessExpression(condition)).Returns(DataType.Long);
+            });
+
+            Assert.Throws<SemanticException>(() => generator.ProcessIfStatement(ast));
+        }
+
+        [Fact]
+        void ProcessIfStatement_ok_when_condition_is_bool()
+        {
+            var scope = new SymbolScope();
+            var condition = new Mock<ExpressionAst>().Object;
+
+            var ast = new IfStatementAst(
+                new KeywordToken(Keyword.If, default), condition, new Mock<BlockStatementAst>().Object,
+                @else: null, null, null);
+
+            var generator = ConfigureGenerator(scope, mock =>
+            {
+                mock.Setup(p => p.ProcessExpression(condition)).Returns(DataType.Bool);
+            });
+
+            generator.ProcessIfStatement(ast);
+        }
         #endregion
     }
 }
