@@ -117,12 +117,24 @@ namespace CZero.Intermediate
             if (literalExpression.Literal is CharLiteralToken)
                 return DataType.Char;
             throw new ArgumentException($"Unknown literal token type: {literalExpression.GetType()}");
+
+            // TODO: 沾点代码生成了，所以下个阶段补充. 应该把字面量load到栈上
         }
 
         public virtual DataType ProcessIdentExpression(IdentExpressionAst identExpression)
         {
-            // 沾点符号表了，所以下个阶段实现
-            throw new NotImplementedException();
+            var name = identExpression.IdentifierToken.Value;
+            if (!SymbolScope.FindSymbolDeep(name, out Symbol symbol))
+                throw new SemanticException($"Symbol {name} not exist");
+
+            if (!(symbol is VariableSymbol variableSymbol))
+                throw new SemanticException($"Symbol {name} is not const/var");
+
+            // All check ok
+
+            // TODO: 代码生成
+
+            return variableSymbol.Type;
         }
 
         public virtual DataType ProcessGroupExpression(GroupExpressionAst groupExpression)

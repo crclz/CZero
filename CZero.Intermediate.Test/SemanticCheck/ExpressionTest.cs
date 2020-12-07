@@ -331,5 +331,62 @@ namespace CZero.Intermediate.Test.SemanticCheck
         }
 
         #endregion
+
+
+        #region IdentExpression
+
+        [Fact]
+        void ProcessIdentExpression_throws_when_symbol_not_found()
+        {
+            var scope = new SymbolScope();
+
+            var name = new IdentifierToken("aCounter", default);
+
+            var ast = new IdentExpressionAst(name);
+
+            var generator = ConfigureGenerator(scope, mock =>
+            {
+            });
+
+            Assert.Throws<SemanticException>(() => generator.ProcessIdentExpression(ast));
+        }
+
+        [Fact]
+        void ProcessIdentExpression_throws_when_symbol_not_var_or_const()
+        {
+            var scope = new SymbolScope();
+            var funcSymbol = new FunctionSymbol("aCounter", DataType.Void, new DataType[0]);
+            scope.AddSymbol(funcSymbol);
+
+            var name = new IdentifierToken("aCounter", default);
+
+            var ast = new IdentExpressionAst(name);
+
+            var generator = ConfigureGenerator(scope, mock =>
+            {
+            });
+
+            Assert.Throws<SemanticException>(() => generator.ProcessIdentExpression(ast));
+        }
+
+        [Fact]
+        void ProcessIdentExpression_returns_type_when_constvar_ok()
+        {
+            var scope = new SymbolScope();
+            var funcSymbol = new VariableSymbol("aCounter", true, false, DataType.Long, null);
+            scope.AddSymbol(funcSymbol);
+
+            var name = new IdentifierToken("aCounter", default);
+
+            var ast = new IdentExpressionAst(name);
+
+            var generator = ConfigureGenerator(scope, mock =>
+            {
+            });
+
+            Assert.Equal(DataType.Long, generator.ProcessIdentExpression(ast));
+        }
+
+        #endregion
     }
 }
