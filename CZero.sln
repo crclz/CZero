@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CZero.Lexical.Test", "CZero
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CZero.Syntactic", "CZero.Syntactic\CZero.Syntactic.csproj", "{67E57817-558C-4626-A465-6A519244E836}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CZero.Syntactic.Test", "CZero.Syntactic.Test\CZero.Syntactic.Test.csproj", "{75476BA7-E87F-4EA6-995F-4510E6971B8F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CZero.Syntactic.Test", "CZero.Syntactic.Test\CZero.Syntactic.Test.csproj", "{75476BA7-E87F-4EA6-995F-4510E6971B8F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CZero.Intermediate", "CZero.Intermediate\CZero.Intermediate.csproj", "{4BDD3926-2DFC-43EF-A8FB-99BDAE4EBC4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{75476BA7-E87F-4EA6-995F-4510E6971B8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75476BA7-E87F-4EA6-995F-4510E6971B8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75476BA7-E87F-4EA6-995F-4510E6971B8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BDD3926-2DFC-43EF-A8FB-99BDAE4EBC4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BDD3926-2DFC-43EF-A8FB-99BDAE4EBC4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BDD3926-2DFC-43EF-A8FB-99BDAE4EBC4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BDD3926-2DFC-43EF-A8FB-99BDAE4EBC4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
