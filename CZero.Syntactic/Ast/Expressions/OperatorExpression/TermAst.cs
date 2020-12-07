@@ -12,6 +12,11 @@ namespace CZero.Syntactic.Ast.Expressions.OperatorExpression
         public FactorAst Factor { get; }
         public IReadOnlyList<(OperatorToken Op, FactorAst Factor)> OpFactors { get; }
 
+        protected TermAst()
+        {
+
+        }
+
         public TermAst(FactorAst factor, IEnumerable<(OperatorToken Op, FactorAst Factor)> opFactors)
         {
             Guard.Against.Null(factor, nameof(factor));

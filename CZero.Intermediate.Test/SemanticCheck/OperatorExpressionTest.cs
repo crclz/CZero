@@ -271,7 +271,7 @@ namespace CZero.Intermediate.Test
 
                 var generator = Configure(mock =>
                 {
-                    mock.Setup(p => p.ProcessFactor(firstFactor)).Returns(DataType.Long);
+                    mock.Setup(p => p.ProcessFactor(firstFactor)).Returns(innerType);
                     mock.Setup(p => p.ProcessFactor(fac2)).Returns(DataType.Double);
                     mock.Setup(p => p.ProcessFactor(fac3)).Returns(DataType.Long);
                 });
@@ -300,14 +300,110 @@ namespace CZero.Intermediate.Test
 
                 var generator = Configure(mock =>
                 {
-                    mock.Setup(p => p.ProcessFactor(firstFactor)).Returns(DataType.Double);
-                    mock.Setup(p => p.ProcessFactor(fac2)).Returns(DataType.Double);
-                    mock.Setup(p => p.ProcessFactor(fac3)).Returns(DataType.Double);
+                    mock.Setup(p => p.ProcessFactor(firstFactor)).Returns(innerType);
+                    mock.Setup(p => p.ProcessFactor(fac2)).Returns(innerType);
+                    mock.Setup(p => p.ProcessFactor(fac3)).Returns(innerType);
                 });
 
-                Assert.Equal(DataType.Double, generator.ProcessTerm(ast));
+                Assert.Equal(innerType, generator.ProcessTerm(ast));
             }
+        }
 
+
+
+        [Fact]
+        void ProcessWeakTerm_throw_when_first_type_not_int_or_double()
+        {
+            foreach (var innerType in Utils.GetEnumList<DataType>())
+            {
+                if (new[] { DataType.Long, DataType.Double }.Contains(innerType))
+                    continue;
+
+                var emptyList = Enumerable.Empty<(OperatorToken, TermAst)>();
+                var ast = new WeakTermAst(new Mock<TermAst>().Object, emptyList);
+
+                var generator = Configure(mock =>
+                {
+                    mock.Setup(p => p.ProcessTerm(It.IsAny<TermAst>())).Returns(innerType);
+                });
+
+                Assert.Throws<SemanticException>(() => generator.ProcessWeakTerm(ast));
+            }
+        }
+
+        [Fact]
+        void ProcessWeakTerm_returns_first_type_when_list_empty()
+        {
+            foreach (var innerType in new[] { DataType.Long, DataType.Double })
+            {
+                var emptyList = Enumerable.Empty<(OperatorToken, TermAst)>();
+                var ast = new WeakTermAst(new Mock<TermAst>().Object, emptyList);
+
+                var generator = Configure(mock =>
+                {
+                    mock.Setup(p => p.ProcessTerm(It.IsAny<TermAst>())).Returns(innerType);
+                });
+
+                Assert.Equal(innerType, generator.ProcessWeakTerm(ast));
+            }
+        }
+
+        [Fact]
+        void ProcessWeakTerm_throws_when_any_thing_in_list_not_first_type()
+        {
+            foreach (var innerType in new[] { DataType.Long, DataType.Double })
+            {
+                var opToken = new OperatorToken(Operator.Plus, default);
+
+                var term2 = new Mock<TermAst>().Object;
+                var term3 = new Mock<TermAst>().Object;
+
+                var opFactors = new[] {
+                    (opToken, term2),
+                    (opToken, term3)
+                };
+
+                var firstTerm = new Mock<TermAst>().Object;
+                var ast = new WeakTermAst(firstTerm, opFactors);
+
+                var generator = Configure(mock =>
+                {
+                    mock.Setup(p => p.ProcessTerm(firstTerm)).Returns(innerType);
+                    mock.Setup(p => p.ProcessTerm(term2)).Returns(DataType.Double);
+                    mock.Setup(p => p.ProcessTerm(term3)).Returns(DataType.Long);
+                });
+
+                Assert.Throws<SemanticException>(() => generator.ProcessWeakTerm(ast));
+            }
+        }
+
+        [Fact]
+        void ProcessWeakTerm_returns_the_type_when_list_is_ok()
+        {
+            foreach (var innerType in new[] { DataType.Long, DataType.Double })
+            {
+                var opToken = new OperatorToken(Operator.Plus, default);
+
+                var term2 = new Mock<TermAst>().Object;
+                var term3 = new Mock<TermAst>().Object;
+
+                var opFactors = new[] {
+                    (opToken, term2),
+                    (opToken, term3)
+                };
+
+                var firstTerm = new Mock<TermAst>().Object;
+                var ast = new WeakTermAst(firstTerm, opFactors);
+
+                var generator = Configure(mock =>
+                {
+                    mock.Setup(p => p.ProcessTerm(firstTerm)).Returns(innerType);
+                    mock.Setup(p => p.ProcessTerm(term2)).Returns(innerType);
+                    mock.Setup(p => p.ProcessTerm(term3)).Returns(innerType);
+                });
+
+                Assert.Equal(innerType, generator.ProcessWeakTerm(ast));
+            }
         }
 
     }

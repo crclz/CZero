@@ -83,5 +83,32 @@ namespace CZero.Intermediate
             // list check ok
             return firstType;
         }
+
+        public virtual DataType ProcessWeakTerm(WeakTermAst weak)
+        {
+            // Remember to assert each op is +|-
+            var firstType = ProcessTerm(weak.Term);
+
+            if (!DataTypeHelper.IsLongOrDouble(firstType))
+                throw new SemanticException($"first type '{firstType}' should be int or double");
+
+            if (weak.OpTerms.Count == 0)
+                return firstType;
+
+            foreach (var (op, term) in weak.OpTerms)
+            {
+                Debug.Assert(op.Value == Lexical.Tokens.Operator.Plus
+                    || op.Value == Lexical.Tokens.Operator.Minus);
+
+                var termType = ProcessTerm(term);
+                if (termType != firstType)
+                    throw new SemanticException(
+                        $"Term type '{termType}' should be equal to first type '{firstType}'");
+
+            }
+
+            // list check ok
+            return firstType;
+        }
     }
 }
