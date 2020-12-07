@@ -175,8 +175,11 @@ namespace CZero.Intermediate
             if (conditionType != DataType.Bool)
                 throw new SemanticException($"If.Condition should be of bool type");
 
+            EnterWhileDefination(new Builders.WhileBuilder(CurrentWhile));
 
             ProcessBlockStatement(whileStatement.WhileBlock);
+
+            LeaveWhileDefination();
         }
 
         public void ProcessReturnStatement(ReturnStatementAst returnStatement)
