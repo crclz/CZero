@@ -1,0 +1,37 @@
+fn main()->int{ // <main:fn>
+    // 读入一个有符号整数
+    //fn getint() -> int;
+    let a:int;// <a:int>
+    let b:double;// <b:double>
+    a = getint();
+
+    // 读入一个浮点数
+    //fn getdouble() -> double;
+    b = getdouble();
+
+    {
+        // 读入一个字符
+        //fn getchar() -> int;
+        a=getchar();
+
+        // 输出一个整数
+        //fn putint(int) -> void;
+        putint(a);
+
+        // 输出一个浮点数
+        //fn putdouble(double) -> void;
+        putdouble(b);
+    }
+    
+    // 输出一个字符
+    //fn putchar(int) -> void;
+    putchar(a);
+
+    // 将编号为这个整数的全局常量看作字符串输出
+    //fn putstr(int) -> void;
+    putstr(a);
+
+    // 输出一个换行
+    //fn putln() -> void;
+    putln();
+}
