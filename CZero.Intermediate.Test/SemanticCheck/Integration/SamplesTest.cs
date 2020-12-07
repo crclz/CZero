@@ -44,9 +44,9 @@ namespace CZero.Intermediate.Test.SemanticCheck.Integration
 
                 var ast = GetAst(sourceCode);
 
-                var scope = new SymbolScope();
+                var rootScope = new SymbolScope();
 
-                var generator = new IntermediateCodeGenerator(scope);
+                var generator = new IntermediateCodeGenerator(rootScope);
 
                 if (isBadSample)
                 {
@@ -55,6 +55,9 @@ namespace CZero.Intermediate.Test.SemanticCheck.Integration
                 else
                 {
                     generator.ProcessProgram(ast);
+
+                    // Scope are pushed and poped corrctly
+                    Assert.Equal(rootScope, generator.SymbolScope);
                 }
 
 

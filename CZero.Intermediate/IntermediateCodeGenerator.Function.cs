@@ -50,6 +50,8 @@ namespace CZero.Intermediate
 
             // All check ok
 
+            // Scope of function is created by the caller
+            ProcessBlockStatement(functionAst.BodyBlock, suppressNewScopeCreation: true);
         }
 
         public void ProcessProgram(ProgramAst programAst)
@@ -59,7 +61,11 @@ namespace CZero.Intermediate
                 if (element is DeclarationStatementAst declarationStatement)
                     ProcessDeclarationStatement(declarationStatement);
                 else if (element is FunctionAst function)
+                {
+                    SymbolScope = SymbolScope.CreateChildScope();
                     ProcessFunction(function);
+                    SymbolScope = SymbolScope.ParentScope;
+                }
                 else
                     throw new ArgumentException($"Unknown ast type of one element: {element.GetType()}");
 

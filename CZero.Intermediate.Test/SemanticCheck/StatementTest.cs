@@ -303,13 +303,15 @@ namespace CZero.Intermediate.Test.SemanticCheck
             var scope = new SymbolScope();
             var condition = new Mock<ExpressionAst>().Object;
 
+            var ifBlock = new Mock<BlockStatementAst>().Object;
             var ast = new IfStatementAst(
-                new KeywordToken(Keyword.If, default), condition, new Mock<BlockStatementAst>().Object,
+                new KeywordToken(Keyword.If, default), condition, ifBlock,
                 @else: null, null, null);
 
             var generator = ConfigureGenerator(scope, mock =>
             {
                 mock.Setup(p => p.ProcessExpression(condition)).Returns(DataType.Bool);
+                mock.Setup(p => p.ProcessBlockStatement(ifBlock, It.IsAny<bool>()));
             });
 
             generator.ProcessIfStatement(ast);
@@ -345,13 +347,15 @@ namespace CZero.Intermediate.Test.SemanticCheck
             var scope = new SymbolScope();
             var condition = new Mock<ExpressionAst>().Object;
 
+            var whileBlock = new Mock<BlockStatementAst>().Object;
             var ast = new WhileStatementAst(
                 new KeywordToken(Keyword.While, default), condition,
-                new Mock<BlockStatementAst>().Object);
+                whileBlock);
 
             var generator = ConfigureGenerator(scope, mock =>
             {
                 mock.Setup(p => p.ProcessExpression(condition)).Returns(DataType.Bool);
+                mock.Setup(p => p.ProcessBlockStatement(whileBlock, It.IsAny<bool>()));
             });
 
             generator.ProcessWhileStatement(ast);

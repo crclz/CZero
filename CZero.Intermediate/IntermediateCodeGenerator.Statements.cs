@@ -151,6 +151,20 @@ namespace CZero.Intermediate
             var conditionType = ProcessExpression(ifStatement.ConditionExpression);
             if (conditionType != DataType.Bool)
                 throw new SemanticException($"If.Condition should be of bool type");
+
+            ProcessBlockStatement(ifStatement.BlockStatement);
+
+            if (ifStatement.HasElseAndFollowing)
+            {
+                if (ifStatement.FollowingIf != null)
+                {
+                    ProcessIfStatement(ifStatement.FollowingIf);
+                }
+                else
+                {
+                    ProcessBlockStatement(ifStatement.FollowingBlock);
+                }
+            }
         }
 
         public void ProcessWhileStatement(WhileStatementAst whileStatement)
@@ -160,6 +174,9 @@ namespace CZero.Intermediate
             var conditionType = ProcessExpression(whileStatement.ConditionExpression);
             if (conditionType != DataType.Bool)
                 throw new SemanticException($"If.Condition should be of bool type");
+
+
+            ProcessBlockStatement(whileStatement.WhileBlock);
         }
 
         public void ProcessReturnStatement(ReturnStatementAst returnStatement)
@@ -180,14 +197,25 @@ namespace CZero.Intermediate
 
         }
 
-        public void ProcessBlockStatement(BlockStatementAst blockStatement)
+        public virtual void ProcessBlockStatement(BlockStatementAst blockStatement,
+            bool suppressNewScopeCreation = false)
         {
             // block_stmt -> '{' stmt* '}'
             Guard.Against.Null(blockStatement, nameof(blockStatement));
 
+            if (!suppressNewScopeCreation)
+            {
+                SymbolScope = SymbolScope.CreateChildScope();
+            }
+
             foreach (var statement in blockStatement.Statements)
             {
                 ProcessStatement(statement);
+            }
+
+            if (!suppressNewScopeCreation)
+            {
+                SymbolScope = SymbolScope.ParentScope;
             }
         }
 

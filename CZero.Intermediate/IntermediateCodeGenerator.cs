@@ -11,7 +11,7 @@ namespace CZero.Intermediate
 {
     partial class IntermediateCodeGenerator
     {
-        private SymbolScope SymbolScope { get; }
+        internal SymbolScope SymbolScope { get; set; }
 
         public FunctionSymbol CurrentFunction { get; private set; }
         public bool IsInFunction => CurrentFunction != null;

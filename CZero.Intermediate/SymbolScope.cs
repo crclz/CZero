@@ -9,7 +9,7 @@ namespace CZero.Intermediate
 {
     class SymbolScope
     {
-        private SymbolScope ParentScope { get; }
+        public SymbolScope ParentScope { get; }
 
         public bool IsRoot => ParentScope == null;
 

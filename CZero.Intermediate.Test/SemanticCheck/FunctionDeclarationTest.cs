@@ -146,15 +146,17 @@ namespace CZero.Intermediate.Test.SemanticCheck
                 new OperatorToken(Operator.Colon, default), new IdentifierToken("int", default));
             var paramList = new FunctionParamListAst(new FunctionParamAst[] { param1, param2 });
 
+            var functionBlock = new Mock<BlockStatementAst>().Object;
             var ast = new FunctionAst(
                 new KeywordToken(Keyword.Fn, default), name, new OperatorToken(Operator.LeftParen, default),
                 paramList, new OperatorToken(Operator.RightParen, default),
                 new OperatorToken(Operator.Arrow, default), returnType: new IdentifierToken("int", default),
-                new Mock<BlockStatementAst>().Object
+                functionBlock
                 );
 
             var generator = ConfigureGenerator(scope, mock =>
             {
+                mock.Setup(p => p.ProcessBlockStatement(functionBlock, It.IsAny<bool>()));
             });
 
             Assert.Throws<SemanticException>(() => generator.ProcessFunction(ast));
@@ -172,15 +174,18 @@ namespace CZero.Intermediate.Test.SemanticCheck
                 new OperatorToken(Operator.Colon, default), new IdentifierToken("int", default));
             var paramList = new FunctionParamListAst(new FunctionParamAst[] { param1 });
 
+            var functionBlock = new Mock<BlockStatementAst>().Object;
+
             var ast = new FunctionAst(
                 new KeywordToken(Keyword.Fn, default), name, new OperatorToken(Operator.LeftParen, default),
                 paramList, new OperatorToken(Operator.RightParen, default),
                 new OperatorToken(Operator.Arrow, default), returnType: new IdentifierToken("int", default),
-                new Mock<BlockStatementAst>().Object
+                functionBlock
                 );
 
             var generator = ConfigureGenerator(scope, mock =>
             {
+                mock.Setup(p => p.ProcessBlockStatement(functionBlock, It.IsAny<bool>()));
             });
 
             generator.ProcessFunction(ast);
