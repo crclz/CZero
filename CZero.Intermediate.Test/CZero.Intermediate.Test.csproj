@@ -24,4 +24,8 @@
     <ProjectReference Include="..\CZero.Intermediate\CZero.Intermediate.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="SemanticCheck\Integration\Samples\" />
+  </ItemGroup>
+
 </Project>
