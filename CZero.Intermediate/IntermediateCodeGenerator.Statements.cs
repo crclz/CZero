@@ -15,9 +15,43 @@ namespace CZero.Intermediate
 {
     partial class IntermediateCodeGenerator
     {
-        public virtual DataType ProcessStatement(StatementAst statement)
+        /*
+        stmt ->
+              expr_stmt
+            | decl_stmt
+            | if_stmt
+            | while_stmt
+            | return_stmt
+            | block_stmt
+            | empty_stmt
+            
+            | break_stmt | continue_stmt
+         */
+        public virtual void ProcessStatement(StatementAst statement)
         {
-            throw new NotImplementedException();
+            Guard.Against.Null(statement, nameof(statement));
+
+            if (statement is BreakStatementAst breakStatement)
+                ProcessBreakStatement(breakStatement);
+            else if (statement is ContinueStatementAst continueStatement)
+                ProcessContinueStatement(continueStatement);
+            else if (statement is ExpressionStatementAst expressionStatement)
+                ProcessExpressionStatement(expressionStatement);
+            else if (statement is DeclarationStatementAst declarationStatement)
+                ProcessDeclarationStatement(declarationStatement);
+            else if (statement is IfStatementAst ifStatement)
+                ProcessIfStatement(ifStatement);
+            else if (statement is WhileStatementAst whileStatement)
+                ProcessWhileStatement(whileStatement);
+            else if (statement is ReturnStatementAst returnStatement)
+                ProcessReturnStatement(returnStatement);
+            else if (statement is BlockStatementAst blockStatement)
+                ProcessBlockStatement(blockStatement);
+            else if (statement is EmptyStatementAst emptyStatement)
+                ProcessEmptyStatement(emptyStatement);
+            else
+                throw new ArgumentException($"Unknown statement type: {statement.GetType()}",
+                    nameof(statement));
         }
 
         public virtual void ProcessExpressionStatement(ExpressionStatementAst expressionStatement)
