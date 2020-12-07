@@ -165,8 +165,18 @@ namespace CZero.Intermediate
 
         public void ProcessBreakStatement(BreakStatementAst breakStatement)
         {
+            Guard.Against.Null(breakStatement, nameof(breakStatement));
+
             if (!IsInWhile)
                 throw new SemanticException($"Not in while, cannot break");
+        }
+
+        public void ProcessContinueStatement(ContinueStatementAst continueStatement)
+        {
+            Guard.Against.Null(continueStatement, nameof(continueStatement));
+
+            if (!IsInWhile)
+                throw new SemanticException($"Not in while, cannot continue");
         }
     }
 }

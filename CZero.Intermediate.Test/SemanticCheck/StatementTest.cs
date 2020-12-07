@@ -479,5 +479,41 @@ namespace CZero.Intermediate.Test.SemanticCheck
         }
 
         #endregion
+
+
+        #region Continue
+        [Fact]
+        void ProcessContinueStatement_throws_when_not_in_while()
+        {
+            var scope = new SymbolScope();
+
+            var ast = new ContinueStatementAst(
+                new KeywordToken(Keyword.Continue, default),
+                new OperatorToken(Operator.Semicolon, default));
+
+            var generator = ConfigureGenerator(scope, mock =>
+            {
+            });
+
+            Assert.Throws<SemanticException>(() => generator.ProcessContinueStatement(ast));
+        }
+
+        [Fact]
+        void ProcessContinueBreakStatement_success_when_in_while()
+        {
+            var scope = new SymbolScope();
+
+            var ast = new ContinueStatementAst(
+                new KeywordToken(Keyword.Continue, default),
+                new OperatorToken(Operator.Semicolon, default));
+
+            var generator = ConfigureGenerator(scope, mock =>
+            {
+            });
+            generator.EnterWhileDefination(new WhileBuilder(null));
+
+            generator.ProcessContinueStatement(ast);
+        }
+        #endregion
     }
 }
