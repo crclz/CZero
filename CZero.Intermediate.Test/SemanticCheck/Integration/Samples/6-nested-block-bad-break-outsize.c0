@@ -1,7 +1,11 @@
+// <bad>
 let a:int=1; // <a:int>
 let z:int;// <z:int>
 // <printf:fn> <a:int> <y:const int> <z:double>
 fn printf(a:int, const y:int, z: double) -> double {
+    
+    break;
+
     let m:int; //<m:int>
     let b:double;// <b:double>
     {
@@ -11,11 +15,7 @@ fn printf(a:int, const y:int, z: double) -> double {
         b=1.023;
         let b:int;// <b:int>
         b=1;
-        if b>m+1 {
-            ;;;;;;;
-            ;
-            ;
-            ;
+        {
             return b as double;
             b=1;
             let a:int;// <a:int>
@@ -23,29 +23,6 @@ fn printf(a:int, const y:int, z: double) -> double {
             let m:int; //<m:int>
             let b:double;// <b:double>
             b=1.023;
-            
-            while m<a+1 {
-                let a:double=3.3;// <a:double>
-                let m:double=2.5;// <m:double>
-                {
-                    break;
-                }
-
-                while 1==1 {
-                    let a:int=3;// <a:int>
-                    a=a+1;
-                }
-
-                if m==a {
-                    break;
-                    {
-                        {
-                            continue;
-                        }
-                    }
-                }
-            }
-
             return b;
 
             let main:double=3.5;//<main:double>

@@ -1,3 +1,4 @@
+// <bad>
 let a:int=1; // <a:int>
 let z:int;// <z:int>
 // <printf:fn> <a:int> <y:const int> <z:double>
@@ -38,13 +39,10 @@ fn printf(a:int, const y:int, z: double) -> double {
 
                 if m==a {
                     break;
-                    {
-                        {
-                            continue;
-                        }
-                    }
+                    continue;
                 }
             }
+            break;// wrong!
 
             return b;
 
