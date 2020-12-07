@@ -314,5 +314,47 @@ namespace CZero.Intermediate.Test.SemanticCheck
             generator.ProcessIfStatement(ast);
         }
         #endregion
+
+
+        #region While 
+
+        // while_stmt -> 'while' expr block_stmt
+
+        [Fact]
+        void ProcessWhileStatement_throws_when_condition_not_bool()
+        {
+            var scope = new SymbolScope();
+            var condition = new Mock<ExpressionAst>().Object;
+
+            var ast = new WhileStatementAst(
+                new KeywordToken(Keyword.While, default), condition,
+                new Mock<BlockStatementAst>().Object);
+
+            var generator = ConfigureGenerator(scope, mock =>
+            {
+                mock.Setup(p => p.ProcessExpression(condition)).Returns(DataType.Double);
+            });
+
+            Assert.Throws<SemanticException>(() => generator.ProcessWhileStatement(ast));
+        }
+
+        [Fact]
+        void ProcessWhileStatement_ok_when_condition_is_bool()
+        {
+            var scope = new SymbolScope();
+            var condition = new Mock<ExpressionAst>().Object;
+
+            var ast = new WhileStatementAst(
+                new KeywordToken(Keyword.While, default), condition,
+                new Mock<BlockStatementAst>().Object);
+
+            var generator = ConfigureGenerator(scope, mock =>
+            {
+                mock.Setup(p => p.ProcessExpression(condition)).Returns(DataType.Bool);
+            });
+
+            generator.ProcessWhileStatement(ast);
+        }
+        #endregion
     }
 }

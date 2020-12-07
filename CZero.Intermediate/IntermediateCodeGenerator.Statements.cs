@@ -118,5 +118,14 @@ namespace CZero.Intermediate
             if (conditionType != DataType.Bool)
                 throw new SemanticException($"If.Condition should be of bool type");
         }
+
+        public void ProcessWhileStatement(WhileStatementAst whileStatement)
+        {
+            Guard.Against.Null(whileStatement, nameof(whileStatement));
+
+            var conditionType = ProcessExpression(whileStatement.ConditionExpression);
+            if (conditionType != DataType.Bool)
+                throw new SemanticException($"If.Condition should be of bool type");
+        }
     }
 }
