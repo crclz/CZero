@@ -76,7 +76,36 @@ namespace CZero.Intermediate
 
         public virtual void ProcessConstDeclarationStatement(ConstDeclarationStatementAst constDeclaration)
         {
-            throw new NotImplementedException();
+            var name = constDeclaration.Name.Value;
+            if (SymbolScope.FindSymbolShallow(name, out Symbol existingSymbol))
+            {
+                throw new SemanticException(
+                    $"Cannot const declare because of duplicated name. " +
+                    $"Existing symbol type: {existingSymbol.GetType()}");
+            }
+
+            if (!new[] { "int", "double" }.Contains(constDeclaration.Type.Value))
+                throw new SemanticException($"Type {constDeclaration.Type.Value} should be int or double");
+
+            var declaringType = constDeclaration.Type.Value switch
+            {
+                "int" => DataType.Long,
+                "double" => DataType.Double,
+                _ => throw new Exception("Not Reached")
+            };
+
+
+            var initialExpressionType = ProcessExpression(constDeclaration.ValueExpression);
+
+            if (declaringType != initialExpressionType)
+            {
+                throw new SemanticException(
+                    $"DeclaringType: {declaringType}, InitialExpressionType: {initialExpressionType}");
+            }
+
+            // All check ok
+            var symbol = new VariableSymbol(name, SymbolScope.IsRoot, true, declaringType);
+            SymbolScope.AddSymbol(symbol);
         }
     }
 }
