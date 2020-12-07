@@ -9,5 +9,16 @@ namespace CZero.Intermediate
 {
     partial class IntermediateCodeGenerator
     {
+        private SymbolScope SymbolScope { get; }
+
+        public IntermediateCodeGenerator()
+        {
+
+        }
+
+        public IntermediateCodeGenerator(SymbolScope symbolScope)
+        {
+            SymbolScope = symbolScope ?? throw new ArgumentNullException(nameof(symbolScope));
+        }
     }
 }

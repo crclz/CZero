@@ -20,7 +20,7 @@ namespace CZero.Intermediate.Symbols
             if (isConstant && initialValue == null)
                 throw new ArgumentException("Const should have initial value");
 
-            if (initialValue != null && DataTypeHelper.IsType(initialValue, type))
+            if (initialValue != null && !DataTypeHelper.IsType(initialValue, type))
             {
                 throw new ArgumentException(
                     $"Initial value ({initialValue.GetType()}) not match data type {type}");

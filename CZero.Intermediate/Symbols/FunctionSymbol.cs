@@ -29,5 +29,20 @@ namespace CZero.Intermediate.Symbols
             ReturnType = returnType;
             ParamTypes = paramTypes.ToList();
         }
+
+        // TODO: test this function
+        public bool IsParamTypeMatch(IReadOnlyList<DataType> typeList)
+        {
+            if (typeList.Count != ParamTypes.Count)
+                return false;
+
+            for (int i = 0; i < ParamTypes.Count; i++)
+            {
+                if (ParamTypes[i] != typeList[i])
+                    return false;
+            }
+
+            return true;
+        }
     }
 }

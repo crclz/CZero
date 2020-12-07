@@ -1,4 +1,5 @@
-﻿using CZero.Intermediate.Symbols;
+﻿using Ardalis.GuardClauses;
+using CZero.Intermediate.Symbols;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,9 +12,50 @@ namespace CZero.Intermediate
         private SymbolScope ParentScope { get; }
         private Dictionary<string, Symbol> Symbols { get; } = new Dictionary<string, Symbol>();
 
+        /// <summary>
+        /// This should be used to initialize root scope
+        /// </summary>
+        public SymbolScope()
+        {
+
+        }
+
         public SymbolScope(SymbolScope parentScope)
         {
             ParentScope = parentScope ?? throw new ArgumentNullException(nameof(parentScope));
+        }
+
+        public SymbolScope CreateChildScope()
+        {
+            return new SymbolScope(this);
+        }
+
+        public void AddSymbol(VariableSymbol symbol)
+        {
+            // TODO: check if the symbol is keyword
+
+            Guard.Against.Null(symbol, nameof(symbol));
+
+            // 覆盖性：变量覆盖一切，函数不能覆盖任何
+            if (FindSymbolShallow(symbol.Name, out Symbol _))
+                throw new ArgumentException("Duplicated symbol name");
+
+            var success = Symbols.TryAdd(symbol.Name, symbol);
+            Debug.Assert(success);
+        }
+
+        public void AddSymbol(FunctionSymbol symbol)
+        {
+            // TODO: check if the symbol is keyword
+
+            Guard.Against.Null(symbol, nameof(symbol));
+            // 覆盖性：变量覆盖一切，函数不能覆盖任何
+
+            if (FindSymbolDeep(symbol.Name, out Symbol symbol1))
+                throw new ArgumentException("Duplicated symbol name");
+
+            var success = Symbols.TryAdd(symbol.Name, symbol);
+            Debug.Assert(success);
         }
 
         public bool FindSymbolShallow(string name, out Symbol symbol)
@@ -41,11 +83,14 @@ namespace CZero.Intermediate
 
             Debug.Assert(shallowSymbol == null);
 
-            if (FindSymbolDeep(name, out Symbol deepSymbol))
+            if (ParentScope != null)
             {
-                Debug.Assert(deepSymbol != null);
-                symbol = deepSymbol;
-                return true;
+                if (ParentScope.FindSymbolDeep(name, out Symbol deepSymbol))
+                {
+                    Debug.Assert(deepSymbol != null);
+                    symbol = deepSymbol;
+                    return true;
+                }
             }
 
             symbol = null;

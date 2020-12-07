@@ -1,8 +1,10 @@
-﻿using CZero.Lexical.Tokens;
+﻿using CZero.Intermediate.Symbols;
+using CZero.Lexical.Tokens;
 using CZero.Syntactic.Ast.Expressions;
 using CZero.Syntactic.Ast.Expressions.OperatorExpression;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -30,7 +32,31 @@ namespace CZero.Intermediate
 
         public virtual DataType ProcessAssignExpression(AssignExpressionAst assignExpression)
         {
-            // 沾点符号表了，所以下个阶段实现
+            // TODO: 沾点代码生成了，所以下个阶段补充
+
+            // IDENT '=' expr
+            // IDENT 是可以赋值的变量，expr是int或者double
+
+            var name = assignExpression.Identifier.Value;
+
+            if (!SymbolScope.FindSymbolDeep(assignExpression.Identifier.Value, out Symbol symbol))
+                throw new SemanticException($"Symbol name '{name}' not found");
+
+            if (!(symbol is VariableSymbol variableSymbol))
+                throw new SemanticException($"Symbol '{name}' is function symbol, cannot assign value");
+
+            if (variableSymbol.IsConstant)
+                throw new SemanticException($"Symbol '{name}' is constant, cannot assign value");
+
+            var valueType = ProcessExpression(assignExpression.Expression);
+            if (valueType != variableSymbol.Type)
+                throw new SemanticException(
+                    $"Variable '{name}' is type '{variableSymbol.Type}', but expression is '{valueType}'");
+
+            // All check ok
+
+            // TODO: 沾点代码生成了，所以下个阶段补充
+
             return DataType.Void;
         }
 
