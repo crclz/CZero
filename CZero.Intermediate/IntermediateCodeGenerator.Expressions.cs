@@ -73,30 +73,20 @@ namespace CZero.Intermediate
             if (!(symbol is FunctionSymbol functionSymbol))
                 throw new SemanticException($"Symbol '{name}' is not function, cannot call.");
 
-            if (functionSymbol.ParamTypes.Count == 0 && callExpression.HasParams)
-                throw new SemanticException($"Function '{name}' has no params, " +
-                    $"but provided {callExpression.ParamList.Parameters.Count} parameters");
+            var needCount = functionSymbol.ParamTypes.Count;
+            var providedCount = callExpression.HasParams ? callExpression.ParamList.Parameters.Count : 0;
 
-            if (functionSymbol.ParamTypes.Count > 0 && !callExpression.HasParams)
-                throw new SemanticException($"Function '{name}' needs param(s)," +
-                    $"but expression did not provide any parameters");
-
-            // 注意，现在，0:0 或者 n:m
-            if (functionSymbol.ParamTypes.Count == 0)// 0:0
-                Debug.Assert(!callExpression.HasParams);
-            else
+            if (needCount != providedCount)
             {
-                Debug.Assert(callExpression.HasParams);
-                if (functionSymbol.ParamTypes.Count != callExpression.ParamList.Parameters.Count)
-                    throw new SemanticException(
-                        $"Function '{name}' needs {functionSymbol.ParamTypes.Count} params," +
-                        $"But provided {callExpression.ParamList.Parameters.Count} params");
+                throw new SemanticException($"Function '{name}' needs {needCount} param(s)," +
+                    $"but provided {providedCount} param(s)");
             }
 
             // Now, 0:0 or n:n. Check the types when n:n
-            var providedTypes = new List<DataType>();
-            if (callExpression.HasParams)
+            if (needCount != 0)
             {
+                var providedTypes = new List<DataType>();
+
                 foreach (var parameter in callExpression.ParamList.Parameters)
                 {
                     var expressionType = ProcessExpression(parameter);
