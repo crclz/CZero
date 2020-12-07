@@ -11,6 +11,11 @@ namespace CZero.Syntactic.Ast.Expressions.OperatorExpression
         public bool IsNegative { get; }
         public StrongFactorAst StrongFactor { get; }
 
+        protected GoodFactorAst()
+        {
+
+        }
+
         public GoodFactorAst(IEnumerable<OperatorToken> negatives, StrongFactorAst strongFactor)
         {
             Guard.Against.Null(negatives, nameof(negatives));
