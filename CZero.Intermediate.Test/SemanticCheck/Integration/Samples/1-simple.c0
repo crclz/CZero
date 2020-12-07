@@ -4,10 +4,12 @@ let c:double;// <c:double>
 
 // <printf:fn> <x:int> <y:const int> <z:double>
 fn printf(x:int, const y:int, z: double) -> double {
-
+    a=-321+3+3213 as int;
+    x = x+x+x*x+y+z as int;
+    z = 3.14*10.2 + c*b;
 }
 
 // <main:fn> <m:const int> <n:const double>
 fn main(const m:int, const n:double) -> int {
-
+    a = 333 + n as int + c as int;
 }
