@@ -10,6 +10,11 @@ namespace CZero.Syntactic.Ast.Expressions.OperatorExpression
     {
         public ExpressionAst SingleExpression { get; }
 
+        protected StrongFactorAst()
+        {
+            // used for mock
+        }
+
         public StrongFactorAst(ExpressionAst singleExpression)
         {
             Guard.Against.Null(singleExpression, nameof(singleExpression));

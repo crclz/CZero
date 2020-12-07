@@ -30,5 +30,8 @@ namespace CZero.Intermediate
             var actualType = DataTypeReference[value.GetType()];
             return type == actualType;
         }
+
+        public static bool IsLongOrDouble(DataType type) =>
+            type == DataType.Double || type == DataType.Long;
     }
 }
