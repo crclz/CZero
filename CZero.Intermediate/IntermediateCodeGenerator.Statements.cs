@@ -191,6 +191,29 @@ namespace CZero.Intermediate
             // All check ok
             var symbol = new VariableSymbol(name, !IsInFunction, true, declaringType);
             SymbolScope.AddSymbol(symbol);
+
+            if (CodeGenerationEnabled)
+            {
+                if (symbol.IsGlobal)
+                {
+                    GlobalBuilder.RegisterGlobalVariable(symbol);
+
+                    symbol.GlobalVariableBuilder.LoadValueInstructions = Bucket.Pop();
+                }
+                else
+                {
+                    CurrentFunction.Builder.RegisterLocalVariable(symbol);
+
+                    // load address
+                    CurrentFunction.Builder.Bucket.Add("loca", symbol.LocalLocation.Id);
+
+                    // load init expr
+                    CurrentFunction.Builder.Bucket.AddRange(Bucket.Pop());
+
+                    // set memory value
+                    CurrentFunction.Builder.Bucket.Add("store.64");
+                }
+            }
         }
 
         public bool ProcessIfStatement(IfStatementAst ifStatement)
