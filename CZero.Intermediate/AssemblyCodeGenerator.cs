@@ -11,11 +11,11 @@ namespace CZero.Intermediate
     {
         public static List<string> Generate(GlobalBuilder globalBuilder)
         {
-            var code = new List<string>();
+            var codeLines = GenerateGlobalVars(globalBuilder);
 
-            // Global vars
-            throw new NotImplementedException();
+            codeLines.AddRange(GenerateFunctions(globalBuilder));
 
+            return codeLines;
         }
 
         public static string getString(object x)
@@ -57,6 +57,42 @@ namespace CZero.Intermediate
                 {
                     code.Add($"# not initial value");
                 }
+
+            }
+
+            return code;
+        }
+
+        public static List<string> GenerateFunctions(GlobalBuilder globalBuilder)
+        {
+            var code = new List<string>();
+
+            foreach (var f in globalBuilder.FunctionsView)
+            {
+                var paramList = "";
+                foreach (var param in f.ParamTypes)
+                    paramList += $"{param} ";
+                code.Add($"# fn {f.Name} ({paramList}) -> {f.ReturnType}");
+
+                foreach (var x in f.Builder.Arguments)
+                {
+                    var id = x.LocalLocation.Id;
+                    code.Add($"# {id} {x.Name} {x.Type} const: {x.IsConstant}");
+                }
+                code.Add("");
+
+                var occupation = f.Builder.LocalVariables.Count;
+                code.Add($"# local var occupation: {occupation}");
+                code.Add("");
+
+                // local vars
+                foreach (var lvar in f.Builder.LocalVariables)
+                {
+                    var id = lvar.LocalLocation.Id;
+                    code.Add($"# {id} {lvar.Name} {lvar.Type} const: {lvar.IsConstant}");
+                }
+
+                code.Add("");
 
             }
 

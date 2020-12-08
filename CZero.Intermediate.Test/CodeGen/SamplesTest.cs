@@ -66,7 +66,7 @@ namespace CZero.Intermediate.Test.CodeGen
 
 
                 // Generate assembly code
-                var codeLines = AssemblyCodeGenerator.GenerateGlobalVars(generator.GlobalBuilder);
+                var codeLines = AssemblyCodeGenerator.Generate(generator.GlobalBuilder);
                 var outputName = sampleFile + ".s";
                 File.WriteAllLines(outputName, codeLines);
             }
