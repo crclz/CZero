@@ -1,4 +1,5 @@
 ﻿using Ardalis.GuardClauses;
+using CZero.Intermediate.Builders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,8 @@ namespace CZero.Intermediate.Symbols
     {
         public DataType ReturnType { get; }
         public IReadOnlyList<DataType> ParamTypes { get; }
+
+        public FunctionBuilder Builder { get; set; }
 
         public FunctionSymbol(string name, DataType returnType,
             IEnumerable<DataType> paramTypes) : base(name)

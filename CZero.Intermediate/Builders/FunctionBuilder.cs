@@ -9,8 +9,36 @@ namespace CZero.Intermediate.Builders
     {
         public int Id { get; }
 
+        private List<VariableSymbol> Arguments { get; } = new List<VariableSymbol>();
         private List<VariableSymbol> LocalVariables { get; } = new List<VariableSymbol>();
-        public int LocalVariableCount => LocalVariables.Count;
 
+        public FunctionBuilder(int id)
+        {
+            Id = id;
+        }
+
+        public void RegisterArgument(VariableSymbol variable)
+        {
+            if (variable is null)
+                throw new ArgumentNullException(nameof(variable));
+
+            if (variable.IsGlobal)
+                throw new ArgumentException(nameof(variable));
+
+            variable.LocalLocation = new LocalLocation(isArgument: true, Arguments.Count);
+            Arguments.Add(variable);
+        }
+
+        public void RegisterLocalVariable(VariableSymbol variable)
+        {
+            if (variable is null)
+                throw new ArgumentNullException(nameof(variable));
+
+            if (variable.IsGlobal)
+                throw new ArgumentException(nameof(variable));
+
+            variable.LocalLocation = new LocalLocation(isArgument: false, LocalVariables.Count);
+            LocalVariables.Add(variable);
+        }
     }
 }
