@@ -11,6 +11,7 @@ namespace CZero.Intermediate.Builders
         public int Id { get; }
 
         public List<Instruction> LoadValueInstructions { get; set; }
+        public bool HasInitialValue => LoadValueInstructions != null;
 
         public GlobalVariableBuilder(int id)
         {

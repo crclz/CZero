@@ -43,7 +43,7 @@ namespace CZero.Intermediate.Test.CodeGen
         [Fact]
         void JustNoException()
         {
-            var samples = Directory.GetFiles(SampleDirectory);
+            var samples = Directory.GetFiles(SampleDirectory, "*.c0");
 
             Assert.NotEmpty(samples);
 
@@ -64,6 +64,11 @@ namespace CZero.Intermediate.Test.CodeGen
                 // Scope are pushed and poped corrctly
                 Assert.Equal(rootScope, generator.SymbolScope);
 
+
+                // Generate assembly code
+                var codeLines = AssemblyCodeGenerator.GenerateGlobalVars(generator.GlobalBuilder);
+                var outputName = sampleFile + ".s";
+                File.WriteAllLines(outputName, codeLines);
             }
 
             TestOutput.WriteLine($"{samples.Length} samples tested");

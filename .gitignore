@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# generated .s asm files
+*.s
+
 # User-specific files
 *.rsuser
 *.suo

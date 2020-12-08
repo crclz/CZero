@@ -134,7 +134,11 @@ namespace CZero.Intermediate
                 {
                     GlobalBuilder.RegisterGlobalVariable(symbol);
 
-                    symbol.GlobalVariableBuilder.LoadValueInstructions = Bucket.Pop();
+                    if (letDeclaration.HasInitialExpression)
+                    {
+                        symbol.GlobalVariableBuilder.LoadValueInstructions = Bucket.Pop();
+                        Debug.Assert(symbol.GlobalVariableBuilder.LoadValueInstructions.Count > 0);
+                    }
                 }
                 else
                 {
@@ -200,6 +204,7 @@ namespace CZero.Intermediate
                     GlobalBuilder.RegisterGlobalVariable(symbol);
 
                     symbol.GlobalVariableBuilder.LoadValueInstructions = Bucket.Pop();
+                    Debug.Assert(symbol.GlobalVariableBuilder.LoadValueInstructions.Count > 0);
                 }
                 else
                 {
