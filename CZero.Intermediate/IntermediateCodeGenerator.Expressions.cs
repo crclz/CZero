@@ -221,14 +221,39 @@ namespace CZero.Intermediate
 
             // All check ok
 
-            // TODO: 代码生成
+            if (CodeGenerationEnabled)
+            {
+                // load-variable-addr
+                if (variableSymbol.IsGlobal)
+                {
+                    var id = variableSymbol.GlobalVariableBuilder.Id;
+                    Bucket.Add(new object[] { "globa", id });
+                }
+                else
+                {
+                    if (variableSymbol.LocalLocation.IsArgument)
+                    {
+                        // 函数参数 (+1)
+                        var id = variableSymbol.LocalLocation.Id + 1;// because arg0 is ret val
+                        Bucket.Add(new object[] { "arga", id });
+                    }
+                    else
+                    {
+                        // 局部变量
+                        var id = variableSymbol.LocalLocation.Id;
+                        Bucket.Add(new object[] { "loca", id });
+                    }
+                }
+
+                // de-reference
+                Bucket.Add(Instruction.Pack("load.64"));
+            }
 
             return variableSymbol.Type;
         }
 
         public virtual DataType ProcessGroupExpression(GroupExpressionAst groupExpression)
         {
-            // TODO: 代码生成
             return ProcessExpression(groupExpression.Expression);
         }
     }

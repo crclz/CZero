@@ -28,3 +28,7 @@ call func id
 ## LiteralExpression
 字符串：把全局变量号码放在栈上
 
+## IdentExpression
+
+load-variable-addr (参考Assign)
+dereference
