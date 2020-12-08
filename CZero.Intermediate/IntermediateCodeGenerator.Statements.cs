@@ -27,7 +27,7 @@ namespace CZero.Intermediate
             
             | break_stmt | continue_stmt
          */
-        public virtual void ProcessStatement(StatementAst statement)
+        public virtual bool ProcessStatement(StatementAst statement)
         {
             Guard.Against.Null(statement, nameof(statement));
 
@@ -40,18 +40,27 @@ namespace CZero.Intermediate
             else if (statement is DeclarationStatementAst declarationStatement)
                 ProcessDeclarationStatement(declarationStatement);
             else if (statement is IfStatementAst ifStatement)
-                ProcessIfStatement(ifStatement);
+            {
+                return ProcessIfStatement(ifStatement);
+            }
             else if (statement is WhileStatementAst whileStatement)
                 ProcessWhileStatement(whileStatement);
             else if (statement is ReturnStatementAst returnStatement)
+            {
                 ProcessReturnStatement(returnStatement);
+                return true;
+            }
             else if (statement is BlockStatementAst blockStatement)
-                ProcessBlockStatement(blockStatement);
+            {
+                return ProcessBlockStatement(blockStatement);
+            }
             else if (statement is EmptyStatementAst emptyStatement)
                 ProcessEmptyStatement(emptyStatement);
             else
                 throw new ArgumentException($"Unknown statement type: {statement.GetType()}",
                     nameof(statement));
+
+            return false;
         }
 
         public virtual void ProcessExpressionStatement(ExpressionStatementAst expressionStatement)
@@ -143,8 +152,12 @@ namespace CZero.Intermediate
             SymbolScope.AddSymbol(symbol);
         }
 
-        public void ProcessIfStatement(IfStatementAst ifStatement)
+        public bool ProcessIfStatement(IfStatementAst ifStatement)
         {
+            // 能脱离函数的充要条件：
+            // 1. 是if-else结构，不是if也不是if-else-if
+            // 2. if-block可以脱离 && else-block可以脱离、
+
             Guard.Against.Null(ifStatement, nameof(ifStatement));
             // if_stmt -> 'if' expr block_stmt ('else' (block_stmt | if_stmt))?
 
@@ -152,19 +165,26 @@ namespace CZero.Intermediate
             if (conditionType != DataType.Bool)
                 throw new SemanticException($"If.Condition should be of bool type");
 
-            ProcessBlockStatement(ifStatement.BlockStatement);
+            var canReturn1 = ProcessBlockStatement(ifStatement.BlockStatement);
+            bool canReturn2 = false;
 
             if (ifStatement.HasElseAndFollowing)
             {
                 if (ifStatement.FollowingIf != null)
                 {
+                    // if-else-if
                     ProcessIfStatement(ifStatement.FollowingIf);
                 }
                 else
                 {
-                    ProcessBlockStatement(ifStatement.FollowingBlock);
+                    // if-else
+                    canReturn2 = ProcessBlockStatement(ifStatement.FollowingBlock);
+
+                    return canReturn1 && canReturn2;
                 }
             }
+
+            return false;
         }
 
         public void ProcessWhileStatement(WhileStatementAst whileStatement)
@@ -200,7 +220,7 @@ namespace CZero.Intermediate
 
         }
 
-        public virtual void ProcessBlockStatement(BlockStatementAst blockStatement,
+        public virtual bool ProcessBlockStatement(BlockStatementAst blockStatement,
             bool suppressNewScopeCreation = false)
         {
             // block_stmt -> '{' stmt* '}'
@@ -211,15 +231,20 @@ namespace CZero.Intermediate
                 SymbolScope = SymbolScope.CreateChildScope();
             }
 
+            bool blockCanReturn = false;
+
             foreach (var statement in blockStatement.Statements)
             {
-                ProcessStatement(statement);
+                bool canReturn = ProcessStatement(statement);
+                blockCanReturn |= canReturn;
             }
 
             if (!suppressNewScopeCreation)
             {
                 SymbolScope = SymbolScope.ParentScope;
             }
+
+            return blockCanReturn;
         }
 
         public void ProcessEmptyStatement(EmptyStatementAst emptyStatement)

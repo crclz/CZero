@@ -185,7 +185,7 @@ namespace CZero.Intermediate.Test.SemanticCheck
 
             var generator = ConfigureGenerator(scope, mock =>
             {
-                mock.Setup(p => p.ProcessBlockStatement(functionBlock, It.IsAny<bool>()));
+                mock.Setup(p => p.ProcessBlockStatement(functionBlock, It.IsAny<bool>())).Returns(false);
             });
 
             generator.ProcessFunction(ast);

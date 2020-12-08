@@ -19,6 +19,8 @@ namespace CZero.Intermediate
         public WhileBuilder CurrentWhile { get; private set; }
         public bool IsInWhile => CurrentWhile != null;
 
+        public bool ReturnCheckEnabled { get; set; } = false;
+
         public IntermediateCodeGenerator()
         {
 

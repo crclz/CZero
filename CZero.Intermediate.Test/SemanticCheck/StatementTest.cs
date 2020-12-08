@@ -311,7 +311,7 @@ namespace CZero.Intermediate.Test.SemanticCheck
             var generator = ConfigureGenerator(scope, mock =>
             {
                 mock.Setup(p => p.ProcessExpression(condition)).Returns(DataType.Bool);
-                mock.Setup(p => p.ProcessBlockStatement(ifBlock, It.IsAny<bool>()));
+                mock.Setup(p => p.ProcessBlockStatement(ifBlock, It.IsAny<bool>())).Returns(false);
             });
 
             generator.ProcessIfStatement(ast);
@@ -355,7 +355,7 @@ namespace CZero.Intermediate.Test.SemanticCheck
             var generator = ConfigureGenerator(scope, mock =>
             {
                 mock.Setup(p => p.ProcessExpression(condition)).Returns(DataType.Bool);
-                mock.Setup(p => p.ProcessBlockStatement(whileBlock, It.IsAny<bool>()));
+                mock.Setup(p => p.ProcessBlockStatement(whileBlock, It.IsAny<bool>())).Returns(false);
             });
 
             generator.ProcessWhileStatement(ast);

@@ -71,7 +71,10 @@ namespace CZero.Intermediate
 
             EnterFunctionDefination(functionSymbol);
             // Scope of function is created by the caller
-            ProcessBlockStatement(functionAst.BodyBlock, suppressNewScopeCreation: true);
+            var canReturn = ProcessBlockStatement(functionAst.BodyBlock, suppressNewScopeCreation: true);
+
+            if (!canReturn && ReturnCheckEnabled)
+                throw new SemanticException($"Cannot leave function {functionAst.Name.Value}");
 
             LeaveFunctionDefination();
         }
