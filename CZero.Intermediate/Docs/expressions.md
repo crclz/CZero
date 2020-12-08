@@ -15,4 +15,11 @@ load-variable-addr:
 3. 局部变量
 
 ## Call Expression
-call_expr
+
+print(a1,a2,a3)
+
+ret-space
+load-a1 (这三个都是自动的)
+load-a2
+load-a3
+call func id

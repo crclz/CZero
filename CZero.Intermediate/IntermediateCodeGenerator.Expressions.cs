@@ -92,10 +92,17 @@ namespace CZero.Intermediate
             return DataType.Void;
         }
 
+        public IReadOnlyDictionary<string, string> StdLibReference = new Dictionary<string, string>
+        {
+            {"getint","scan.i" },{"getdouble", "scan.f"},{"getchar", "scan.c"},
+            { "putint", "print.i"},{ "putdouble", "print.f"},{ "putchar","print.c" },
+            { "putstr","print.s"},{ "putln","println"}
+        };
+
+        public bool IsStdLibCall(string s) => StdLibReference.ContainsKey(s);
+
         public virtual DataType ProcessCallExpression(CallExpressionAst callExpression)
         {
-            // TODO: 沾点代码生成了，所以下个阶段补充
-
             var name = callExpression.Identifier.Value;
 
             if (!SymbolScope.FindSymbolDeep(name, out Symbol symbol))
@@ -103,6 +110,10 @@ namespace CZero.Intermediate
 
             if (!(symbol is FunctionSymbol functionSymbol))
                 throw new SemanticException($"Symbol '{name}' is not function, cannot call.");
+
+            // ret-space: 如果是stdlibs，不需要预留空间
+            if (CodeGenerationEnabled && !IsStdLibCall(functionSymbol.Name))
+                Bucket.Add(new object[] { "push", (long)0 });
 
             var needCount = functionSymbol.ParamTypes.Count;
             var providedCount = callExpression.HasParams ? callExpression.ParamList.Parameters.Count : 0;
@@ -131,8 +142,24 @@ namespace CZero.Intermediate
             }
 
 
-            // Function types check ok
-            // TODO: 沾点代码生成了，所以下个阶段补充
+            // call func id
+            if (CodeGenerationEnabled)
+            {
+                if (!IsStdLibCall(functionSymbol.Name))
+                {
+                    var funcId = functionSymbol.Builder.Id;
+                    Bucket.Add(Instruction.Pack("call", funcId));
+                }
+                else
+                {
+                    // stdlib calls
+
+                    var opcode = StdLibReference[functionSymbol.Name];
+                    Debug.Assert(opcode != null);
+
+                    Bucket.Add(new Instruction(opcode));
+                }
+            }
 
             return functionSymbol.ReturnType;
         }

@@ -37,5 +37,11 @@ namespace CZero.Intermediate.Instructions
         {
             return new Instruction(parts);
         }
+
+        public static Instruction Pack(params object[] parts)
+        {
+            return new Instruction(parts);
+        }
+
     }
 }
