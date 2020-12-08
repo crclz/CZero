@@ -49,13 +49,13 @@ namespace CZero.Intermediate.Test.CodeGen.Expressions
 
                 Stack.Add(instruction[1]);
             }
-            else if (Regex.IsMatch(opcode, "^(add)|(sub)|(mul)|(div)\\.i|f$"))
+            else if (Regex.IsMatch(opcode, "^(add|sub|mul|div)\\.(i|f)$"))
             {
                 var typec = opcode[4];
                 if (typec == 'i')
                 {
-                    long i1 = PopStack<long>();
                     long i2 = PopStack<long>();
+                    long i1 = PopStack<long>();
 
                     switch (opcode[..3])
                     {
@@ -76,8 +76,8 @@ namespace CZero.Intermediate.Test.CodeGen.Expressions
                 }
                 else
                 {
-                    var f1 = PopStack<double>();
                     var f2 = PopStack<double>();
+                    var f1 = PopStack<double>();
 
                     switch (opcode[..3])
                     {
@@ -122,8 +122,8 @@ namespace CZero.Intermediate.Test.CodeGen.Expressions
             }
             else if (opcode == "cmp.i")
             {
-                var i1 = PopStack<long>();
                 var i2 = PopStack<long>();
+                var i1 = PopStack<long>();
 
                 long delta = 0;
                 if (i1 > i2) delta = 1;
@@ -133,8 +133,8 @@ namespace CZero.Intermediate.Test.CodeGen.Expressions
             }
             else if (opcode == "cmp.f")
             {
-                var f1 = PopStack<double>();
                 var f2 = PopStack<double>();
+                var f1 = PopStack<double>();
 
                 long delta = 0;
                 if (f1 > f2) delta = 1;
@@ -151,6 +151,24 @@ namespace CZero.Intermediate.Test.CodeGen.Expressions
             {
                 var f1 = PopStack<double>();
                 Stack.Add(-f1);
+            }
+            else if (opcode == "set.gt")
+            {
+                var x = PopStack<long>();
+                if (x > 0)
+                    x = 1;
+                else
+                    x = 0;
+                Stack.Add(x);
+            }
+            else if (opcode == "set.lt")
+            {
+                var x = PopStack<long>();
+                if (x < 0)
+                    x = 1;
+                else
+                    x = 0;
+                Stack.Add(x);
             }
             else
                 throw new Exception($"Unknown opcode {opcode}");

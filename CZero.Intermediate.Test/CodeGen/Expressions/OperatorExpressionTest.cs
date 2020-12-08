@@ -42,10 +42,13 @@ namespace CZero.Intermediate.Test.CodeGen.Expressions
         [Fact]
         void TestExpressionSamples()
         {
-            foreach (var (src, r) in OperatorExpressionTestStage1.SampleList1)
+            var samples = new List<(string, object)>();
+            samples.AddRange(OperatorExpressionTestStage1.SampleList1);
+            samples.AddRange(OperatorExpressionTestStage1.SamplesWithNegative);
+
+            foreach (var (src, r) in samples)
             {
                 var instructions = Generate(src);
-                //instructions = Generate("0-2313121");
 
                 var nvam = new Nvam(instructions);
 
