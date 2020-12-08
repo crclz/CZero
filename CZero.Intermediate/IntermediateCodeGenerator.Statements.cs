@@ -1,4 +1,5 @@
 ﻿using Ardalis.GuardClauses;
+using CZero.Intermediate.Instructions;
 using CZero.Intermediate.Symbols;
 using CZero.Lexical.Tokens;
 using CZero.Syntactic.Ast.Expressions;
@@ -229,11 +230,36 @@ namespace CZero.Intermediate
             if (conditionType != DataType.Bool)
                 throw new SemanticException($"If.Condition should be of bool type");
 
-            var canReturn1 = ProcessBlockStatement(ifStatement.BlockStatement);
+            // codegen: cond-expr
+            if (CodeGenerationEnabled)
+            {
+                CurrentFunction.Builder.Bucket.AddRange(Bucket.Pop());
+            }
+
+            bool canReturn1 = false;
             bool canReturn2 = false;
 
             if (ifStatement.HasElseAndFollowing)
             {
+                var else0 = new Instruction("nop");
+                var done0 = new Instruction("nop");
+
+                // jmp-if-false .ELSE0
+                if (CodeGenerationEnabled)
+                    CurrentFunction.Builder.Bucket.Add(new object[] { "br.false", else0 });
+
+                // if-block
+                canReturn1 = ProcessBlockStatement(ifStatement.BlockStatement);
+
+                // jmp .DONE0
+                if (CodeGenerationEnabled)
+                    CurrentFunction.Builder.Bucket.Add(new object[] { "br", done0 });
+
+                // .ELSE0: nop
+                if (CodeGenerationEnabled)
+                    CurrentFunction.Builder.Bucket.Add(else0);
+
+                // else-block
                 if (ifStatement.FollowingIf != null)
                 {
                     // if-else-if
@@ -245,7 +271,24 @@ namespace CZero.Intermediate
                     canReturn2 = ProcessBlockStatement(ifStatement.FollowingBlock);
                 }
 
+                // .DONE0: nop
+                if (CodeGenerationEnabled)
+                    CurrentFunction.Builder.Bucket.Add(done0);
+
                 return canReturn1 && canReturn2;
+            }
+            else
+            {
+                var doneInstruction = new Instruction("nop");
+                if (CodeGenerationEnabled)
+                    CurrentFunction.Builder.Bucket.Add(new object[] { "br.false", doneInstruction });
+
+                // if-block
+                canReturn1 = ProcessBlockStatement(ifStatement.BlockStatement);
+
+                // .DONE
+                if (CodeGenerationEnabled)
+                    CurrentFunction.Builder.Bucket.Add(doneInstruction);
             }
 
             return false;
