@@ -21,6 +21,9 @@ namespace CZero.Intermediate
 
         public bool ReturnCheckEnabled { get; set; } = false;
 
+        public bool CodeGenerationEnabled { get; set; } = false;
+        public Bucket Bucket = new Bucket();
+
         public IntermediateCodeGenerator()
         {
 

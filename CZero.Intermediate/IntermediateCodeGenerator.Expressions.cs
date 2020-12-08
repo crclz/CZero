@@ -111,17 +111,46 @@ namespace CZero.Intermediate
 
         public virtual DataType ProcessLiteralExpression(LiteralExpressionAst literalExpression)
         {
-            if (literalExpression.Literal is UInt64LiteralToken)
+
+            if (literalExpression.Literal is UInt64LiteralToken intLiteral)
+            {
+                if (CodeGenerationEnabled)
+                {
+                    Bucket.Add("push", (long)intLiteral.Value);
+                }
                 return DataType.Long;
-            if (literalExpression.Literal is DoubleLiteralToken)
+            }
+            if (literalExpression.Literal is DoubleLiteralToken doubleLiteral)
+            {
+                if (CodeGenerationEnabled)
+                {
+                    Bucket.Add("push", doubleLiteral.Value);
+
+                }
                 return DataType.Double;
+            }
             if (literalExpression.Literal is StringLiteralToken)
+            {
+                // 字符串应该存全局变量，并把地址放在栈上
+                if (CodeGenerationEnabled)
+                {
+                    throw new NotImplementedException();
+
+                }
+
                 return DataType.String;
-            if (literalExpression.Literal is CharLiteralToken)
+            }
+            if (literalExpression.Literal is CharLiteralToken charLiteral)
+            {
+                if(CodeGenerationEnabled)
+                {
+                    Bucket.Add("push", (long)charLiteral.Value);
+                }
+
                 return DataType.Char;
+            }
             throw new ArgumentException($"Unknown literal token type: {literalExpression.GetType()}");
 
-            // TODO: 沾点代码生成了，所以下个阶段补充. 应该把字面量load到栈上
         }
 
         public virtual DataType ProcessIdentExpression(IdentExpressionAst identExpression)

@@ -1,4 +1,5 @@
 ﻿using Ardalis.GuardClauses;
+using CZero.Lexical.Tokens;
 using CZero.Syntactic.Ast.Expressions;
 using CZero.Syntactic.Ast.Expressions.OperatorExpression;
 using System;
@@ -42,34 +43,57 @@ namespace CZero.Intermediate
             if (goodFactor.IsNegative && !DataTypeHelper.IsLongOrDouble(strongFactorType))
                 throw new SemanticException($"{strongFactorType} cannot be negative");
 
+            if (CodeGenerationEnabled)
+            {
+                if (goodFactor.IsNegative)
+                {
+                    Debug.Assert(DataTypeHelper.IsLongOrDouble(strongFactorType));
+                    var negativeOperation = "neg." + DataTypeHelper.Suffix(strongFactorType);
+                    Bucket.Add(negativeOperation);
+                }
+            }
+
             return strongFactorType;
         }
 
         public virtual DataType ProcessFactor(FactorAst factor)
         {
-            var type = ProcessGoodFactor(factor.GoodFactor);
+            var firstType = ProcessGoodFactor(factor.GoodFactor);
 
             if (factor.AsTypeList.Count == 0)
-                return type;
+                return firstType;
 
-            if (!DataTypeHelper.IsLongOrDouble(type))
+            if (!DataTypeHelper.IsLongOrDouble(firstType))
             {
-                throw new SemanticException($"Inner type '{type}' is not double or int");
+                throw new SemanticException($"First type '{firstType}' is not double or int");
             }
+
+            var type = firstType;
 
             foreach (var a in factor.AsTypeList)
             {
+                DataType t2;
                 switch (a.TypeToken.Value)
                 {
                     case "int":
-                        type = DataType.Long;
+                        t2 = DataType.Long;
                         break;
                     case "double":
-                        type = DataType.Double;
+                        t2 = DataType.Double;
                         break;
                     default:
                         throw new SemanticException($"Wrong type cast: {a.TypeToken.Value}");
                 }
+
+                if (CodeGenerationEnabled)
+                {
+                    var src = DataTypeHelper.Suffix(type);
+                    var dst = DataTypeHelper.Suffix(t2);
+
+                    Bucket.Add(src + "to" + dst);
+                }
+
+                type = t2;
             }
 
             return type;
@@ -85,6 +109,8 @@ namespace CZero.Intermediate
             if (!DataTypeHelper.IsLongOrDouble(firstType))
                 throw new SemanticException($"First factor type {firstType} is not int or double");
 
+            char suffix = DataTypeHelper.Suffix(firstType);
+
             foreach (var (op, factor) in term.OpFactors)
             {
                 Debug.Assert(op.Value == Lexical.Tokens.Operator.Mult
@@ -93,6 +119,14 @@ namespace CZero.Intermediate
                 var factorType = ProcessFactor(factor);
                 if (factorType != firstType)
                     throw new SemanticException($"Factor type '{factorType}' should equal to first type '{firstType}'");
+
+                if (CodeGenerationEnabled)
+                {
+                    if (op.Value == Lexical.Tokens.Operator.Mult)
+                        Bucket.Add("mul." + suffix);
+                    else
+                        Bucket.Add("div." + suffix);
+                }
             }
 
             // list check ok
@@ -110,6 +144,7 @@ namespace CZero.Intermediate
             if (!DataTypeHelper.IsLongOrDouble(firstType))
                 throw new SemanticException($"first type '{firstType}' should be int or double");
 
+            char suffix = DataTypeHelper.Suffix(firstType);
 
             foreach (var (op, term) in weak.OpTerms)
             {
@@ -121,6 +156,13 @@ namespace CZero.Intermediate
                     throw new SemanticException(
                         $"Term type '{termType}' should be equal to first type '{firstType}'");
 
+                if (CodeGenerationEnabled)
+                {
+                    if (op.Value == Lexical.Tokens.Operator.Plus)
+                        Bucket.Add("add." + suffix);
+                    else
+                        Bucket.Add("sub." + suffix);
+                }
             }
 
             // list check ok
@@ -152,8 +194,41 @@ namespace CZero.Intermediate
                     $"A weak term '{weakTermType}' in list not matching first type '{firstType}'");
 
             // Check ok. Now comparing.
+            var typec = DataTypeHelper.Suffix(firstType);
 
-            // TODO: Code generation
+            if (CodeGenerationEnabled)
+            {
+                // first do cmp, approx. (a-b)
+                Bucket.Add("cmp." + typec);
+
+                switch (op.Value)
+                {
+                    case Operator.GreaterThan:
+                        Bucket.Add("set.gt");
+                        break;
+                    case Operator.LessThan:
+                        Bucket.Add("set.lt");
+                        break;
+                    case Operator.GreaterEqual:
+                        // >= equivalent to (not <)
+                        Bucket.Add("set.lt");
+                        Bucket.Add("not");
+                        break;
+                    case Operator.LessEqual:
+                        // <= equivalent to (not >)
+                        Bucket.Add("set.gt");
+                        Bucket.Add("not");
+                        break;
+                    case Operator.Equal:
+                        Bucket.Add("not");
+                        break;
+                    case Operator.NotEqual:
+                        // if not equal, a-b is not 0. (not 0 is true)
+                        break;
+                    default:
+                        throw new Exception("Not Reached");
+                };
+            }
 
             return DataType.Bool;
         }

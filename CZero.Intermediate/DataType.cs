@@ -44,5 +44,15 @@ namespace CZero.Intermediate
         {
             return new[] { "int", "double" }.Contains(s);
         }
+
+        public static char Suffix(DataType type)
+        {
+            return type switch
+            {
+                DataType.Long => 'i',
+                DataType.Double => 'f',
+                _ => throw new ArgumentException()
+            };
+        }
     }
 }
