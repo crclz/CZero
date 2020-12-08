@@ -302,11 +302,32 @@ namespace CZero.Intermediate
             if (conditionType != DataType.Bool)
                 throw new SemanticException($"If.Condition should be of bool type");
 
+            var doneLabel = new Instruction("nop");
+
+            var startLabel = new Instruction("nop");
+            if (CodeGenerationEnabled)
+                CurrentFunction.Builder.Bucket.Add(startLabel);
+
+            // cond-expr
+            if (CodeGenerationEnabled)
+                CurrentFunction.Builder.Bucket.AddRange(Bucket.Pop());
+
+            // jump(if false) to done
+            if (CodeGenerationEnabled)
+                CurrentFunction.Builder.Bucket.Add(new object[] { "br", doneLabel });
+
+            // # while-block
             EnterWhileDefination(new Builders.WhileBuilder(CurrentWhile));
-
             ProcessBlockStatement(whileStatement.WhileBlock);
-
             LeaveWhileDefination();
+
+            // jmp .START
+            if (CodeGenerationEnabled)
+                CurrentFunction.Builder.Bucket.Add(startLabel);
+
+            // .DONE:nop
+            if (CodeGenerationEnabled)
+                CurrentFunction.Builder.Bucket.Add(doneLabel);
         }
 
         public void ProcessReturnStatement(ReturnStatementAst returnStatement)
