@@ -51,7 +51,7 @@ namespace CZero.Syntactic.Test.AnalyzerTest
             }
         }
 
-        internal static List<(string Source, object Value)> SampleList1 = new List<(string, object)>
+        public static List<(string Source, object Value)> SampleList1 = new List<(string, object)>
         {
             ("1",1), ("123",123), ("23141123",23141123),("0",0),
             ("1+1",1+1),("123132+213123",123132+213123),("8882331+2813812",8882331+2813812),
@@ -87,7 +87,7 @@ namespace CZero.Syntactic.Test.AnalyzerTest
         }
 
 
-        internal static List<(string Source, object Value)> SamplesWithNegative = new List<(string, object)>
+        public static List<(string Source, object Value)> SamplesWithNegative = new List<(string, object)>
         {
             ("-1",-1), ("-(-123)",-(-123)), ("-(-(-23141123))",-(-(-23141123))),("-(-0)",-(-0)),
             ("-1+1",-1+1),("-123132+213123",-123132+213123),("-8882331+2813812",-8882331+2813812),

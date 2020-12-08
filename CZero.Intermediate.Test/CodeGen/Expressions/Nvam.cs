@@ -11,6 +11,7 @@ namespace CZero.Intermediate.Test.CodeGen.Expressions
         private List<object[]> Instructions { get; }
 
         private List<object> Stack { get; } = new List<object>();
+        public IReadOnlyList<object> StackView => Stack.AsReadOnly();
 
         public int Cursor { get; private set; } = 0;
 

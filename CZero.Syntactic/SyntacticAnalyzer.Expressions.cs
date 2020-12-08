@@ -3,8 +3,10 @@ using CZero.Syntactic.Ast.Expressions;
 using CZero.Syntactic.Ast.Expressions.OperatorExpression;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
+[assembly:InternalsVisibleTo("CZero.Intermediate.Test")]
 namespace CZero.Syntactic
 {
     public partial class SyntacticAnalyzer
