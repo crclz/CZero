@@ -166,7 +166,6 @@ namespace CZero.Intermediate
 
         public virtual DataType ProcessLiteralExpression(LiteralExpressionAst literalExpression)
         {
-
             if (literalExpression.Literal is UInt64LiteralToken intLiteral)
             {
                 if (CodeGenerationEnabled)
@@ -186,11 +185,14 @@ namespace CZero.Intermediate
             }
             if (literalExpression.Literal is StringLiteralToken)
             {
-                // 字符串应该存全局变量，并把地址放在栈上
+                // 字符串应该存全局变量，并把地址（划掉）应该把全局变量号放在栈上
                 if (CodeGenerationEnabled)
                 {
-                    throw new NotImplementedException();
+                    var symbol = new VariableSymbol(Guid.NewGuid().ToString(), true, true, DataType.String);
+                    GlobalBuilder.RegisterGlobalVariable(symbol);
+                    var id = symbol.GlobalVariableBuilder.Id;
 
+                    Bucket.Add(Instruction.Pack("push", (long)id));
                 }
 
                 return DataType.String;

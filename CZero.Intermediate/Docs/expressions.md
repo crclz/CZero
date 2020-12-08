@@ -23,3 +23,8 @@ load-a1 (这三个都是自动的)
 load-a2
 load-a3
 call func id
+
+
+## LiteralExpression
+字符串：把全局变量号码放在栈上
+
