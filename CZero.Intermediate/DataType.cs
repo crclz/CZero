@@ -17,10 +17,17 @@ namespace CZero.Intermediate
         public static bool IsLongOrDouble(DataType type) =>
             type == DataType.Double || type == DataType.Long;
 
-        public static bool IsValidParamType(DataType type)
+        public static bool IsValidDefParamType(DataType type)
         {
             Guard.Against.OutOfRange(type, nameof(type));
             return type == DataType.Long || type == DataType.Double;
+        }
+
+        public static bool IsValidIncomingParamType(DataType type)
+        {
+            Guard.Against.OutOfRange(type, nameof(type));
+            return type == DataType.Long || type == DataType.Double
+                || type == DataType.String || type == DataType.Char;
         }
 
         public static bool IsValidReturnType(DataType type)

@@ -34,4 +34,6 @@ fn main()->int{ // <main:fn>
     // 输出一个换行
     //fn putln() -> void;
     putln();
+
+    return 0;
 }

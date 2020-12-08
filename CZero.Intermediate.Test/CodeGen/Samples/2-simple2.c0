@@ -1,0 +1,16 @@
+let a:int=1;
+
+fn printf(x:int, const y:int, z: double) -> double {
+    x=1;
+    z=1.11 + x as double;
+    return z;
+}
+
+let c:double;
+
+
+fn main(const m:int, const n:double) -> int {
+    return n as int;
+}
+
+const b: double=2.5;

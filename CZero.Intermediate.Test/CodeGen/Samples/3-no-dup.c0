@@ -1,0 +1,16 @@
+let a:int=1;
+let z:int;
+
+fn printf(a:int, const printf2:int, z: double) -> void {
+    a = a+1+1*2*z as int;
+    return;
+}
+
+let y:double;
+
+fn main(const m:int, const y:double, const b:int) -> int {
+    return m * y as int * b*10086;
+}
+
+const b: double=2.5;
+

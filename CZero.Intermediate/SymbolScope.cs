@@ -137,11 +137,11 @@ namespace CZero.Intermediate
 
             // 输出一个字符
             //fn putchar(int) -> void;
-            _addFuncSym(new FunctionSymbol("putchar", DataType.Void, new[] { DataType.Long }));
+            _addFuncSym(new FunctionSymbol("putchar", DataType.Void, new[] { DataType.Char }));
 
             // 将编号为这个整数的全局常量看作字符串输出
             //fn putstr(int) -> void;
-            _addFuncSym(new FunctionSymbol("putstr", DataType.Void, new[] { DataType.Long }));
+            _addFuncSym(new FunctionSymbol("putstr", DataType.Void, new[] { DataType.String }));
 
             // 输出一个换行
             //fn putln() -> void;

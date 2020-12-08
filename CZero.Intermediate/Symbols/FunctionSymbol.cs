@@ -25,7 +25,7 @@ namespace CZero.Intermediate.Symbols
 
             foreach (var paramType in paramTypes)
             {
-                if (!DataTypeHelper.IsValidParamType(paramType))
+                if (!DataTypeHelper.IsValidIncomingParamType(paramType))
                     throw new ArgumentException(nameof(paramTypes));
             }
 

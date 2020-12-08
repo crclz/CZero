@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="CodeGen\Samples\" />
     <Folder Include="SemanticCheck\Integration\Samples\" />
   </ItemGroup>
 
