@@ -1,4 +1,5 @@
 ﻿using Ardalis.GuardClauses;
+using CZero.Intermediate.Instructions;
 using CZero.Intermediate.Symbols;
 using CZero.Lexical.Tokens;
 using CZero.Syntactic.Ast.Expressions;
@@ -36,8 +37,6 @@ namespace CZero.Intermediate
 
         public virtual DataType ProcessAssignExpression(AssignExpressionAst assignExpression)
         {
-            // TODO: 沾点代码生成了，所以下个阶段补充
-
             // IDENT '=' expr
             // IDENT 是可以赋值的变量，expr是int或者double
 
@@ -59,7 +58,36 @@ namespace CZero.Intermediate
 
             // All check ok
 
-            // TODO: 沾点代码生成了，所以下个阶段补充
+            if (CodeGenerationEnabled)
+            {
+                // load-variable-addr
+                if (variableSymbol.IsGlobal)
+                {
+                    var id = variableSymbol.GlobalVariableBuilder.Id;
+                    CurrentFunction.Builder.Bucket.Add(new object[] { "globa", id });
+                }
+                else
+                {
+                    if (variableSymbol.LocalLocation.IsArgument)
+                    {
+                        // 函数参数 (+1)
+                        var id = variableSymbol.LocalLocation.Id + 1;// because arg0 is ret val
+                        CurrentFunction.Builder.Bucket.Add(new object[] { "arga", id });
+                    }
+                    else
+                    {
+                        // 局部变量
+                        var id = variableSymbol.LocalLocation.Id;
+                        CurrentFunction.Builder.Bucket.Add(new object[] { "loca", id });
+                    }
+                }
+
+                // value-expr
+                CurrentFunction.Builder.Bucket.AddRange(Bucket.Pop());
+
+                // store.64
+                CurrentFunction.Builder.Bucket.Add(new Instruction("store.64"));
+            }
 
             return DataType.Void;
         }
