@@ -1,4 +1,5 @@
 ﻿using CZero.Intermediate.Builders;
+using CZero.Intermediate.Instructions;
 using CZero.Intermediate.Symbols;
 using CZero.Lexical.Tokens;
 using CZero.Syntactic.Ast;
@@ -86,7 +87,7 @@ namespace CZero.Intermediate.Test.CodeGen
             // Assert
             var instructions = generator.Bucket.Pop();
             Assert.Single(instructions);
-            Assert.Equal("pop", instructions[0].Single());
+            Assert.Equal("pop", instructions[0].Parts.Single());
 
         }
 
@@ -107,8 +108,8 @@ namespace CZero.Intermediate.Test.CodeGen
                 mock.Setup(p => p.ProcessExpression(expr)).Returns(DataType.Long);
             });
 
-            var ins1 = new object[] { "push", 111L };
-            generator.Bucket.AddInstruction(ins1);// this is initial value expr
+            var ins1 = new Instruction(new object[] { "push", 111L });
+            generator.Bucket.Add(ins1);// this is initial value expr
 
             // Act
             generator.ProcessLetDeclarationStatement(ast);
@@ -150,7 +151,7 @@ namespace CZero.Intermediate.Test.CodeGen
             generator.EnterFunctionDefination(function);
 
             var ins1 = new object[] { "push", 111L };
-            generator.Bucket.AddInstruction(ins1);// this is initial value expr
+            generator.Bucket.Add(ins1);// this is initial value expr
 
             // Act
             generator.ProcessLetDeclarationStatement(ast);
@@ -170,9 +171,9 @@ namespace CZero.Intermediate.Test.CodeGen
 
             var funcBody = function.Builder.Bucket.InstructionList;
             Assert.Equal(3, funcBody.Count);
-            AssertJsonEqual(new object[] { "loca", 0 }, funcBody[0]);
-            AssertJsonEqual(ins1, funcBody[1]);
-            AssertJsonEqual(new object[] { "store.64" }, funcBody[2]);
+            AssertJsonEqual(new object[] { "loca", 0 }, funcBody[0].Parts);
+            AssertJsonEqual(ins1, funcBody[1].Parts);
+            AssertJsonEqual(new object[] { "store.64" }, funcBody[2].Parts);
         }
     }
 }

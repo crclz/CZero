@@ -1,4 +1,5 @@
 ﻿using Ardalis.GuardClauses;
+using CZero.Intermediate.Instructions;
 using CZero.Syntactic;
 using System;
 using System.Collections.Generic;
@@ -8,39 +9,31 @@ namespace CZero.Intermediate.Builders
 {
     class Bucket
     {
-        public List<object[]> InstructionList { get; set; } = new List<object[]>();
+        public List<Instruction> InstructionList { get; set; } = new List<Instruction>();
 
-        public void Add(string singleOpCode)
+        public void AddSingle(string singleOpCode)
         {
             Guard.Against.Null(singleOpCode, nameof(singleOpCode));
-            Add(new object[] { singleOpCode });
+            Add(new Instruction(new object[] { singleOpCode }));
         }
 
-        public void Add(params object[] instruction)
+        public void Add(Instruction instruction)
         {
             Guard.Against.Null(instruction, nameof(instruction));
-            Guard.Against.NullElement(instruction, nameof(instruction));
 
             InstructionList.Add(instruction);
         }
 
-        public void AddInstruction(object[] instruction)
+        public void AddRange(List<Instruction> instructions)
         {
-            Guard.Against.Null(instruction, nameof(instruction));
-            Guard.Against.NullElement(instruction, nameof(instruction));
-
-            InstructionList.Add(instruction);
+            foreach (var instruction in instructions)
+                Add(instruction);
         }
 
-        public void AddRange(List<object[]> instructions)
-        {
-            InstructionList.AddRange(instructions);
-        }
-
-        public List<object[]> Pop()
+        public List<Instruction> Pop()
         {
             var instructions = InstructionList;
-            InstructionList = new List<object[]>();
+            InstructionList = new List<Instruction>();
             return instructions;
         }
     }

@@ -1,4 +1,5 @@
-﻿using CZero.Intermediate.Symbols;
+﻿using CZero.Intermediate.Instructions;
+using CZero.Intermediate.Symbols;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,7 +10,7 @@ namespace CZero.Intermediate.Builders
     {
         public int Id { get; }
 
-        public List<object[]> LoadValueInstructions { get; set; }
+        public List<Instruction> LoadValueInstructions { get; set; }
 
         public GlobalVariableBuilder(int id)
         {

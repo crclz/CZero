@@ -49,7 +49,7 @@ namespace CZero.Intermediate
                 {
                     Debug.Assert(DataTypeHelper.IsLongOrDouble(strongFactorType));
                     var negativeOperation = "neg." + DataTypeHelper.Suffix(strongFactorType);
-                    Bucket.Add(negativeOperation);
+                    Bucket.AddSingle(negativeOperation);
                 }
             }
 
@@ -90,7 +90,7 @@ namespace CZero.Intermediate
                     var src = DataTypeHelper.Suffix(type);
                     var dst = DataTypeHelper.Suffix(t2);
 
-                    Bucket.Add(src + "to" + dst);
+                    Bucket.AddSingle(src + "to" + dst);
                 }
 
                 type = t2;
@@ -123,9 +123,9 @@ namespace CZero.Intermediate
                 if (CodeGenerationEnabled)
                 {
                     if (op.Value == Lexical.Tokens.Operator.Mult)
-                        Bucket.Add("mul." + suffix);
+                        Bucket.AddSingle("mul." + suffix);
                     else
-                        Bucket.Add("div." + suffix);
+                        Bucket.AddSingle("div." + suffix);
                 }
             }
 
@@ -159,9 +159,9 @@ namespace CZero.Intermediate
                 if (CodeGenerationEnabled)
                 {
                     if (op.Value == Lexical.Tokens.Operator.Plus)
-                        Bucket.Add("add." + suffix);
+                        Bucket.AddSingle("add." + suffix);
                     else
-                        Bucket.Add("sub." + suffix);
+                        Bucket.AddSingle("sub." + suffix);
                 }
             }
 
@@ -199,28 +199,28 @@ namespace CZero.Intermediate
             if (CodeGenerationEnabled)
             {
                 // first do cmp, approx. (a-b)
-                Bucket.Add("cmp." + typec);
+                Bucket.AddSingle("cmp." + typec);
 
                 switch (op.Value)
                 {
                     case Operator.GreaterThan:
-                        Bucket.Add("set.gt");
+                        Bucket.AddSingle("set.gt");
                         break;
                     case Operator.LessThan:
-                        Bucket.Add("set.lt");
+                        Bucket.AddSingle("set.lt");
                         break;
                     case Operator.GreaterEqual:
                         // >= equivalent to (not <)
-                        Bucket.Add("set.lt");
-                        Bucket.Add("not");
+                        Bucket.AddSingle("set.lt");
+                        Bucket.AddSingle("not");
                         break;
                     case Operator.LessEqual:
                         // <= equivalent to (not >)
-                        Bucket.Add("set.gt");
-                        Bucket.Add("not");
+                        Bucket.AddSingle("set.gt");
+                        Bucket.AddSingle("not");
                         break;
                     case Operator.Equal:
-                        Bucket.Add("not");
+                        Bucket.AddSingle("not");
                         break;
                     case Operator.NotEqual:
                         // if not equal, a-b is not 0. (not 0 is true)

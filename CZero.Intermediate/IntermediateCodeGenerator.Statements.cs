@@ -74,7 +74,7 @@ namespace CZero.Intermediate
             {
                 if (expressionReturnType != DataType.Void)
                 {
-                    Bucket.Add("pop");
+                    Bucket.AddSingle("pop");
                 }
             }
         }
@@ -140,7 +140,7 @@ namespace CZero.Intermediate
                     CurrentFunction.Builder.RegisterLocalVariable(symbol);
 
                     // load address
-                    CurrentFunction.Builder.Bucket.Add("loca", symbol.LocalLocation.Id);
+                    CurrentFunction.Builder.Bucket.Add(new object[] { "loca", symbol.LocalLocation.Id });
 
                     if (letDeclaration.HasInitialExpression)
                     {
@@ -150,11 +150,11 @@ namespace CZero.Intermediate
                     else
                     {
                         // load zero value
-                        CurrentFunction.Builder.Bucket.Add("push", (long)0);
+                        CurrentFunction.Builder.Bucket.Add(new object[] { "push", (long)0 });
                     }
 
                     // set memory value
-                    CurrentFunction.Builder.Bucket.Add("store.64");
+                    CurrentFunction.Builder.Bucket.AddSingle("store.64");
                 }
             }
         }
@@ -205,13 +205,13 @@ namespace CZero.Intermediate
                     CurrentFunction.Builder.RegisterLocalVariable(symbol);
 
                     // load address
-                    CurrentFunction.Builder.Bucket.Add("loca", symbol.LocalLocation.Id);
+                    CurrentFunction.Builder.Bucket.Add(new object[] { "loca", symbol.LocalLocation.Id });
 
                     // load init expr
                     CurrentFunction.Builder.Bucket.AddRange(Bucket.Pop());
 
                     // set memory value
-                    CurrentFunction.Builder.Bucket.Add("store.64");
+                    CurrentFunction.Builder.Bucket.AddSingle("store.64");
                 }
             }
         }

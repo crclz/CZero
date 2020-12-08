@@ -116,7 +116,7 @@ namespace CZero.Intermediate
             {
                 if (CodeGenerationEnabled)
                 {
-                    Bucket.Add("push", (long)intLiteral.Value);
+                    Bucket.Add(new object[] { "push", (long)intLiteral.Value });
                 }
                 return DataType.Long;
             }
@@ -124,7 +124,7 @@ namespace CZero.Intermediate
             {
                 if (CodeGenerationEnabled)
                 {
-                    Bucket.Add("push", doubleLiteral.Value);
+                    Bucket.Add(new object[] { "push", doubleLiteral.Value });
 
                 }
                 return DataType.Double;
@@ -142,9 +142,9 @@ namespace CZero.Intermediate
             }
             if (literalExpression.Literal is CharLiteralToken charLiteral)
             {
-                if(CodeGenerationEnabled)
+                if (CodeGenerationEnabled)
                 {
-                    Bucket.Add("push", (long)charLiteral.Value);
+                    Bucket.Add(new object[] { "push", (long)charLiteral.Value });
                 }
 
                 return DataType.Char;

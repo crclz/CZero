@@ -1,4 +1,5 @@
-﻿using CZero.Intermediate.Symbols;
+﻿using CZero.Intermediate.Instructions;
+using CZero.Intermediate.Symbols;
 using CZero.Lexical;
 using CZero.Syntactic;
 using CZero.Syntactic.Ast;
@@ -17,7 +18,7 @@ namespace CZero.Intermediate.Test.CodeGen.Expressions
 {
     public class OperatorExpressionTest
     {
-        public static List<object[]> Generate(string sourceCode)
+        static List<Instruction> Generate(string sourceCode)
         {
             var lexer = new Lexer(sourceCode);
             var tokens = lexer.Parse().ToList();

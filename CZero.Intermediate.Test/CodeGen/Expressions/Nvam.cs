@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CZero.Intermediate.Instructions;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -8,7 +9,7 @@ namespace CZero.Intermediate.Test.CodeGen.Expressions
 {
     class Nvam
     {
-        private List<object[]> Instructions { get; }
+        private List<Instruction> Instructions { get; }
 
         private List<object> Stack { get; } = new List<object>();
         public IReadOnlyList<object> StackView => Stack.AsReadOnly();
@@ -17,7 +18,7 @@ namespace CZero.Intermediate.Test.CodeGen.Expressions
 
         public bool ReachedEnd => Cursor >= Instructions.Count;
 
-        public Nvam(List<object[]> instructions)
+        public Nvam(List<Instruction> instructions)
         {
             Instructions = instructions;
         }
@@ -37,7 +38,7 @@ namespace CZero.Intermediate.Test.CodeGen.Expressions
             if (ReachedEnd)
                 throw new InvalidOperationException();
 
-            var instruction = Instructions[Cursor];
+            var instruction = Instructions[Cursor].Parts;
 
             if (!(instruction[0] is string opcode))
                 throw new InvalidOperationException($"BadOpCode '{instruction[0]}'");
