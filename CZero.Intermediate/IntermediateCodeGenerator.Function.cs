@@ -77,6 +77,10 @@ namespace CZero.Intermediate
                 throw new SemanticException($"Cannot leave function {functionAst.Name.Value}");
 
             LeaveFunctionDefination();
+
+            // implecit void returning
+            if (CodeGenerationEnabled)
+                CurrentFunction.Builder.Bucket.Add(new Instructions.Instruction("ret"));
         }
 
         public void ProcessProgram(ProgramAst programAst)
