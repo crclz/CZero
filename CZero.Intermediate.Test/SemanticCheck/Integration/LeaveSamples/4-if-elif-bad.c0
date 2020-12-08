@@ -1,0 +1,9 @@
+// <bad>
+fn main() -> int {
+    let a:int=3;
+    if a==300{
+        return 1;
+    } else if a== 600{
+        return 3;
+    }
+}
