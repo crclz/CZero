@@ -339,6 +339,10 @@ namespace CZero.Intermediate
             if (!IsInFunction)
                 throw new SemanticException($"Cannot return out side of function defination");
 
+            // load-retval-addr
+            if (CodeGenerationEnabled)
+                CurrentFunction.Builder.Bucket.Add(new object[] { "arga", 0 });
+
             DataType actualReturnType;
             if (returnStatement.ReturnExpression != null)
                 actualReturnType = ProcessExpression(returnStatement.ReturnExpression);
@@ -351,6 +355,20 @@ namespace CZero.Intermediate
                     $"Should return {CurrentFunction.ReturnType}, but return {actualReturnType}");
             }
 
+            // returning-expr;
+            if (actualReturnType == DataType.Void)
+                Debug.Assert(Bucket.InstructionList.Count == 0);
+
+            if (CodeGenerationEnabled)
+                CurrentFunction.Builder.Bucket.AddRange(Bucket.Pop());
+
+            // write-retval
+            if (CodeGenerationEnabled)
+                CurrentFunction.Builder.Bucket.Add(new Instruction("store.64"));
+
+            // ret
+            if (CodeGenerationEnabled)
+                CurrentFunction.Builder.Bucket.Add(new Instruction("ret"));
         }
 
         public virtual bool ProcessBlockStatement(BlockStatementAst blockStatement,
