@@ -155,8 +155,8 @@ namespace CZero.Intermediate
         public bool ProcessIfStatement(IfStatementAst ifStatement)
         {
             // 能脱离函数的充要条件：
-            // 1. 是if-else结构，不是if也不是if-else-if
-            // 2. if-block可以脱离 && else-block可以脱离、
+            // 1. 不能只有if, 要有else。只有if 相当于 可能脱离。“可能”视为0.
+            // 2. if-block可以脱离 && else也可以脱离
 
             Guard.Against.Null(ifStatement, nameof(ifStatement));
             // if_stmt -> 'if' expr block_stmt ('else' (block_stmt | if_stmt))?
@@ -173,15 +173,15 @@ namespace CZero.Intermediate
                 if (ifStatement.FollowingIf != null)
                 {
                     // if-else-if
-                    ProcessIfStatement(ifStatement.FollowingIf);
+                    canReturn2 = ProcessIfStatement(ifStatement.FollowingIf);
                 }
                 else
                 {
                     // if-else
                     canReturn2 = ProcessBlockStatement(ifStatement.FollowingBlock);
-
-                    return canReturn1 && canReturn2;
                 }
+
+                return canReturn1 && canReturn2;
             }
 
             return false;
@@ -211,11 +211,16 @@ namespace CZero.Intermediate
             if (!IsInFunction)
                 throw new SemanticException($"Cannot return out side of function defination");
 
-            var expressionType = ProcessExpression(returnStatement.ReturnExpression);
-            if (expressionType != CurrentFunction.ReturnType)
+            DataType actualReturnType;
+            if (returnStatement.ReturnExpression != null)
+                actualReturnType = ProcessExpression(returnStatement.ReturnExpression);
+            else
+                actualReturnType = DataType.Void;
+
+            if (actualReturnType != CurrentFunction.ReturnType)
             {
                 throw new SemanticException(
-                    $"Should return {CurrentFunction.ReturnType}, but return {expressionType}");
+                    $"Should return {CurrentFunction.ReturnType}, but return {actualReturnType}");
             }
 
         }

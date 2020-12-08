@@ -24,10 +24,10 @@ namespace CZero.Intermediate
             if (SymbolScope.FindSymbolDeep(functionAst.Name.Value, out Symbol symbol))
                 throw new SemanticException($"Symbol already exist: {symbol.Name}, {symbol.GetType()}");
 
-            if (!new[] { "int", "double" }.Contains(functionAst.ReturnType.Value))
+            if (!new[] { "int", "double", "void" }.Contains(functionAst.ReturnType.Value))
                 throw new SemanticException($"Bad returning type: {functionAst.ReturnType.Value}");
 
-            var returnType = DataTypeHelper.ParseLongOrDouble(functionAst.ReturnType.Value);
+            var returnType = DataTypeHelper.ParseIntDoubleVoid(functionAst.ReturnType.Value);
 
             // Add function to scope
             var paramTypeList = new List<DataType>();
@@ -73,7 +73,7 @@ namespace CZero.Intermediate
             // Scope of function is created by the caller
             var canReturn = ProcessBlockStatement(functionAst.BodyBlock, suppressNewScopeCreation: true);
 
-            if (!canReturn && ReturnCheckEnabled)
+            if (!canReturn && ReturnCheckEnabled && returnType != DataType.Void)
                 throw new SemanticException($"Cannot leave function {functionAst.Name.Value}");
 
             LeaveFunctionDefination();

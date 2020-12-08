@@ -2,9 +2,9 @@
 let a:int=1; // <a:int>
 let z:int;// <z:int>
 // <printf:fn> <a:int> <printf2:const int> <z:double>
-fn printf(a:int, const printf2:int, z: double) -> double {
+fn printf(a:int, const printf2:int, z: double) -> void {
     a = a+1+1*2*z as int;
-    return z*100.0;
+    return;
 }
 
 let y:double;// <y:double>

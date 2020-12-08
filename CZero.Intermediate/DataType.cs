@@ -29,13 +29,14 @@ namespace CZero.Intermediate
             return type == DataType.Long || type == DataType.Double || type == DataType.Void;
         }
 
-        public static DataType ParseLongOrDouble(string s)
+        public static DataType ParseIntDoubleVoid(string s)
         {
             return s switch
             {
                 "int" => DataType.Long,
                 "double" => DataType.Double,
-                _ => throw new ArgumentException($"'{s}' is neither int nor double.", nameof(s))
+                "void" => DataType.Void,
+                _ => throw new ArgumentException($"'{s}' is not int/double/void.", nameof(s))
             };
         }
 

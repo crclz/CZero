@@ -1,0 +1,40 @@
+fn main()->int{
+    {
+        return -1;
+    }
+    let a:int=2345;
+}
+
+fn print() -> int {
+    let a:int;
+
+    if a == 1000 {
+        return 1;
+    }
+
+    return 2;
+}
+
+fn print2() -> int {
+    let a:int;
+
+    if a == 1000 {
+        return 1;
+    }
+    else {
+        let a:double=3.5;
+        return 2;
+    }
+}
+
+fn print3() -> int {
+    let a:int;
+
+    if a == 1000 {
+        return 1;
+    } else if a==2000 {
+        return 2;
+    } else {
+        return 3;
+    }
+}
