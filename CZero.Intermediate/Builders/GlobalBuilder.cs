@@ -9,7 +9,10 @@ namespace CZero.Intermediate.Builders
     class GlobalBuilder
     {
         private List<FunctionSymbol> Functions { get; } = new List<FunctionSymbol>();
+        public IReadOnlyList<FunctionSymbol> FunctionsView => Functions.AsReadOnly();
+
         private List<VariableSymbol> GlobalVariables { get; } = new List<VariableSymbol>();
+        public IReadOnlyList<VariableSymbol> GlobalVariablesView => GlobalVariables.AsReadOnly();
 
         public void RegisterFunction(FunctionSymbol function)
         {

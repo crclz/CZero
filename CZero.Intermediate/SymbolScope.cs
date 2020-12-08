@@ -11,7 +11,7 @@ namespace CZero.Intermediate
     {
         public SymbolScope ParentScope { get; }
 
-        public bool IsRoot => ParentScope == null;
+        //public bool IsRoot => ParentScope == null;
 
         private Dictionary<string, Symbol> Symbols { get; } = new Dictionary<string, Symbol>();
 

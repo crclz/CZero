@@ -9,7 +9,7 @@ namespace CZero.Intermediate.Builders
     {
         public int Id { get; }
 
-        public IList<object[]> LoadValueInstructions { get; }
+        public List<object[]> LoadValueInstructions { get; set; }
 
         public GlobalVariableBuilder(int id)
         {

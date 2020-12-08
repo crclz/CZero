@@ -24,6 +24,8 @@ namespace CZero.Intermediate
         public bool CodeGenerationEnabled { get; set; } = false;
         public Bucket Bucket = new Bucket();
 
+        public GlobalBuilder GlobalBuilder = new GlobalBuilder();
+
         public IntermediateCodeGenerator()
         {
 

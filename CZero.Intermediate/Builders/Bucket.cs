@@ -8,7 +8,7 @@ namespace CZero.Intermediate.Builders
 {
     class Bucket
     {
-        private List<object[]> InstructionList { get; set; } = new List<object[]>();
+        public List<object[]> InstructionList { get; set; } = new List<object[]>();
 
         public void Add(string singleOpCode)
         {
@@ -22,6 +22,19 @@ namespace CZero.Intermediate.Builders
             Guard.Against.NullElement(instruction, nameof(instruction));
 
             InstructionList.Add(instruction);
+        }
+
+        public void AddInstruction(object[] instruction)
+        {
+            Guard.Against.Null(instruction, nameof(instruction));
+            Guard.Against.NullElement(instruction, nameof(instruction));
+
+            InstructionList.Add(instruction);
+        }
+
+        public void AddRange(List<object[]> instructions)
+        {
+            InstructionList.AddRange(instructions);
         }
 
         public List<object[]> Pop()

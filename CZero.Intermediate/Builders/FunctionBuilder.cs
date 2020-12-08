@@ -9,8 +9,10 @@ namespace CZero.Intermediate.Builders
     {
         public int Id { get; }
 
-        private List<VariableSymbol> Arguments { get; } = new List<VariableSymbol>();
-        private List<VariableSymbol> LocalVariables { get; } = new List<VariableSymbol>();
+        public List<VariableSymbol> Arguments { get; } = new List<VariableSymbol>();
+        public List<VariableSymbol> LocalVariables { get; } = new List<VariableSymbol>();
+
+        public Bucket Bucket { get; } = new Bucket();
 
         public FunctionBuilder(int id)
         {

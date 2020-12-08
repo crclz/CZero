@@ -69,7 +69,14 @@ namespace CZero.Intermediate
 
             var expressionReturnType = ProcessExpression(expressionStatement.Expression);
 
-            // TODO: 代码生成，如果不是返回void，则丢弃栈顶的值
+            // 代码生成，如果不是返回void，则丢弃栈顶的值
+            if (CodeGenerationEnabled)
+            {
+                if (expressionReturnType != DataType.Void)
+                {
+                    Bucket.Add("pop");
+                }
+            }
         }
 
         public virtual void ProcessDeclarationStatement(DeclarationStatementAst declarationStatement)
@@ -114,8 +121,42 @@ namespace CZero.Intermediate
             }
 
             // Add to symbol table
-            var symbol = new VariableSymbol(name, isGlobal: SymbolScope.IsRoot, isConstant: false, declaringType);
+            var symbol = new VariableSymbol(name, isGlobal: !IsInFunction, isConstant: false, declaringType);
             SymbolScope.AddSymbol(symbol);
+
+            if (CodeGenerationEnabled)
+            {
+                if (!letDeclaration.HasInitialExpression)
+                    Debug.Assert(Bucket.InstructionList.Count == 0);
+
+                if (symbol.IsGlobal)
+                {
+                    GlobalBuilder.RegisterGlobalVariable(symbol);
+
+                    symbol.GlobalVariableBuilder.LoadValueInstructions = Bucket.Pop();
+                }
+                else
+                {
+                    CurrentFunction.Builder.RegisterLocalVariable(symbol);
+
+                    // load address
+                    CurrentFunction.Builder.Bucket.Add("loca", symbol.LocalLocation.Id);
+
+                    if (letDeclaration.HasInitialExpression)
+                    {
+                        // load init expr
+                        CurrentFunction.Builder.Bucket.AddRange(Bucket.Pop());
+                    }
+                    else
+                    {
+                        // load zero value
+                        CurrentFunction.Builder.Bucket.Add("push", (long)0);
+                    }
+
+                    // set memory value
+                    CurrentFunction.Builder.Bucket.Add("store.64");
+                }
+            }
         }
 
         public virtual void ProcessConstDeclarationStatement(ConstDeclarationStatementAst constDeclaration)
@@ -148,7 +189,7 @@ namespace CZero.Intermediate
             }
 
             // All check ok
-            var symbol = new VariableSymbol(name, SymbolScope.IsRoot, true, declaringType);
+            var symbol = new VariableSymbol(name, !IsInFunction, true, declaringType);
             SymbolScope.AddSymbol(symbol);
         }
 
