@@ -314,8 +314,14 @@ namespace CZero.Intermediate
             Guard.Against.Null(whileStatement, nameof(whileStatement));
 
             var conditionType = ProcessExpression(whileStatement.ConditionExpression);
-            if (conditionType != DataType.Bool)
-                throw new SemanticException($"If.Condition should be of bool type");
+
+            if (!(conditionType == DataType.Bool ||
+                conditionType == DataType.Double ||
+                conditionType == DataType.Long))
+            {
+                throw new SemanticException(
+                    $"While condition should be of bool, double or long type. Provided: {conditionType}");
+            }
 
             var doneLabel = new Instruction("nop");
 
@@ -332,8 +338,10 @@ namespace CZero.Intermediate
                 CurrentFunction.Builder.Bucket.Add(new object[] { "br.false", doneLabel });
 
             // # while-block
-            EnterWhileDefination(new Builders.WhileBuilder(CurrentWhile));
+            EnterWhileDefination(new Builders.WhileBuilder(CurrentWhile, startLabel, doneLabel));
+
             ProcessBlockStatement(whileStatement.WhileBlock);
+
             LeaveWhileDefination();
 
             // jmp .START
@@ -442,6 +450,12 @@ namespace CZero.Intermediate
 
             if (!IsInWhile)
                 throw new SemanticException($"Not in while, cannot break");
+
+            // jmp CurrentWhile.Done
+            Debug.Assert(CurrentWhile.DoneLabel != null);
+
+            if (CodeGenerationEnabled)
+                CurrentFunction.Builder.Bucket.Add(Instruction.Pack("br", CurrentWhile.DoneLabel));
         }
 
         public void ProcessContinueStatement(ContinueStatementAst continueStatement)
@@ -450,6 +464,12 @@ namespace CZero.Intermediate
 
             if (!IsInWhile)
                 throw new SemanticException($"Not in while, cannot continue");
+
+            // jmp CurrentWhile.Start
+            Debug.Assert(CurrentWhile.StartLabel != null);
+
+            if (CodeGenerationEnabled)
+                CurrentFunction.Builder.Bucket.Add(Instruction.Pack("br", CurrentWhile.StartLabel));
         }
     }
 }

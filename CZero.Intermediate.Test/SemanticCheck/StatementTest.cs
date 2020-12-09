@@ -1,4 +1,5 @@
 ﻿using CZero.Intermediate.Builders;
+using CZero.Intermediate.Instructions;
 using CZero.Intermediate.Symbols;
 using CZero.Lexical.Tokens;
 using CZero.Syntactic.Ast;
@@ -324,7 +325,7 @@ namespace CZero.Intermediate.Test.SemanticCheck
         // while_stmt -> 'while' expr block_stmt
 
         [Fact]
-        void ProcessWhileStatement_throws_when_condition_not_bool()
+        void ProcessWhileStatement_throws_when_condition_not_bool_double_int()
         {
             var scope = new SymbolScope();
             var condition = new Mock<ExpressionAst>().Object;
@@ -335,7 +336,7 @@ namespace CZero.Intermediate.Test.SemanticCheck
 
             var generator = ConfigureGenerator(scope, mock =>
             {
-                mock.Setup(p => p.ProcessExpression(condition)).Returns(DataType.Double);
+                mock.Setup(p => p.ProcessExpression(condition)).Returns(DataType.String);
             });
 
             Assert.Throws<SemanticException>(() => generator.ProcessWhileStatement(ast));
@@ -474,10 +475,13 @@ namespace CZero.Intermediate.Test.SemanticCheck
                 new KeywordToken(Keyword.Break, default),
                 new OperatorToken(Operator.Semicolon, default));
 
+            var startLabel = new Instruction("nop");
+            var doneLabel = new Instruction("nop");
+
             var generator = ConfigureGenerator(scope, mock =>
             {
             });
-            generator.EnterWhileDefination(new WhileBuilder(null));
+            generator.EnterWhileDefination(new WhileBuilder(null, startLabel, doneLabel));
 
             generator.ProcessBreakStatement(ast);
         }
@@ -514,7 +518,11 @@ namespace CZero.Intermediate.Test.SemanticCheck
             var generator = ConfigureGenerator(scope, mock =>
             {
             });
-            generator.EnterWhileDefination(new WhileBuilder(null));
+
+            var startLabel = new Instruction("nop");
+            var doneLabel = new Instruction("nop");
+
+            generator.EnterWhileDefination(new WhileBuilder(null, startLabel, doneLabel));
 
             generator.ProcessContinueStatement(ast);
         }

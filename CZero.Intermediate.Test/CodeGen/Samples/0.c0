@@ -9,8 +9,22 @@ fn print_args_when_has_return(a:int,b:int,c:int) -> int {
     putint(b);
     putchar(' ');
 
+
+    while 'A' {
+        break;
+    }
+
+    while 123 {
+        break;
+    }
+
+    while 123.06 {
+        break;
+    }
+
     putint(c);
     putchar(' ');
+
 
     putln();
     return 0;
