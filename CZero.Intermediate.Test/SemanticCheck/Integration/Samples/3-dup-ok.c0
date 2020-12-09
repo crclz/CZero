@@ -1,4 +1,4 @@
-//<bad>
+// not bad! can bu duplicated
 let a:int=1; // <a:int>
 let z:int;// <z:int>
 // <printf:fn> <a:int> <printf:const int> <z:double>

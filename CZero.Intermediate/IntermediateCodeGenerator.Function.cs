@@ -53,6 +53,12 @@ namespace CZero.Intermediate
                 GlobalBuilder.RegisterFunction(functionSymbol);
             }
 
+            // Create scope
+            SymbolScope = SymbolScope.CreateChildScope();
+
+            // for testing
+            functionSymbol.BodyBlockScope = SymbolScope;
+
             EnterFunctionDefination(functionSymbol);
             {
                 // register params
@@ -81,20 +87,18 @@ namespace CZero.Intermediate
                     }
                 }
 
-
-                // Scope of function is created by the caller
                 var canReturn = ProcessBlockStatement(functionAst.BodyBlock, suppressNewScopeCreation: true);
 
                 if (!canReturn && ReturnCheckEnabled && returnType != DataType.Void)
                     throw new SemanticException($"Cannot leave function {functionAst.Name.Value}");
 
+                // implecit void returning
+                if (CodeGenerationEnabled && returnType == DataType.Void)
+                    CurrentFunction.Builder.Bucket.Add(new Instructions.Instruction("ret"));
+
             }
-
-            // implecit void returning
-            if (CodeGenerationEnabled && returnType == DataType.Void)
-                CurrentFunction.Builder.Bucket.Add(new Instructions.Instruction("ret"));
-
             LeaveFunctionDefination();
+            SymbolScope = SymbolScope.ParentScope;
         }
 
         public void ProcessProgram(ProgramAst programAst)
@@ -105,9 +109,7 @@ namespace CZero.Intermediate
                     ProcessDeclarationStatement(declarationStatement);
                 else if (element is FunctionAst function)
                 {
-                    SymbolScope = SymbolScope.CreateChildScope();
                     ProcessFunction(function);
-                    SymbolScope = SymbolScope.ParentScope;
                 }
                 else
                     throw new ArgumentException($"Unknown ast type of one element: {element.GetType()}");

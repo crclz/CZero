@@ -14,6 +14,13 @@ namespace CZero.Intermediate.Symbols
 
         public FunctionBuilder Builder { get; set; }
 
+
+        /// <summary>
+        /// For testing purpose
+        /// </summary>
+        public SymbolScope BodyBlockScope { get; set; }
+
+
         public FunctionSymbol(string name, DataType returnType,
             IEnumerable<DataType> paramTypes) : base(name)
         {

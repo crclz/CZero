@@ -105,7 +105,7 @@ namespace CZero.Intermediate.Test.SemanticCheck
         }
 
         [Fact]
-        void Function_throws_when_any_param_name_exist_in_shallow()
+        void Function_success_when_some_param_name_exist_in_shallow()
         {
             var name = new IdentifierToken("SendRequest", default);
 
@@ -119,18 +119,21 @@ namespace CZero.Intermediate.Test.SemanticCheck
                 new OperatorToken(Operator.Colon, default), new IdentifierToken("int", default));
             var paramList = new FunctionParamListAst(new FunctionParamAst[] { param1, param2 });
 
+            var bodyBlock = new Mock<BlockStatementAst>().Object;
+
             var ast = new FunctionAst(
                 new KeywordToken(Keyword.Fn, default), name, new OperatorToken(Operator.LeftParen, default),
                 paramList, new OperatorToken(Operator.RightParen, default),
                 new OperatorToken(Operator.Arrow, default), returnType: new IdentifierToken("int", default),
-                new Mock<BlockStatementAst>().Object
+                bodyBlock
                 );
 
             var generator = ConfigureGenerator(scope, mock =>
             {
+                mock.Setup(p => p.ProcessBlockStatement(bodyBlock, It.IsAny<bool>())).Returns(true);
             });
 
-            Assert.Throws<SemanticException>(() => generator.ProcessFunction(ast));
+            generator.ProcessFunction(ast);
         }
 
         [Fact]
@@ -192,13 +195,6 @@ namespace CZero.Intermediate.Test.SemanticCheck
 
             // Assert
 
-            // params
-            Assert.True(scope.FindSymbolShallow(param1.Name.Value, out Symbol sym1));
-            var var1 = Assert.IsType<VariableSymbol>(sym1);
-            Assert.Equal(param1.IsConstant, var1.IsConstant);
-            Assert.False(var1.IsGlobal);
-            Assert.Equal(DataType.Long, var1.Type);
-            Assert.Equal(param1.Name.Value, var1.Name);
 
             // self
             Assert.True(scope.FindSymbolShallow(ast.Name.Value, out Symbol symx));
@@ -206,6 +202,16 @@ namespace CZero.Intermediate.Test.SemanticCheck
             Assert.Equal(DataType.Long, funcSym.ReturnType);
             Assert.Equal(DataType.Long, funcSym.ParamTypes.Single());
 
+            // params
+            Assert.True(scope.FindSymbolShallow(name.Value, out Symbol s0));
+            scope = (s0 as FunctionSymbol).BodyBlockScope;
+
+            Assert.True(scope.FindSymbolShallow(param1.Name.Value, out Symbol sym1));
+            var var1 = Assert.IsType<VariableSymbol>(sym1);
+            Assert.Equal(param1.IsConstant, var1.IsConstant);
+            Assert.False(var1.IsGlobal);
+            Assert.Equal(DataType.Long, var1.Type);
+            Assert.Equal(param1.Name.Value, var1.Name);
         }
     }
 }

@@ -1,0 +1,15 @@
+fn initA() -> int {
+    return 3+3;
+}
+
+fn k() -> int {
+    return 3+3;
+}
+
+
+fn main() -> int {
+    k();
+    return 0;
+}
+
+const a:int=initA();
