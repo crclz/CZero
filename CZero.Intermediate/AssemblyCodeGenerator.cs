@@ -14,9 +14,9 @@ namespace CZero.Intermediate
         {
             var codeLines = GenerateGlobalVars(globalBuilder);
 
+            codeLines.Add("# ==================================== # ");
             codeLines.Add("");
-            codeLines.Add("");
-            codeLines.Add("__START__");
+            codeLines.Add(".START");
             codeLines.AddRange(GenerateStartFunction(globalBuilder));
 
             codeLines.AddRange(GenerateFunctions(globalBuilder));
@@ -37,11 +37,12 @@ namespace CZero.Intermediate
             foreach (var v in globalBuilder.GlobalVariablesView)
             {
                 code.Add("");
-                code.Add("");
-                code.Add($"# id: {v.GlobalVariableBuilder.Id}");
-                code.Add($"# name: {v.Name}");
-                code.Add($"# const: {v.IsConstant}");
-                code.Add($"# type: {v.Type}");
+                var lined = "#";
+                lined += $" {v.GlobalVariableBuilder.Id}";
+                lined += $" {v.Name}";
+                lined += $" const={v.IsConstant}";
+                lined += $" type: {v.Type}";
+                code.Add(lined);
 
                 if (v.GlobalVariableBuilder.StringConstantValue != null)
                 {
@@ -49,7 +50,7 @@ namespace CZero.Intermediate
                 }
                 else if (v.GlobalVariableBuilder.HasInitialValue)
                 {
-                    code.Add($"# initial:");
+                    code.Add($"# initial expr:");
                     foreach (var instruction in v.GlobalVariableBuilder.LoadValueInstructions)
                     {
                         var line = "";
@@ -65,7 +66,7 @@ namespace CZero.Intermediate
                 }
                 else
                 {
-                    code.Add($"# not initial value");
+                    code.Add($"# (no initial expr)");
                 }
 
             }
@@ -79,10 +80,12 @@ namespace CZero.Intermediate
 
             foreach (var f in globalBuilder.FunctionsView.Where(p => p.Name != "_start"))
             {
+                code.Add("# ================================================== #");
+                code.Add("");
                 var paramList = "";
                 foreach (var param in f.ParamTypes)
                     paramList += $"{param} ";
-                code.Add($"# fn {f.Name} ({paramList}) -> {f.ReturnType}");
+                code.Add($"._{f.Name} # {f.Builder.Id} fn {f.Name} ({paramList}) -> {f.ReturnType}");
 
                 foreach (var x in f.Builder.Arguments)
                 {
@@ -105,8 +108,8 @@ namespace CZero.Intermediate
                 code.Add("");
 
                 // Function body
+                code.Add("# function body");
                 code.AddRange(FunctionBody(f.Builder.Bucket));
-                code.Add("");
                 code.Add("");
 
             }
