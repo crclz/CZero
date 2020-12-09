@@ -13,8 +13,10 @@ fn not_main(const m:int, const n:double) -> int {
     return n as int;
 }
 
-fn main()->void{
+fn main()-> double {
     not_main(3232,3.1415);  
+
+    return 3.14159;
 }
 
 const b: double=2.5;

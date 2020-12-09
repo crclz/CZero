@@ -53,8 +53,10 @@ fn not_main(const m:int, const y:double, const b:int) -> int {
     let printf:int;//<printf:int>
 }
 
-fn main()->void{
+fn main()-> int {
     not_main(23232,54545.2300,33);
+
+    return 333;
 }
 
 const b: double=2.5; // <b:const double>

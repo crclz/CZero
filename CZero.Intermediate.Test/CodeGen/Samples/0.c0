@@ -29,7 +29,9 @@ fn print_args_when_no_return(a:int,b:int,c:int) -> void {
     putln();
 }
 
-fn main() -> void {
+fn main() -> int {
     print_args_when_no_return(33,44,55);
     print_args_when_has_return(77,88,99);
+
+    return 123123;
 }

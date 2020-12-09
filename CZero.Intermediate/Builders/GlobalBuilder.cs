@@ -8,7 +8,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-[assembly:InternalsVisibleTo("CZero")]
+[assembly: InternalsVisibleTo("CZero")]
 namespace CZero.Intermediate.Builders
 {
     class GlobalBuilder
@@ -115,18 +115,13 @@ namespace CZero.Intermediate.Builders
             if (mainFunction == null)
                 throw new SemanticException("No main function");
 
-            // Check main should have 0 arg and return void
+            // Check main should have 0 arg
             if (mainFunction.ParamTypes.Count > 0)
                 throw new SemanticException("Function main should not have params");
-            if (mainFunction.ReturnType != DataType.Void)
-                throw new SemanticException("Function main's return type should be void");
 
-            // args space and ret space
-            var space = mainFunction.ParamTypes.Count;
+            // Main function can have return value.
+            // Return space
             if (mainFunction.ReturnType != DataType.Void)
-                space++;
-
-            for (int i = 0; i < space; i++)
                 start.Builder.Bucket.Add(Instruction.Pack("push", (long)0xDEADBEEF));
 
             start.Builder.Bucket.Add(Instruction.Pack("call", mainFunction.Builder.Id));
