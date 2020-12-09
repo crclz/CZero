@@ -1,0 +1,7 @@
+[jobs.c0]
+# 使用 Dockerfile 来源，路径就是当前文件夹，镜像名称是 my-c0-compiler
+image = {source = "dockerfile", path = ".", tag = "my-c0-compiler"}
+
+run = [
+  "dotnet CZero.dll $input $asm",
+]
