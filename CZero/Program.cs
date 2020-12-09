@@ -26,6 +26,12 @@ namespace CZero
 
                 var sourceCode = File.ReadAllText(inputPath);
 
+                Console.WriteLine(sourceCode);
+
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine();
+
                 var ast = GetAst(sourceCode);
 
                 var rootScope = new SymbolScope();
