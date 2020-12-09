@@ -4,6 +4,7 @@ using CZero.Syntactic;
 using CZero.Syntactic.Ast;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -66,9 +67,15 @@ namespace CZero.Intermediate.Test.CodeGen
 
 
                 // Generate assembly code
-                var codeLines = new AssemblyCodeGenerator(generator.GlobalBuilder).Generate();
+                var asm = new AssemblyCodeGenerator(generator.GlobalBuilder);
+                var codeLines = asm.Generate();
                 var outputName = sampleFile + ".s";
                 File.WriteAllLines(outputName, codeLines);
+
+                // Write machine code
+                var exeData = asm.Executable.GetData();
+                var exeName = sampleFile.Replace(".c0", ".o0");
+                File.WriteAllBytes(exeName, exeData);
             }
 
             TestOutput.WriteLine($"{samples.Length} samples tested");

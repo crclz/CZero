@@ -13,12 +13,16 @@ fn printf(a:int, const y:int, z: double) -> double {
 
 let y:double;// <y:double>
 
-// <main:fn> <m:const int> <y:const double> <b:const int>
-fn main(const m:int, const y:double, const b:int) -> int {
+
+fn not_main(const m:int, const y:double, const b:int) -> int {
     const a:double=2.567;// <a:const double>
     const z:double=3.14;// <z:const double>
 
     return (z+1.2) as int + (a*z*(a+1.2)) as int;
+}
+
+fn main()->void{
+    not_main(323,3.6,5454);
 }
 
 const b: double=2.5; // <b:const double>

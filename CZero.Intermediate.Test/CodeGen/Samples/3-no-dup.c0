@@ -8,8 +8,12 @@ fn printf(a:int, const printf2:int, z: double) -> void {
 
 let y:double;
 
-fn main(const m:int, const y:double, const b:int) -> int {
+fn not_main(const m:int, const y:double, const b:int) -> int {
     return m * y as int * b*10086;
+}
+
+fn main()->void{
+    not_main(3,4.43, 323);
 }
 
 const b: double=2.5;

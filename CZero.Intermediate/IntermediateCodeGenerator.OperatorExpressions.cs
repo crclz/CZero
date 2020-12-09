@@ -87,10 +87,13 @@ namespace CZero.Intermediate
 
                 if (CodeGenerationEnabled)
                 {
-                    var src = DataTypeHelper.Suffix(type);
-                    var dst = DataTypeHelper.Suffix(t2);
+                    if (type != t2)
+                    {
+                        var src = DataTypeHelper.Suffix(type);
+                        var dst = DataTypeHelper.Suffix(t2);
 
-                    ExpressionBucket.AddSingle(src + "to" + dst);
+                        ExpressionBucket.AddSingle(src + "to" + dst);
+                    }
                 }
 
                 type = t2;

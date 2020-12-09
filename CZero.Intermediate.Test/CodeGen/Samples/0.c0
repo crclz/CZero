@@ -1,0 +1,35 @@
+let a:int=1; 
+let b:int; 
+let c:int;
+
+fn print_args_when_has_return(a:int,b:int,c:int) -> int {
+    putint(a);
+    putchar(' ');
+
+    putint(b);
+    putchar(' ');
+
+    putint(c);
+    putchar(' ');
+
+    putln();
+    return 0;
+}
+
+fn print_args_when_no_return(a:int,b:int,c:int) -> void {
+    putint(a);
+    putchar(' ');
+
+    putint(b);
+    putchar(' ');
+
+    putint(c);
+    putchar(' ');
+
+    putln();
+}
+
+fn main() -> void {
+    print_args_when_no_return(33,44,55);
+    print_args_when_has_return(77,88,99);
+}

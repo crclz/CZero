@@ -9,9 +9,13 @@ fn printf(x:int, const y:int, z: double) -> double {
     return z;
 }
 
-fn main(const m:int, const n:double) -> int {
-    a = 333 + n as int + c as int;
-    return a;
+fn Notmain(const m:int, const n:double) -> void {
+    m;
+    //return a;
+}
+
+fn main()->void {
+    Notmain(3,3.5);
 }
 
 fn empty() -> void {

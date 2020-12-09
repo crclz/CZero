@@ -1,4 +1,4 @@
-fn main()->int{ // <main:fn>
+fn main()->void{ // <main:fn>
     // 读入一个有符号整数
     //fn getint() -> int;
     let a:int;// <a:int>
@@ -35,5 +35,5 @@ fn main()->int{ // <main:fn>
     //fn putln() -> void;
     putln();
 
-    return 0;
+    return;
 }

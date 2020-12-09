@@ -187,14 +187,12 @@ namespace CZero.Intermediate
                 }
                 return DataType.Double;
             }
-            if (literalExpression.Literal is StringLiteralToken)
+            if (literalExpression.Literal is StringLiteralToken stringLiteral)
             {
                 // 字符串应该存全局变量，并把地址（划掉）应该把全局变量号放在栈上
                 if (CodeGenerationEnabled)
                 {
-                    var symbol = new VariableSymbol(Guid.NewGuid().ToString(), true, true, DataType.String);
-                    GlobalBuilder.RegisterGlobalVariable(symbol);
-                    var id = symbol.GlobalVariableBuilder.Id;
+                    var id = GlobalBuilder.RegisterStringConstant(stringLiteral.Value);
 
                     ExpressionBucket.Add(Instruction.Pack("push", (long)id));
                 }
@@ -237,8 +235,9 @@ namespace CZero.Intermediate
                 {
                     if (variableSymbol.LocalLocation.IsArgument)
                     {
-                        // 函数参数 (+1)
-                        var id = variableSymbol.LocalLocation.Id + 1;// because arg0 is ret val
+                        var id = variableSymbol.LocalLocation.Id;
+                        if (CurrentFunction.ReturnType != DataType.Void)
+                            id++;// because arg0 is ret val
                         var instruction = Instruction.Pack("arga", id);
                         instruction.Comment = variableSymbol.Name + " (ident-expr)";
                         ExpressionBucket.Add(instruction);

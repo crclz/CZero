@@ -60,10 +60,18 @@ namespace CZero.Intermediate
         public void WriteOpCode(string opcode)
         {
             // get opcode byte
+            Debug.Assert(InstructionReference.ContainsKey(opcode));
+
+            var opCodeByte = InstructionReference[opcode];
 
             // write byte
+            WriteByte(opCodeByte);
 
+        }
 
+        public byte[] GetData()
+        {
+            return Stream.ToArray();
         }
 
         public void GenerateInstructionReference()

@@ -5,6 +5,7 @@
 
 # generated .s asm files
 *.s
+*.o0
 
 # User-specific files
 *.rsuser

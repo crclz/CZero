@@ -9,8 +9,12 @@ fn printf(x:int, const y:int, z: double) -> double {
 let c:double;
 
 
-fn main(const m:int, const n:double) -> int {
+fn not_main(const m:int, const n:double) -> int {
     return n as int;
+}
+
+fn main()->void{
+    not_main(3232,3.1415);  
 }
 
 const b: double=2.5;

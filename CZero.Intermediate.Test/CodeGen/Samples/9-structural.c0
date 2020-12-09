@@ -7,9 +7,9 @@ fn k() -> int {
 }
 
 
-fn main() -> int {
+fn main() -> void {
     k();
-    return 0;
+    return;
 }
 
 let a:int=initA();

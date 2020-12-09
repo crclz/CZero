@@ -29,12 +29,13 @@ namespace CZero.Intermediate
 
         public List<string> Generate()
         {
+            //
+            globalBuilder.BuildStartFunction();
+            //
+
             var codeLines = GenerateGlobalVars();
 
             codeLines.Add("# ==================================== # ");
-            codeLines.Add("");
-            codeLines.Add(".START");
-            codeLines.AddRange(GenerateStartFunction(globalBuilder));
 
             // functions: Array<FunctionDef> {count=functionCount, ...}
             // functionCount
@@ -111,11 +112,16 @@ namespace CZero.Intermediate
                     Executable.WriteInt(sizeof(long));
 
                     // data
-                    Executable.WriteInt(0);
+                    Executable.WriteLong(0L);
                 }
                 else
                 {
                     code.Add($"# (no initial expr)");
+
+                    // count
+                    Executable.WriteInt(sizeof(long));
+                    // data: set 0
+                    Executable.WriteLong(0L);
                 }
 
             }
@@ -127,22 +133,22 @@ namespace CZero.Intermediate
         {
             var code = new List<string>();
 
-            foreach (var f in globalBuilder.FunctionsView.Where(p => p.Name != "_start"))
+            foreach (var f in globalBuilder.FunctionsView)
             {
                 // name: u32
                 Executable.WriteInt(f.Builder.NameAt);
 
-                // return_slots: u32 (1 slot is 1 byte)
+                // return_slots: u32
                 if (f.ReturnType == DataType.Void)
                     Executable.WriteInt(0);
                 else
-                    Executable.WriteInt(8);
+                    Executable.WriteInt(1);
 
-                // param_slots: u32 (1 slot is 1 byte)
-                Executable.WriteInt(8 * f.ParamTypes.Count);
+                // param_slots: u32
+                Executable.WriteInt(f.ParamTypes.Count);
 
                 // loc_slots: u32,
-                Executable.WriteInt(8 * f.Builder.LocalVariables.Count);
+                Executable.WriteInt(f.Builder.LocalVariables.Count);
 
                 code.Add("# ================================================== #");
                 code.Add("");
@@ -330,57 +336,59 @@ namespace CZero.Intermediate
             }
         }
 
-        public List<string> GenerateStartFunction(GlobalBuilder globalBuilder)
-        {
-            // 设置全局变量初始值
-            var code = new List<string>();
+        //public List<string> GenerateStartFunction(GlobalBuilder globalBuilder)
+        //{
+        //    // TODO: header
 
-            foreach (var v in globalBuilder.GlobalVariablesView)
-            {
-                var vb = v.GlobalVariableBuilder;
+        //    // 设置全局变量初始值
+        //    var code = new List<string>();
 
-                if (vb.StringConstantValue != null)
-                {
-                    // string constant is already in the data after compiling
-                    code.Add($"# {v.Name}: (.data) {vb.StringConstantValue}");
-                }
-                else
-                {
-                    if (!vb.HasInitialValue)
-                    {
-                        code.Add($"# {v.Name}: no initial value");
-                    }
-                    else
-                    {
-                        code.Add($"# {v.Name}: initial value setter code:");
+        //    foreach (var v in globalBuilder.GlobalVariablesView)
+        //    {
+        //        var vb = v.GlobalVariableBuilder;
 
-                        // load-addr
-                        code.Add($"globa {vb.Id}");
-                        Executable.WriteOpCode("globa");
-                        Executable.WriteInt(vb.Id);
+        //        if (vb.StringConstantValue != null)
+        //        {
+        //            // string constant is already in the data after compiling
+        //            code.Add($"# {v.Name}: (.data) {vb.StringConstantValue}");
+        //        }
+        //        else
+        //        {
+        //            if (!vb.HasInitialValue)
+        //            {
+        //                code.Add($"# {v.Name}: no initial value");
+        //            }
+        //            else
+        //            {
+        //                code.Add($"# {v.Name}: initial value setter code:");
 
-                        // init-expr
-                        code.AddRange(vb.LoadValueInstructions.Select(p => PlainInstructionToString(p)));
-                        foreach (var ins in vb.LoadValueInstructions)
-                            WritePlainInstruction(ins);
+        //                // load-addr
+        //                code.Add($"globa {vb.Id}");
+        //                Executable.WriteOpCode("globa");
+        //                Executable.WriteInt(vb.Id);
 
-                        // store
-                        code.Add("store.64");
-                        Executable.WriteOpCode("store.64");
+        //                // init-expr
+        //                code.AddRange(vb.LoadValueInstructions.Select(p => PlainInstructionToString(p)));
+        //                foreach (var ins in vb.LoadValueInstructions)
+        //                    WritePlainInstruction(ins);
 
-                    }
-                }
-            }
+        //                // store
+        //                code.Add("store.64");
+        //                Executable.WriteOpCode("store.64");
 
-            // call main
-            var mainFunction = globalBuilder.FunctionsView.Single(p => p.Name == "main");
+        //            }
+        //        }
+        //    }
 
-            // Real generator shoul Check if there is main
+        //    // call main
+        //    var mainFunction = globalBuilder.FunctionsView.Single(p => p.Name == "main");
 
-            code.Add("");
-            code.Add("call " + mainFunction.Builder.Id);
+        //    // Real generator shoul Check if there is main
 
-            return code;
-        }
+        //    code.Add("");
+        //    code.Add("call " + mainFunction.Builder.Id);
+
+        //    return code;
+        //}
     }
 }
