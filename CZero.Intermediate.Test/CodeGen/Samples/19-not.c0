@@ -1,0 +1,11 @@
+fn main() -> void {
+
+    if 1==61315 {
+        putstr("ONE\n");
+    }
+
+    if 2==2 {
+        putstr("TWO\n");
+    }
+
+}
