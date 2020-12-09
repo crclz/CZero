@@ -1,0 +1,25 @@
+fn dothings(const a:int)->void{
+
+    putint(a);
+    putstr(" -- ");
+
+    if a >= 90 {
+        putstr("a >= 90\n");
+    } else if a <= 60 {
+        putstr("a <= 60\n");
+    } else {
+        putstr("a between (60,90)\n");
+    }
+
+}
+
+fn main()->void {
+    
+    let i:int=0;
+
+    while i < 100 {
+        dothings(i);
+        i = i+5;
+    }
+
+}

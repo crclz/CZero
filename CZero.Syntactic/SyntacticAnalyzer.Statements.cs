@@ -243,7 +243,13 @@ namespace CZero.Syntactic
 
             var ok = tryElseAndFollowing();
             if (!ok)
+            {
+                // Clear the shits
+                @else = null;
+                followingBlock = null;
+                followingIf = null;
                 _reader.SetCursor(cursor2);
+            }
 
             // ok
             ifStatement = new IfStatementAst(@if, condition, blockStatement, @else, followingBlock, followingIf);
