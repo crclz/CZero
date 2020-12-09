@@ -323,7 +323,7 @@ namespace CZero.Intermediate
 
             // jump(if false) to done
             if (CodeGenerationEnabled)
-                CurrentFunction.Builder.Bucket.Add(new object[] { "br", doneLabel });
+                CurrentFunction.Builder.Bucket.Add(new object[] { "br.false", doneLabel });
 
             // # while-block
             EnterWhileDefination(new Builders.WhileBuilder(CurrentWhile));
@@ -332,7 +332,7 @@ namespace CZero.Intermediate
 
             // jmp .START
             if (CodeGenerationEnabled)
-                CurrentFunction.Builder.Bucket.Add(startLabel);
+                CurrentFunction.Builder.Bucket.Add(Instruction.Pack("br", startLabel));
 
             // .DONE:nop
             if (CodeGenerationEnabled)

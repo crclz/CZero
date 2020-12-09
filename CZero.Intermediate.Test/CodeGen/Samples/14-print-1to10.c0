@@ -1,0 +1,18 @@
+fn dothings(const to:int)->int{
+
+    let i:int=1;
+    while i <= to {
+        putint(i);
+        putchar(' ');
+        i=i+1;
+    }
+
+    putln();
+
+    return i;
+}
+
+fn main()->void {
+    let x:int=dothings(10);
+    putint(x);
+}
