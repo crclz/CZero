@@ -75,7 +75,7 @@ namespace CZero.Intermediate
                         // 函数参数 (+1)
                         var id = variableSymbol.LocalLocation.Id + 1;// because arg0 is ret val
                         var instruction = Instruction.Pack("arga", id);
-                        instruction.Comment = variableSymbol.Name+" call-arg";
+                        instruction.Comment = variableSymbol.Name + " call-arg";
                         ExpressionBucket.Add(instruction);
                     }
                     else
@@ -115,8 +115,8 @@ namespace CZero.Intermediate
             if (!(symbol is FunctionSymbol functionSymbol))
                 throw new SemanticException($"Symbol '{name}' is not function, cannot call.");
 
-            // ret-space: 如果是stdlibs，不需要预留空间
-            if (CodeGenerationEnabled && !IsStdLibCall(functionSymbol.Name))
+            // ret-space: 如果是stdlibs，不需要预留空间。如果是返回void的，也不用。
+            if (CodeGenerationEnabled && !IsStdLibCall(functionSymbol.Name) && functionSymbol.ReturnType != DataType.Void)
                 ExpressionBucket.Add(new object[] { "push", (long)0 });
 
             var needCount = functionSymbol.ParamTypes.Count;
