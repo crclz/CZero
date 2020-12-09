@@ -351,7 +351,7 @@ namespace CZero.Intermediate
             var sessId = Guid.NewGuid().ToString()
 ;
             // load-retval-addr
-            if (CodeGenerationEnabled)// TODO: NULL RETURN TYPE
+            if (CodeGenerationEnabled && CurrentFunction.ReturnType != DataType.Void)
             {
                 var instruction = Instruction.Pack("arga", 0);
                 instruction.Comment = "load retval addr " + sessId;

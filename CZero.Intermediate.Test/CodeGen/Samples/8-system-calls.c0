@@ -3,11 +3,16 @@ fn main()->int{ // <main:fn>
     //fn getint() -> int;
     let a:int;// <a:int>
     let b:double;// <b:double>
+    a = getint();
 
-    
+    // 读入一个浮点数
+    //fn getdouble() -> double;
+    b = getdouble();
+
+    {
         // 读入一个字符
         //fn getchar() -> int;
-        // let c:int=getchar();
+        a=getchar();
 
         // 输出一个整数
         //fn putint(int) -> void;
@@ -16,7 +21,7 @@ fn main()->int{ // <main:fn>
         // 输出一个浮点数
         //fn putdouble(double) -> void;
         putdouble(b);
-    
+    }
     
     // 输出一个字符
     //fn putchar(xxx) -> void;

@@ -13,3 +13,11 @@ fn main(const m:int, const n:double) -> int {
     a = 333 + n as int + c as int;
     return a;
 }
+
+fn empty() -> void {
+
+}
+
+fn empty2() -> void {
+    return;
+}
