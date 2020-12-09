@@ -56,6 +56,8 @@ namespace CZero.Intermediate
                 throw new SemanticException(
                     $"Variable '{name}' is type '{variableSymbol.Type}', but expression is '{valueType}'");
 
+            var valueExpressionCode = ExpressionBucket.Pop();
+
             // All check ok
 
             if (CodeGenerationEnabled)
@@ -64,7 +66,7 @@ namespace CZero.Intermediate
                 if (variableSymbol.IsGlobal)
                 {
                     var id = variableSymbol.GlobalVariableBuilder.Id;
-                    Bucket.Add(new object[] { "globa", id });
+                    ExpressionBucket.Add(new object[] { "globa", id });
                 }
                 else
                 {
@@ -74,21 +76,21 @@ namespace CZero.Intermediate
                         var id = variableSymbol.LocalLocation.Id + 1;// because arg0 is ret val
                         var instruction = Instruction.Pack("arga", id);
                         instruction.Comment = variableSymbol.Name+" call-arg";
-                        Bucket.Add(instruction);
+                        ExpressionBucket.Add(instruction);
                     }
                     else
                     {
                         // 局部变量
                         var id = variableSymbol.LocalLocation.Id;
-                        Bucket.Add(new object[] { "loca", id });
+                        ExpressionBucket.Add(new object[] { "loca", id });
                     }
                 }
 
                 // value-expr
-                Bucket.AddRange(Bucket.Pop());
+                ExpressionBucket.AddRange(valueExpressionCode);
 
                 // store.64
-                Bucket.Add(new Instruction("store.64"));
+                ExpressionBucket.Add(new Instruction("store.64"));
             }
 
             return DataType.Void;
@@ -115,7 +117,7 @@ namespace CZero.Intermediate
 
             // ret-space: 如果是stdlibs，不需要预留空间
             if (CodeGenerationEnabled && !IsStdLibCall(functionSymbol.Name))
-                Bucket.Add(new object[] { "push", (long)0 });
+                ExpressionBucket.Add(new object[] { "push", (long)0 });
 
             var needCount = functionSymbol.ParamTypes.Count;
             var providedCount = callExpression.HasParams ? callExpression.ParamList.Parameters.Count : 0;
@@ -150,7 +152,7 @@ namespace CZero.Intermediate
                 if (!IsStdLibCall(functionSymbol.Name))
                 {
                     var funcId = functionSymbol.Builder.Id;
-                    Bucket.Add(Instruction.Pack("call", funcId));
+                    ExpressionBucket.Add(Instruction.Pack("call", funcId));
                 }
                 else
                 {
@@ -159,7 +161,7 @@ namespace CZero.Intermediate
                     var opcode = StdLibReference[functionSymbol.Name];
                     Debug.Assert(opcode != null);
 
-                    Bucket.Add(new Instruction(opcode));
+                    ExpressionBucket.Add(new Instruction(opcode));
                 }
             }
 
@@ -172,7 +174,7 @@ namespace CZero.Intermediate
             {
                 if (CodeGenerationEnabled)
                 {
-                    Bucket.Add(new object[] { "push", (long)intLiteral.Value });
+                    ExpressionBucket.Add(new object[] { "push", (long)intLiteral.Value });
                 }
                 return DataType.Long;
             }
@@ -180,7 +182,7 @@ namespace CZero.Intermediate
             {
                 if (CodeGenerationEnabled)
                 {
-                    Bucket.Add(new object[] { "push", doubleLiteral.Value });
+                    ExpressionBucket.Add(new object[] { "push", doubleLiteral.Value });
 
                 }
                 return DataType.Double;
@@ -194,7 +196,7 @@ namespace CZero.Intermediate
                     GlobalBuilder.RegisterGlobalVariable(symbol);
                     var id = symbol.GlobalVariableBuilder.Id;
 
-                    Bucket.Add(Instruction.Pack("push", (long)id));
+                    ExpressionBucket.Add(Instruction.Pack("push", (long)id));
                 }
 
                 return DataType.String;
@@ -203,7 +205,7 @@ namespace CZero.Intermediate
             {
                 if (CodeGenerationEnabled)
                 {
-                    Bucket.Add(new object[] { "push", (long)charLiteral.Value });
+                    ExpressionBucket.Add(new object[] { "push", (long)charLiteral.Value });
                 }
 
                 return DataType.Char;
@@ -229,7 +231,7 @@ namespace CZero.Intermediate
                 if (variableSymbol.IsGlobal)
                 {
                     var id = variableSymbol.GlobalVariableBuilder.Id;
-                    Bucket.Add(new object[] { "globa", id });
+                    ExpressionBucket.Add(new object[] { "globa", id });
                 }
                 else
                 {
@@ -239,18 +241,18 @@ namespace CZero.Intermediate
                         var id = variableSymbol.LocalLocation.Id + 1;// because arg0 is ret val
                         var instruction = Instruction.Pack("arga", id);
                         instruction.Comment = variableSymbol.Name + " (ident-expr)";
-                        Bucket.Add(instruction);
+                        ExpressionBucket.Add(instruction);
                     }
                     else
                     {
                         // 局部变量
                         var id = variableSymbol.LocalLocation.Id;
-                        Bucket.Add(new object[] { "loca", id });
+                        ExpressionBucket.Add(new object[] { "loca", id });
                     }
                 }
 
                 // de-reference
-                Bucket.Add(Instruction.Pack("load.64"));
+                ExpressionBucket.Add(Instruction.Pack("load.64"));
             }
 
             return variableSymbol.Type;

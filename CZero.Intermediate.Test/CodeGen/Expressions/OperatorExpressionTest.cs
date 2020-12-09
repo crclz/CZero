@@ -37,7 +37,7 @@ namespace CZero.Intermediate.Test.CodeGen.Expressions
 
             generator.ProcessOperatorExpression(ast);
 
-            return generator.Bucket.Pop();
+            return generator.ExpressionBucket.Pop();
         }
 
         [Fact]

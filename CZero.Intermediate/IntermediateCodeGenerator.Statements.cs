@@ -72,7 +72,7 @@ namespace CZero.Intermediate
 
             // 因为表达式还在临时bucket里面，所以需要pop出来放在函数bucket里面
             if (CodeGenerationEnabled)
-                CurrentFunction.Builder.Bucket.AddRange(Bucket.Pop());
+                CurrentFunction.Builder.Bucket.AddRange(ExpressionBucket.Pop());
 
             // 代码生成，如果不是返回void，则丢弃栈顶的值
             if (CodeGenerationEnabled)
@@ -132,7 +132,7 @@ namespace CZero.Intermediate
             if (CodeGenerationEnabled)
             {
                 if (!letDeclaration.HasInitialExpression)
-                    Debug.Assert(Bucket.InstructionList.Count == 0);
+                    Debug.Assert(ExpressionBucket.InstructionList.Count == 0);
 
                 if (symbol.IsGlobal)
                 {
@@ -140,7 +140,7 @@ namespace CZero.Intermediate
 
                     if (letDeclaration.HasInitialExpression)
                     {
-                        symbol.GlobalVariableBuilder.LoadValueInstructions = Bucket.Pop();
+                        symbol.GlobalVariableBuilder.LoadValueInstructions = ExpressionBucket.Pop();
                         Debug.Assert(symbol.GlobalVariableBuilder.LoadValueInstructions.Count > 0);
                     }
                 }
@@ -154,7 +154,7 @@ namespace CZero.Intermediate
                     if (letDeclaration.HasInitialExpression)
                     {
                         // load init expr
-                        CurrentFunction.Builder.Bucket.AddRange(Bucket.Pop());
+                        CurrentFunction.Builder.Bucket.AddRange(ExpressionBucket.Pop());
                     }
                     else
                     {
@@ -207,7 +207,7 @@ namespace CZero.Intermediate
                 {
                     GlobalBuilder.RegisterGlobalVariable(symbol);
 
-                    symbol.GlobalVariableBuilder.LoadValueInstructions = Bucket.Pop();
+                    symbol.GlobalVariableBuilder.LoadValueInstructions = ExpressionBucket.Pop();
                     Debug.Assert(symbol.GlobalVariableBuilder.LoadValueInstructions.Count > 0);
                 }
                 else
@@ -218,7 +218,7 @@ namespace CZero.Intermediate
                     CurrentFunction.Builder.Bucket.Add(new object[] { "loca", symbol.LocalLocation.Id });
 
                     // load init expr
-                    CurrentFunction.Builder.Bucket.AddRange(Bucket.Pop());
+                    CurrentFunction.Builder.Bucket.AddRange(ExpressionBucket.Pop());
 
                     // set memory value
                     CurrentFunction.Builder.Bucket.AddSingle("store.64");
@@ -242,7 +242,7 @@ namespace CZero.Intermediate
             // codegen: cond-expr
             if (CodeGenerationEnabled)
             {
-                CurrentFunction.Builder.Bucket.AddRange(Bucket.Pop());
+                CurrentFunction.Builder.Bucket.AddRange(ExpressionBucket.Pop());
             }
 
             bool canReturn1 = false;
@@ -319,7 +319,7 @@ namespace CZero.Intermediate
 
             // cond-expr
             if (CodeGenerationEnabled)
-                CurrentFunction.Builder.Bucket.AddRange(Bucket.Pop());
+                CurrentFunction.Builder.Bucket.AddRange(ExpressionBucket.Pop());
 
             // jump(if false) to done
             if (CodeGenerationEnabled)
@@ -372,11 +372,11 @@ namespace CZero.Intermediate
 
             // returning-expr;
             if (actualReturnType == DataType.Void)
-                Debug.Assert(Bucket.InstructionList.Count == 0);
+                Debug.Assert(ExpressionBucket.InstructionList.Count == 0);
 
             if (CodeGenerationEnabled)
             {
-                var exprCode = Bucket.Pop();
+                var exprCode = ExpressionBucket.Pop();
                 exprCode.ForEach(p => p.Comment += " " + sessId);
                 CurrentFunction.Builder.Bucket.AddRange(exprCode);
             }

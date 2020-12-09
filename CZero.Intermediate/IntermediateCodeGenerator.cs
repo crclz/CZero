@@ -22,7 +22,12 @@ namespace CZero.Intermediate
         public bool ReturnCheckEnabled { get; set; } = false;
 
         public bool CodeGenerationEnabled { get; set; } = false;
-        public Bucket Bucket = new Bucket();
+
+        /// <summary>
+        /// Only ProcessXxxExpression can add to it. <br/>
+        /// Only ProcessXxxStatement can pop it to function bucket.
+        /// </summary>
+        public Bucket ExpressionBucket = new Bucket();
 
         public GlobalBuilder GlobalBuilder = new GlobalBuilder();
 

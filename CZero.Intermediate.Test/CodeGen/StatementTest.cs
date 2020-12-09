@@ -118,13 +118,13 @@ namespace CZero.Intermediate.Test.CodeGen
             });
 
             var ins1 = new Instruction(new object[] { "push", 111L });
-            generator.Bucket.Add(ins1);// this is initial value expr
+            generator.ExpressionBucket.Add(ins1);// this is initial value expr
 
             // Act
             generator.ProcessLetDeclarationStatement(ast);
 
             // Assert
-            Assert.Empty(generator.Bucket.Pop());
+            Assert.Empty(generator.ExpressionBucket.Pop());
 
             Assert.True(scope.FindSymbolShallow("x", out Symbol symbol));
 
@@ -160,13 +160,13 @@ namespace CZero.Intermediate.Test.CodeGen
             generator.EnterFunctionDefination(function);
 
             var ins1 = new object[] { "push", 111L };
-            generator.Bucket.Add(ins1);// this is initial value expr
+            generator.ExpressionBucket.Add(ins1);// this is initial value expr
 
             // Act
             generator.ProcessLetDeclarationStatement(ast);
 
             // Assert
-            Assert.Empty(generator.Bucket.Pop());
+            Assert.Empty(generator.ExpressionBucket.Pop());
 
             Assert.True(scope.FindSymbolShallow("x", out Symbol symbol));
 
