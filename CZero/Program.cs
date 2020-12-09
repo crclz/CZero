@@ -17,34 +17,45 @@ namespace CZero
     {
         static void Main(string[] args)
         {
-            // args: input output
-            var inputPath = args[0];
-            var outputPath = args[1];
+            try
+            {
 
-            var sourceCode = File.ReadAllText(inputPath);
+                // args: input output
+                var inputPath = args[0];
+                var outputPath = args[1];
 
-            var ast = GetAst(sourceCode);
+                var sourceCode = File.ReadAllText(inputPath);
 
-            var rootScope = new SymbolScope();
+                var ast = GetAst(sourceCode);
 
-            var generator = new IntermediateCodeGenerator(rootScope);
-            generator.CodeGenerationEnabled = true;
-            generator.ReturnCheckEnabled = true;
+                var rootScope = new SymbolScope();
 
-            generator.ProcessProgram(ast);
+                var generator = new IntermediateCodeGenerator(rootScope);
+                generator.CodeGenerationEnabled = true;
+                generator.ReturnCheckEnabled = true;
 
-            // Generate assembly code
-            var asm = new AssemblyCodeGenerator(generator.GlobalBuilder);
+                generator.ProcessProgram(ast);
 
-            var codeLines = asm.Generate();
+                // Generate assembly code
+                var asm = new AssemblyCodeGenerator(generator.GlobalBuilder);
 
-            // Print asm code
-            foreach(var line in codeLines)
-                Console.WriteLine(line);
+                var codeLines = asm.Generate();
 
-            // Write machine code
-            var exeData = asm.Executable.GetData();
-            File.WriteAllBytes(outputPath, exeData);
+                // Print asm code
+                foreach (var line in codeLines)
+                    Console.WriteLine(line);
+
+                // Write machine code
+                var exeData = asm.Executable.GetData();
+                File.WriteAllBytes(outputPath, exeData);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+
+                Environment.Exit(66666);
+            }
+
         }
 
         public static ProgramAst GetAst(string sourceCode)

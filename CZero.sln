@@ -13,9 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CZero.Syntactic", "CZero.Sy
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CZero.Syntactic.Test", "CZero.Syntactic.Test\CZero.Syntactic.Test.csproj", "{75476BA7-E87F-4EA6-995F-4510E6971B8F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CZero.Intermediate", "CZero.Intermediate\CZero.Intermediate.csproj", "{4BDD3926-2DFC-43EF-A8FB-99BDAE4EBC4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CZero.Intermediate", "CZero.Intermediate\CZero.Intermediate.csproj", "{4BDD3926-2DFC-43EF-A8FB-99BDAE4EBC4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CZero.Intermediate.Test", "CZero.Intermediate.Test\CZero.Intermediate.Test.csproj", "{31095320-8903-4E7E-9AA8-9355ADB3B535}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CZero.Intermediate.Test", "CZero.Intermediate.Test\CZero.Intermediate.Test.csproj", "{31095320-8903-4E7E-9AA8-9355ADB3B535}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
