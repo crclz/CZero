@@ -73,7 +73,10 @@ namespace CZero.Intermediate
                     if (variableSymbol.LocalLocation.IsArgument)
                     {
                         // 函数参数 (+1)
-                        var id = variableSymbol.LocalLocation.Id + 1;// because arg0 is ret val
+                        var id = variableSymbol.LocalLocation.Id;
+                        if (CurrentFunction.ReturnType != DataType.Void)
+                            id++;
+
                         var instruction = Instruction.Pack("arga", id);
                         instruction.Comment = variableSymbol.Name + " call-arg";
                         ExpressionBucket.Add(instruction);
