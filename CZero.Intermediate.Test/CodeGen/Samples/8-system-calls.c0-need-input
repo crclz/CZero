@@ -3,37 +3,37 @@ fn main()->void{ // <main:fn>
     //fn getint() -> int;
     let a:int;// <a:int>
     let b:double;// <b:double>
-    a = getint();
+    getint();
 
     // 读入一个浮点数
     //fn getdouble() -> double;
-    b = getdouble();
+//    b = getdouble();
 
-    {
+    
         // 读入一个字符
         //fn getchar() -> int;
-        a=getchar();
+//        a=getchar();
 
         // 输出一个整数
         //fn putint(int) -> void;
-        putint(a);
+//        putint(a);
 
         // 输出一个浮点数
         //fn putdouble(double) -> void;
-        putdouble(b);
-    }
+ //       putdouble(b);
+    
     
     // 输出一个字符
     //fn putchar(xxx) -> void;
-    putchar('Z');
+//    putchar('Z');
 
     // 将编号为这个整数的全局常量看作字符串输出
     //fn putstr(xxx) -> void;
-    putstr("asdassdaasda\rasd");
+//    putstr("asdassdaasda\rasd");
 
     // 输出一个换行
     //fn putln() -> void;
-    putln();
+//    putln();
 
-    return;
+    // return;
 }

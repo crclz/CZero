@@ -382,12 +382,13 @@ namespace CZero.Intermediate
             }
 
             // write-retval
-            if (CodeGenerationEnabled)
-                CurrentFunction.Builder.Bucket.Add(new Instruction("store.64"));
-
-            // ret
-            if (CodeGenerationEnabled)
+            if (CodeGenerationEnabled && CurrentFunction.ReturnType != DataType.Void)
             {
+                if (CodeGenerationEnabled)
+                    CurrentFunction.Builder.Bucket.Add(new Instruction("store.64"));
+
+                // ret
+
                 CurrentFunction.Builder.Bucket.Add(new Instruction("ret")
                 {
                     Comment = " " + sessId
