@@ -12,4 +12,6 @@ fn main() -> int {
     return 0;
 }
 
-const a:int=initA();
+let a:int=initA();
+let b:int;
+let c:int=3;
