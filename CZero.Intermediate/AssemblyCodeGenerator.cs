@@ -10,14 +10,35 @@ namespace CZero.Intermediate
 {
     class AssemblyCodeGenerator
     {
-        public static List<string> Generate(GlobalBuilder globalBuilder)
+        public ExecutableWriter Executable { get; } = new ExecutableWriter();
+
+        private GlobalBuilder globalBuilder { get; }
+
+        public AssemblyCodeGenerator(GlobalBuilder globalBuilder)
         {
-            var codeLines = GenerateGlobalVars(globalBuilder);
+            this.globalBuilder = globalBuilder;
+
+            // magic
+            int magic = 0x72303b3e;
+            Executable.WriteInt(magic);
+
+            // version
+            int version = 0x00000001;
+            Executable.WriteInt(version);
+        }
+
+        public List<string> Generate()
+        {
+            var codeLines = GenerateGlobalVars();
 
             codeLines.Add("# ==================================== # ");
             codeLines.Add("");
             codeLines.Add(".START");
             codeLines.AddRange(GenerateStartFunction(globalBuilder));
+
+            // functions: Array<FunctionDef> {count=functionCount, ...}
+            // functionCount
+            Executable.WriteInt(globalBuilder.FunctionsView.Count);
 
             codeLines.AddRange(GenerateFunctions(globalBuilder));
 
@@ -31,11 +52,21 @@ namespace CZero.Intermediate
             return x.ToString();
         }
 
-        public static List<string> GenerateGlobalVars(GlobalBuilder globalBuilder)
+        public List<string> GenerateGlobalVars()
         {
+            // globals: Array<GlobalDef>
+            // write 'count'
+            Executable.WriteInt(globalBuilder.GlobalVariablesView.Count);
+
             var code = new List<string>();
             foreach (var v in globalBuilder.GlobalVariablesView)
             {
+                // write is_const: u8
+                if (v.IsConstant)
+                    Executable.WriteByte(1);
+                else
+                    Executable.WriteByte(0);
+
                 code.Add("");
                 var lined = "#";
                 lined += $" {v.GlobalVariableBuilder.Id}";
@@ -46,7 +77,17 @@ namespace CZero.Intermediate
 
                 if (v.GlobalVariableBuilder.StringConstantValue != null)
                 {
-                    code.Add($"# string constant: {v.GlobalVariableBuilder.StringConstantValue}");
+                    var stringValue = v.GlobalVariableBuilder.StringConstantValue;
+                    code.Add($"# string constant: {stringValue}");
+
+                    // value: Array<u8>, {count,data}
+
+                    // count
+                    Executable.WriteInt(stringValue.Length);
+
+                    // data
+                    for (int i = 0; i < stringValue.Length; i++)
+                        Executable.WriteByte((byte)stringValue[i]);
                 }
                 else if (v.GlobalVariableBuilder.HasInitialValue)
                 {
@@ -63,6 +104,14 @@ namespace CZero.Intermediate
                         }
                         code.Add(line);
                     }
+
+                    // value: Array<u8>, {count=sizeof(long) ,data}
+
+                    // count
+                    Executable.WriteInt(sizeof(long));
+
+                    // data
+                    Executable.WriteInt(0);
                 }
                 else
                 {
@@ -74,12 +123,27 @@ namespace CZero.Intermediate
             return code;
         }
 
-        public static List<string> GenerateFunctions(GlobalBuilder globalBuilder)
+        public List<string> GenerateFunctions(GlobalBuilder globalBuilder)
         {
             var code = new List<string>();
 
             foreach (var f in globalBuilder.FunctionsView.Where(p => p.Name != "_start"))
             {
+                // name: u32
+                Executable.WriteInt(f.Builder.NameAt);
+
+                // return_slots: u32 (1 slot is 1 byte)
+                if (f.ReturnType == DataType.Void)
+                    Executable.WriteInt(0);
+                else
+                    Executable.WriteInt(8);
+
+                // param_slots: u32 (1 slot is 1 byte)
+                Executable.WriteInt(8 * f.ParamTypes.Count);
+
+                // loc_slots: u32,
+                Executable.WriteInt(8 * f.Builder.LocalVariables.Count);
+
                 code.Add("# ================================================== #");
                 code.Add("");
                 var paramList = "";
@@ -128,9 +192,58 @@ namespace CZero.Intermediate
             }
         }
 
-        public static List<string> FunctionBody(Bucket bucket)
+        public List<string> FunctionBody(Bucket bucket)
         {
+            // body: Array<Instruction>, {count, ...}
+            Executable.WriteInt(bucket.InstructionList.Count);
+
             var counter = 1;
+
+            // Preprocess instructions, add offsets
+            for (int i = 0; i < bucket.InstructionList.Count; i++)
+                bucket.InstructionList[i].Offset = i;
+
+            // Write instructions
+            foreach (var instruction in bucket.InstructionList)
+            {
+                var opCode = (string)instruction.Parts[0];
+
+                // Write opcode
+                Executable.WriteOpCode(opCode);
+
+                Debug.Assert(instruction.Parts.Count <= 2);
+
+                foreach (var part in instruction.Parts.ToArray()[1..])
+                {
+                    var reqs2 = new[] {
+                            "push", "popn", "loca", "arga", "globa",
+                            "br","br.true", "br.false", "call","callname"};
+
+                    Debug.Assert(reqs2.Contains(opCode));
+
+                    if (part is Instruction ins)
+                    {
+
+                        // write offset
+                        var offset = ins.Offset - instruction.Offset - 1;
+                        Executable.WriteInt(offset);
+                    }
+                    else
+                    {
+                        // write operand
+                        if (part is int intOperand)
+                            Executable.WriteInt(intOperand);
+                        else if (part is long longOperand)
+                            Executable.WriteLong(longOperand);
+                        else if (part is double doubleOperand)
+                            Executable.WriteDouble(doubleOperand);
+                        else
+                            throw new Exception($"Bad operand type {part.GetType()}");
+                    }
+                }
+            }
+
+            // asm shits
 
             EachPart(bucket, p =>
             {
@@ -191,7 +304,33 @@ namespace CZero.Intermediate
             return line;
         }
 
-        public static List<string> GenerateStartFunction(GlobalBuilder globalBuilder)
+        public void WritePlainInstruction(Instruction instruction)
+        {
+            var opcode = (string)instruction.Parts[0];
+            Executable.WriteOpCode(opcode);
+
+            foreach (var part in instruction.Parts.ToArray()[1..])
+            {
+                if (part is Instruction ins)
+                {
+                    throw new ArgumentException("Not plain instruction");
+                }
+                else
+                {
+                    // write operand
+                    if (part is int intOperand)
+                        Executable.WriteInt(intOperand);
+                    else if (part is long longOperand)
+                        Executable.WriteLong(longOperand);
+                    else if (part is double doubleOperand)
+                        Executable.WriteDouble(doubleOperand);
+                    else
+                        throw new Exception($"Bad operand type {part.GetType()}");
+                }
+            }
+        }
+
+        public List<string> GenerateStartFunction(GlobalBuilder globalBuilder)
         {
             // 设置全局变量初始值
             var code = new List<string>();
@@ -217,12 +356,18 @@ namespace CZero.Intermediate
 
                         // load-addr
                         code.Add($"globa {vb.Id}");
+                        Executable.WriteOpCode("globa");
+                        Executable.WriteInt(vb.Id);
 
                         // init-expr
                         code.AddRange(vb.LoadValueInstructions.Select(p => PlainInstructionToString(p)));
+                        foreach (var ins in vb.LoadValueInstructions)
+                            WritePlainInstruction(ins);
 
                         // store
                         code.Add("store.64");
+                        Executable.WriteOpCode("store.64");
+
                     }
                 }
             }
