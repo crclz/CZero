@@ -1,0 +1,14 @@
+fn A() -> void {
+}
+
+fn main() -> void {
+
+    let a:int=1;
+
+    if a==1 {
+        A();
+    }
+
+    let b:int=1;
+
+}
