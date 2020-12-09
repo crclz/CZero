@@ -1,0 +1,21 @@
+fn A() -> void {
+}
+
+fn B() -> void {
+
+}
+
+fn main() -> void {
+
+    let a:int=1;
+
+    if a==1 {
+        A();
+
+    } else if 1==2 {
+        B();
+    } 
+
+    let b:int=1;
+
+}
