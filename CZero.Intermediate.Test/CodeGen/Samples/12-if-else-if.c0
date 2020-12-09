@@ -2,19 +2,31 @@ fn A() -> void {
 }
 
 fn B() -> void {
+    let d : double;
+    if d {
+    
+    }
 
+    if 'c' {
+    }
 }
 
 fn main() -> void {
 
     let a:int=1;
 
+    if a { // could be int
+    
+    }
+
     if a==1 {
         A();
 
     } else if 1==2 {
         B();
-    } 
+    }
+
+    putchar(97);
 
     let b:int=1;
 

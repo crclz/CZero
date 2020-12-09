@@ -280,7 +280,7 @@ namespace CZero.Intermediate.Test.SemanticCheck
 
         #region If
         [Fact]
-        void ProcessIfStatement_throws_when_condition_not_bool()
+        void ProcessIfStatement_throws_when_condition_not_double_int_bool()
         {
             var scope = new SymbolScope();
             var condition = new Mock<ExpressionAst>().Object;
@@ -291,7 +291,7 @@ namespace CZero.Intermediate.Test.SemanticCheck
 
             var generator = ConfigureGenerator(scope, mock =>
             {
-                mock.Setup(p => p.ProcessExpression(condition)).Returns(DataType.Long);
+                mock.Setup(p => p.ProcessExpression(condition)).Returns(DataType.String);
             });
 
             Assert.Throws<SemanticException>(() => generator.ProcessIfStatement(ast));

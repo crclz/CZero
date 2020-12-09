@@ -206,7 +206,7 @@ namespace CZero.Intermediate
                     ExpressionBucket.Add(new object[] { "push", (long)charLiteral.Value });
                 }
 
-                return DataType.Char;
+                return DataType.Long;
             }
             throw new ArgumentException($"Unknown literal token type: {literalExpression.GetType()}");
 

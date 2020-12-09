@@ -236,8 +236,14 @@ namespace CZero.Intermediate
             // if_stmt -> 'if' expr block_stmt ('else' (block_stmt | if_stmt))?
 
             var conditionType = ProcessExpression(ifStatement.ConditionExpression);
-            if (conditionType != DataType.Bool)
-                throw new SemanticException($"If.Condition should be of bool type");
+            if (!(conditionType == DataType.Bool ||
+                conditionType == DataType.Double ||
+                conditionType == DataType.Long))
+            {
+                throw new SemanticException(
+                    $"If.Condition should be of bool,double or long type. Provided: {conditionType}");
+            }
+
 
             // codegen: cond-expr
             if (CodeGenerationEnabled)

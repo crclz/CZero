@@ -137,7 +137,7 @@ namespace CZero.Intermediate
 
             // 输出一个字符
             //fn putchar(int) -> void;
-            _addFuncSym(new FunctionSymbol("putchar", DataType.Void, new[] { DataType.Char }));
+            _addFuncSym(new FunctionSymbol("putchar", DataType.Void, new[] { DataType.Long }));
 
             // 将编号为这个整数的全局常量看作字符串输出
             //fn putstr(int) -> void;

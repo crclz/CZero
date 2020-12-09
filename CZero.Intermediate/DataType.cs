@@ -9,7 +9,7 @@ namespace CZero.Intermediate
 {
     enum DataType
     {
-        Void, Long, Double, Char, String, Bool
+        Void, Long, Double, String, Bool
     }
 
     static class DataTypeHelper
@@ -27,7 +27,7 @@ namespace CZero.Intermediate
         {
             Guard.Against.OutOfRange(type, nameof(type));
             return type == DataType.Long || type == DataType.Double
-                || type == DataType.String || type == DataType.Char;
+                || type == DataType.String || type == DataType.Long;
         }
 
         public static bool IsValidReturnType(DataType type)
