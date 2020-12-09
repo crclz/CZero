@@ -400,14 +400,15 @@ namespace CZero.Intermediate
             {
                 if (CodeGenerationEnabled)
                     CurrentFunction.Builder.Bucket.Add(new Instruction("store.64"));
+            }
 
-                // ret
-
+            // ret
+            if (CodeGenerationEnabled)
+            {
                 CurrentFunction.Builder.Bucket.Add(new Instruction("ret")
                 {
                     Comment = " " + sessId
                 });
-
             }
         }
 
