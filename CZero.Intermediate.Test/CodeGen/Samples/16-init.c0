@@ -1,0 +1,19 @@
+fn oneToX(const x:int) -> int {
+    let sum:int = 0;
+    let i:int = 1;
+
+    while i<=x {
+        sum = sum + i;
+        i = i +1;
+    }
+
+    return sum;
+}
+
+const a:int = oneToX(100);
+
+fn main()->void {
+    
+    putint(a);
+
+}
