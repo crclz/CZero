@@ -8,15 +8,16 @@ namespace CZero.Intermediate.Builders
     class FunctionBuilder
     {
         public int Id { get; }
-
+        public int NameAt { get; }
         public List<VariableSymbol> Arguments { get; } = new List<VariableSymbol>();
         public List<VariableSymbol> LocalVariables { get; } = new List<VariableSymbol>();
 
         public Bucket Bucket { get; } = new Bucket();
 
-        public FunctionBuilder(int id)
+        public FunctionBuilder(int id, int nameAt)
         {
             Id = id;
+            NameAt = nameAt;
         }
 
         public void RegisterArgument(VariableSymbol variable)

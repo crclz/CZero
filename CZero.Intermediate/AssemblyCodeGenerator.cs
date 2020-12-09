@@ -38,7 +38,11 @@ namespace CZero.Intermediate
                 code.Add($"# const: {v.IsConstant}");
                 code.Add($"# type: {v.Type}");
 
-                if (v.GlobalVariableBuilder.HasInitialValue)
+                if (v.GlobalVariableBuilder.StringConstantValue != null)
+                {
+                    code.Add($"# string constant: {v.GlobalVariableBuilder.StringConstantValue}");
+                }
+                else if (v.GlobalVariableBuilder.HasInitialValue)
                 {
                     code.Add($"# initial:");
                     foreach (var instruction in v.GlobalVariableBuilder.LoadValueInstructions)
