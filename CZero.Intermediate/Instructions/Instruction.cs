@@ -9,13 +9,12 @@ namespace CZero.Intermediate.Instructions
 {
     class Instruction
     {
-        private static int SomeCounter { get; set; } = 1;
-
         public int Offset { get; set; } = -1;
 
         public IReadOnlyList<object> Parts { get; }
 
-        public string Alias { get; }
+        public string Alias { get; set; }
+        public string Comment { get; set; }
 
         public Instruction(string singleOpCode) : this(new object[] { singleOpCode })
         {
@@ -28,9 +27,6 @@ namespace CZero.Intermediate.Instructions
             Guard.Against.NullElement(parts, nameof(parts));
 
             Parts = parts.ToArray();
-
-            Alias = $".{SomeCounter}";
-            SomeCounter++;
         }
 
         public static implicit operator Instruction(object[] parts)

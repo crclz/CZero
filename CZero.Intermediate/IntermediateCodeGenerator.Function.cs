@@ -91,7 +91,7 @@ namespace CZero.Intermediate
             }
 
             // implecit void returning
-            if (CodeGenerationEnabled)
+            if (CodeGenerationEnabled && returnType == DataType.Void)
                 CurrentFunction.Builder.Bucket.Add(new Instructions.Instruction("ret"));
 
             LeaveFunctionDefination();

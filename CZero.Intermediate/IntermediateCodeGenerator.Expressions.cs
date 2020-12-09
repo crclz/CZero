@@ -64,7 +64,7 @@ namespace CZero.Intermediate
                 if (variableSymbol.IsGlobal)
                 {
                     var id = variableSymbol.GlobalVariableBuilder.Id;
-                    CurrentFunction.Builder.Bucket.Add(new object[] { "globa", id });
+                    Bucket.Add(new object[] { "globa", id });
                 }
                 else
                 {
@@ -72,21 +72,23 @@ namespace CZero.Intermediate
                     {
                         // 函数参数 (+1)
                         var id = variableSymbol.LocalLocation.Id + 1;// because arg0 is ret val
-                        CurrentFunction.Builder.Bucket.Add(new object[] { "arga", id });
+                        var instruction = Instruction.Pack("arga", id);
+                        instruction.Comment = variableSymbol.Name+" call-arg";
+                        Bucket.Add(instruction);
                     }
                     else
                     {
                         // 局部变量
                         var id = variableSymbol.LocalLocation.Id;
-                        CurrentFunction.Builder.Bucket.Add(new object[] { "loca", id });
+                        Bucket.Add(new object[] { "loca", id });
                     }
                 }
 
                 // value-expr
-                CurrentFunction.Builder.Bucket.AddRange(Bucket.Pop());
+                Bucket.AddRange(Bucket.Pop());
 
                 // store.64
-                CurrentFunction.Builder.Bucket.Add(new Instruction("store.64"));
+                Bucket.Add(new Instruction("store.64"));
             }
 
             return DataType.Void;
@@ -235,7 +237,9 @@ namespace CZero.Intermediate
                     {
                         // 函数参数 (+1)
                         var id = variableSymbol.LocalLocation.Id + 1;// because arg0 is ret val
-                        Bucket.Add(new object[] { "arga", id });
+                        var instruction = Instruction.Pack("arga", id);
+                        instruction.Comment = variableSymbol.Name + " (ident-expr)";
+                        Bucket.Add(instruction);
                     }
                     else
                     {

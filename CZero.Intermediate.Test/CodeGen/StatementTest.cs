@@ -44,17 +44,22 @@ namespace CZero.Intermediate.Test.CodeGen
         }
 
         [Fact]
-        void ExpressionStatement_generates_nothing_if_expr_returning_void()
+        void ExpressionStatement_generates_nothing_if_expr_returning_void()// this is not correct!!!
         {
             // Arrange
             var scope = new SymbolScope();
 
             var expr = new Mock<ExpressionAst>().Object;
 
+
             var generator = ConfigureGenerator(scope, mock =>
             {
                 mock.Setup(p => p.ProcessExpression(expr)).Returns(DataType.Void);
             });
+
+            var function = new FunctionSymbol("p", DataType.Void, new DataType[0]);
+            generator.GlobalBuilder.RegisterFunction(function);
+            generator.EnterFunctionDefination(function);
 
             var ast = new ExpressionStatementAst(expr, new OperatorToken(Operator.Semicolon, default));
 
@@ -62,12 +67,12 @@ namespace CZero.Intermediate.Test.CodeGen
             generator.ProcessExpressionStatement(ast);
 
             // Assert
-            var instructions = generator.Bucket.Pop();
+            var instructions = generator.CurrentFunction.Builder.Bucket.Pop();
             Assert.Empty(instructions);
         }
 
         [Fact]
-        void ExpressionStatement_generates_pop_if_expr_not_returning_void()
+        void ExpressionStatement_generates_pop_if_expr_not_returning_void()// not correct!!!
         {
             // Arrange
             var scope = new SymbolScope();
@@ -81,11 +86,15 @@ namespace CZero.Intermediate.Test.CodeGen
 
             var ast = new ExpressionStatementAst(expr, new OperatorToken(Operator.Semicolon, default));
 
+            var function = new FunctionSymbol("p", DataType.Void, new DataType[0]);
+            generator.GlobalBuilder.RegisterFunction(function);
+            generator.EnterFunctionDefination(function);
+
             // Act
             generator.ProcessExpressionStatement(ast);
 
             // Assert
-            var instructions = generator.Bucket.Pop();
+            var instructions = generator.CurrentFunction.Builder.Bucket.Pop();
             Assert.Single(instructions);
             Assert.Equal("pop", instructions[0].Parts.Single());
 

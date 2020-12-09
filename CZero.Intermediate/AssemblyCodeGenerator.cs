@@ -1,4 +1,5 @@
 ﻿using CZero.Intermediate.Builders;
+using CZero.Intermediate.Instructions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -94,6 +95,66 @@ namespace CZero.Intermediate
 
                 code.Add("");
 
+                // Function body
+                code.AddRange(FunctionBody(f.Builder.Bucket));
+                code.Add("");
+                code.Add("");
+
+            }
+
+            return code;
+        }
+
+        private static void EachPart(Bucket bucket, Action<object> action)
+        {
+            foreach (var ins in bucket.InstructionList)
+            {
+                foreach (var p in ins.Parts)
+                {
+                    action(p);
+                }
+            }
+        }
+
+        public static List<string> FunctionBody(Bucket bucket)
+        {
+            var counter = 1;
+
+            EachPart(bucket, p =>
+            {
+                if (p is Instruction instruction)
+                {
+                    instruction.Alias = ".L" + counter;
+                    counter++;
+                }
+            });
+
+            var code = new List<string>();
+
+            foreach (var instruction in bucket.InstructionList)
+            {
+                var line = (string)instruction.Parts[0];
+
+                foreach (var part in instruction.Parts.ToArray()[1..])
+                {
+                    if (part is Instruction ins)
+                    {
+                        Debug.Assert(ins.Alias != null);
+                        line += " " + ins.Alias;
+                    }
+                    else
+                    {
+                        line += " " + getString(part);
+                    }
+                }
+
+                if (instruction.Alias != null)
+                    line = $"{instruction.Alias}: {line}";
+
+                if (instruction.Comment != null)
+                    line = line + " # " + instruction.Comment;
+
+                code.Add(line);
             }
 
             return code;

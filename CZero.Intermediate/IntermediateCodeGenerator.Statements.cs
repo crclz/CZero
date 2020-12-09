@@ -70,12 +70,16 @@ namespace CZero.Intermediate
 
             var expressionReturnType = ProcessExpression(expressionStatement.Expression);
 
+            // 因为表达式还在临时bucket里面，所以需要pop出来放在函数bucket里面
+            if (CodeGenerationEnabled)
+                CurrentFunction.Builder.Bucket.AddRange(Bucket.Pop());
+
             // 代码生成，如果不是返回void，则丢弃栈顶的值
             if (CodeGenerationEnabled)
             {
                 if (expressionReturnType != DataType.Void)
                 {
-                    Bucket.AddSingle("pop");
+                    CurrentFunction.Builder.Bucket.AddSingle("pop");
                 }
             }
         }
@@ -344,9 +348,15 @@ namespace CZero.Intermediate
             if (!IsInFunction)
                 throw new SemanticException($"Cannot return out side of function defination");
 
+            var sessId = Guid.NewGuid().ToString()
+;
             // load-retval-addr
-            if (CodeGenerationEnabled)
-                CurrentFunction.Builder.Bucket.Add(new object[] { "arga", 0 });
+            if (CodeGenerationEnabled)// TODO: NULL RETURN TYPE
+            {
+                var instruction = Instruction.Pack("arga", 0);
+                instruction.Comment = "load retval addr " + sessId;
+                CurrentFunction.Builder.Bucket.Add(instruction);
+            }
 
             DataType actualReturnType;
             if (returnStatement.ReturnExpression != null)
@@ -365,7 +375,11 @@ namespace CZero.Intermediate
                 Debug.Assert(Bucket.InstructionList.Count == 0);
 
             if (CodeGenerationEnabled)
-                CurrentFunction.Builder.Bucket.AddRange(Bucket.Pop());
+            {
+                var exprCode = Bucket.Pop();
+                exprCode.ForEach(p => p.Comment += " " + sessId);
+                CurrentFunction.Builder.Bucket.AddRange(exprCode);
+            }
 
             // write-retval
             if (CodeGenerationEnabled)
@@ -373,7 +387,13 @@ namespace CZero.Intermediate
 
             // ret
             if (CodeGenerationEnabled)
-                CurrentFunction.Builder.Bucket.Add(new Instruction("ret"));
+            {
+                CurrentFunction.Builder.Bucket.Add(new Instruction("ret")
+                {
+                    Comment = " " + sessId
+                });
+
+            }
         }
 
         public virtual bool ProcessBlockStatement(BlockStatementAst blockStatement,
